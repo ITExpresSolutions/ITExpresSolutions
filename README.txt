@@ -1,11 +1,16 @@
-# ITExpresSolutions - V3
+# ITExpresSolutions - V4
 
-Versión con:
-- Diseño responsive.
-- WhatsApp y llamada.
-- Sección de solicitud de soporte.
-- Ventana modal preparada para integrar Google Forms.
-- Logos en assets/.
+Versión completa conectada al formulario real de Google Forms.
 
-## Próximo paso
-Crear un Google Form con los campos de soporte, activar las notificaciones por correo y conectar el formulario a la ventana de esta web.
+Formulario:
+https://forms.gle/6QHaxfYMQFeeVf3RA
+
+Incluye:
+- index.html
+- style.css
+- assets/logo.jpg
+- assets/logo-badge.png
+- README.txt
+
+Flujo:
+Cliente -> Web -> Solicitar soporte -> Google Forms -> Google Sheets -> correo de nueva respuesta.
