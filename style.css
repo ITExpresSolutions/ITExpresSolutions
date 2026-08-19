@@ -118,3 +118,92 @@ body.intro-active{overflow:hidden}
   .video-intro-media{object-position:center}
   .hero-video-bg{object-position:center}
 }
+
+
+/* ===== V9 DESKTOP / MOBILE NORMALIZATION ===== */
+:root{
+  --container:1280px;
+  --text-max:680px;
+}
+.container{width:min(var(--container),calc(100% - 64px));margin-inline:auto}
+body{overflow-x:hidden}
+img,video{max-width:100%}
+
+/* Desktop */
+@media(min-width:851px){
+  .nav{min-height:82px}
+  .brand{font-size:21px}
+  nav{gap:20px;font-size:14px;white-space:nowrap}
+  .desktop-call{white-space:nowrap}
+  .hero{min-height:760px}
+  .hero-video-bg{object-fit:cover;object-position:center center}
+  .hero-video-overlay{background:linear-gradient(90deg,rgba(3,22,37,.93) 0%,rgba(3,35,52,.76) 44%,rgba(3,35,52,.25) 100%)}
+  .hero-content{padding:110px 0}
+  .hero-copy{max-width:760px}
+  .hero h1{font-size:clamp(48px,5.2vw,70px);max-width:760px}
+  .hero p{font-size:19px;max-width:680px}
+  .quick{margin-top:-42px}
+  .section{padding:92px 0}
+  .section-head{grid-template-columns:minmax(0,1fr) minmax(300px,430px);gap:60px}
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{min-height:205px}
+  .support-grid{grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr)}
+  .about-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .about-image img{width:100%;height:auto;object-fit:contain;background:#f4f8fb}
+  .software-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .digital-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .request-box{grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr)}
+}
+
+/* Medium desktop / tablet */
+@media(min-width:851px) and (max-width:1100px){
+  .container{width:min(100% - 40px,1000px)}
+  .nav{gap:14px}
+  nav{gap:12px;font-size:12px}
+  .hero{min-height:680px}
+  .section-head{grid-template-columns:1fr 360px;gap:30px}
+  .software-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Mobile */
+@media(max-width:850px){
+  .container{width:min(100% - 36px,680px)}
+  .header{position:sticky}
+  .hero{min-height:680px}
+  .hero-video-bg{object-position:center center}
+  .hero-content{padding:85px 0}
+  .hero-copy{max-width:100%}
+  .hero h1{font-size:clamp(40px,11vw,58px)}
+  .hero p{font-size:17px}
+  .section{padding:72px 0}
+  .section-head{grid-template-columns:1fr;gap:18px}
+  .cards,.support-grid,.about-grid,.digital-grid,.request-box{grid-template-columns:1fr}
+  .software-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quick-grid{grid-template-columns:1fr}
+  .quick-grid a{border-right:0;border-bottom:1px solid #e8eff3}
+  .quick-grid a:last-child{border-bottom:0}
+  .digital-cta{flex-direction:column;align-items:flex-start}
+}
+
+/* Small phones */
+@media(max-width:520px){
+  .container{width:calc(100% - 28px)}
+  .hero{min-height:650px}
+  .hero h1{font-size:42px;letter-spacing:-1.5px}
+  .hero p{font-size:16px}
+  .hero-actions .btn{width:100%}
+  .trust{gap:9px;font-size:12px}
+  .software-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .software-item{padding:16px 8px}
+  .software-logo{height:50px}
+  .request-box{padding:30px 20px}
+  .contact-box{padding:34px 22px}
+}
+
+/* Intro video keeps its 4:3 composition on desktop instead of stretching it. */
+.video-intro-media{object-fit:cover;object-position:center center}
+@media(min-width:851px){
+  .video-intro-media{object-position:center center}
+  .video-intro-brand{max-width:90vw}
+  .video-intro-brand img{width:110px;height:110px}
+}
