@@ -19,6 +19,7 @@
       <nav id="main-nav">
         <a href="#servicios">Servicios</a>
         <a href="#soporte">Soporte remoto</a>
+        <a href="#solicitar">Solicitar soporte</a>
         <a href="#nosotros">Nosotros</a>
         <a href="#contacto">Contacto</a>
       </nav>
@@ -36,7 +37,7 @@
           <p>Reparación, mantenimiento y soporte técnico para computadoras, redes, impresoras, celulares y mucho más.</p>
           <div class="hero-actions">
             <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
-            <a class="btn btn-outline" href="tel:+525663885856">📞 Llamar ahora</a>
+            <a class="btn btn-outline" href="#solicitar">📋 Solicitar soporte</a>
           </div>
           <div class="trust">
             <span>✓ Atención personalizada</span>
@@ -111,6 +112,45 @@
       </div>
     </section>
 
+    <section id="solicitar" class="section request-section">
+      <div class="container request-box">
+        <div class="request-copy">
+          <div class="eyebrow">SOLICITUD DE SOPORTE</div>
+          <h2>Cuéntanos qué problema tienes.</h2>
+          <p>Envía tu solicitud y podremos revisar los detalles antes de contactarte. El formulario quedará conectado a tu cuenta de Google para recibir las solicitudes por correo.</p>
+          <div class="request-points">
+            <span>✓ Datos del cliente</span>
+            <span>✓ Tipo de equipo</span>
+            <span>✓ Descripción del problema</span>
+            <span>✓ Preferencia de atención</span>
+          </div>
+        </div>
+        <div class="request-card">
+          <div class="request-icon">🛠️</div>
+          <h3>¿Necesitas asistencia?</h3>
+          <p>Completa una solicitud de soporte técnico.</p>
+          <button class="btn" type="button" id="openSupportForm">📋 Solicitar soporte</button>
+          <a class="request-alt" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte." target="_blank" rel="noopener">O escríbenos por WhatsApp →</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal" id="supportModal" aria-hidden="true">
+      <div class="modal-backdrop" id="closeSupportBackdrop"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="supportModalTitle">
+        <button class="modal-close" id="closeSupportForm" aria-label="Cerrar">×</button>
+        <div class="eyebrow">SOLICITAR SOPORTE</div>
+        <h2 id="supportModalTitle">Solicitud de servicio</h2>
+        <p class="modal-intro">Completa tus datos. El formulario de Google será conectado aquí para que la solicitud llegue a ITExpresSolutions.</p>
+        <div class="google-form-placeholder">
+          <div class="placeholder-icon">📨</div>
+          <h3>Formulario seguro de soporte</h3>
+          <p>En el siguiente paso conectaremos tu Google Form con esta ventana. Tus respuestas podrán guardarse automáticamente en Google Sheets y generar notificaciones en tu Gmail.</p>
+          <button class="btn" type="button" id="openGoogleFormSetup">Configurar formulario</button>
+        </div>
+      </div>
+    </div>
+
     <section id="contacto" class="section contact">
       <div class="container contact-box">
         <div>
@@ -148,6 +188,31 @@
       nav.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
     }));
+
+    const modal = document.querySelector('#supportModal');
+    const openBtn = document.querySelector('#openSupportForm');
+    const closeBtn = document.querySelector('#closeSupportForm');
+    const backdrop = document.querySelector('#closeSupportBackdrop');
+    const setupBtn = document.querySelector('#openGoogleFormSetup');
+
+    function openModal() {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('no-scroll');
+    }
+    function closeModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('no-scroll');
+    }
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    setupBtn.addEventListener('click', () => {
+      window.open('https://forms.google.com/', '_blank', 'noopener');
+    });
   </script>
 </body>
 </html>

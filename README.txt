@@ -1,11 +1,11 @@
-# ITExpresSolutions - V2
+# ITExpresSolutions - V3
 
-Sitio estático listo para GitHub Pages.
+Versión con:
+- Diseño responsive.
+- WhatsApp y llamada.
+- Sección de solicitud de soporte.
+- Ventana modal preparada para integrar Google Forms.
+- Logos en assets/.
 
-Estructura:
-- index.html
-- style.css
-- assets/logo.jpg
-- assets/logo-badge.png
-
-Las rutas de las imágenes ya están configuradas para la carpeta assets.
+## Próximo paso
+Crear un Google Form con los campos de soporte, activar las notificaciones por correo y conectar el formulario a la ventana de esta web.
