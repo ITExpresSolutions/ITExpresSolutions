@@ -1,20 +1,7 @@
-# ITExpresSolutions - V5
+# ITExpresSolutions V8
 
-Incluye todo lo de V4 y agrega:
-- Sección de software y plataformas.
-- Soporte para Microsoft 365/Office, Windows, Google Workspace, Adobe, antivirus y soporte remoto.
-- Servicios digitales para pequeñas y medianas empresas:
-  - Gestión de redes sociales.
-  - Creación y mantenimiento de páginas web.
-  - Presencia digital y Google Business Profile.
-- Botón de contacto por WhatsApp para soluciones digitales.
-
-Formulario de soporte:
-https://forms.gle/6QHaxfYMQFeeVf3RA
-
-Estructura:
-- index.html
-- style.css
-- README.txt
-- assets/logo.jpg
-- assets/logo-badge.png
+Nuevo video de entrada usando el video proporcionado por el usuario.
+- hero-intro.mp4: 1280x960, alta calidad, con música cinematográfica original.
+- hero-bg.mp4: 1280x960, alta calidad, sin audio para fondo en loop.
+- Se conserva el encuadre original 4:3; no se recortó el video.
+- La música es original, con energía cinematográfica/tecnológica, sin copiar la banda sonora de Transformers.

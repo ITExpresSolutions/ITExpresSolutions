@@ -9,6 +9,18 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="video-intro" id="videoIntro" aria-hidden="false">
+    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto">
+      <source src="hero-intro.mp4" type="video/mp4">
+    </video>
+    <div class="video-intro-shade"></div>
+    <div class="video-intro-brand">
+      <img src="assets/logo-badge.png" alt="ITExpresSolutions">
+      <div class="intro-name">ITExpres<span>Solutions</span></div>
+      <div class="intro-tagline">Soporte técnico y soluciones digitales</div>
+      <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
+    </div>
+  </div>
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" aria-label="ITExpresSolutions inicio">
@@ -28,8 +40,11 @@
   </header>
 
   <main>
-    <section id="inicio" class="hero">
-      <div class="hero-overlay"></div>
+    <section id="inicio" class="hero hero-video">
+      <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="assets/logo.jpg">
+        <source src="hero-bg.mp4" type="video/mp4">
+      </video>
+      <div class="hero-video-overlay"></div>
       <div class="container hero-content">
         <div class="hero-copy">
           <div class="eyebrow">SOPORTE TÉCNICO • CDMX • REMOTO EN TODO MÉXICO</div>
@@ -179,6 +194,36 @@
   <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
 
   <script>
+
+    const intro = document.querySelector('#videoIntro');
+    const introVideo = document.querySelector('#introVideo');
+    const skipIntro = document.querySelector('#skipIntro');
+    const heroVideo = document.querySelector('#heroVideo');
+
+    function enterSite() {
+      if (!intro) return;
+      intro.classList.add('hide');
+      intro.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('intro-active');
+      setTimeout(() => intro.remove(), 900);
+      if (heroVideo) {
+        heroVideo.currentTime = 0;
+        heroVideo.play().catch(() => {});
+      }
+    }
+
+    document.body.classList.add('intro-active');
+    skipIntro.addEventListener('click', enterSite);
+    introVideo.addEventListener('ended', enterSite);
+    introVideo.addEventListener('error', () => setTimeout(enterSite, 1200));
+
+    // The same video remains as the hero background after the intro.
+    if (heroVideo) {
+      heroVideo.loop = true;
+      heroVideo.muted = true;
+      heroVideo.addEventListener('canplay', () => heroVideo.play().catch(() => {}), {once:true});
+    }
+
     const toggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('#main-nav');
     toggle.addEventListener('click', () => {
