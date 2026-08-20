@@ -23,3 +23,6 @@ El sitio es estático y no necesita servidor de pago.
 
 V12 - Corrección de ilustraciones
 Las ilustraciones ahora están integradas directamente dentro de index.html para evitar errores 404/rutas de GitHub Pages. Sube/reemplaza index.html y style.css junto con la carpeta assets y los videos.
+
+
+V13: se eliminó la referencia al fundador y se agregó una sección de oportunidades para técnicos/ingenieros en Contacto.

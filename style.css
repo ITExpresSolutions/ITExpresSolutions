@@ -22,3 +22,18 @@ body:has(.page-panel.active[data-panel="inicio"]) .header{background:rgba(255,25
 @media(max-width:1050px){.page-hero{gap:30px;padding:38px}.page-hero-copy h1{font-size:clamp(36px,5vw,52px)}}
 @media(max-width:850px){.page-hero{grid-template-columns:1fr}.page-hero-art{min-height:230px}.inline-illustration{min-height:200px}.inline-illustration svg{width:min(100%,520px)}.split-feature{grid-template-columns:1fr}.illustration-card{overflow:hidden}}
 @media(max-width:520px){.page-hero-art{min-height:190px}.inline-illustration{min-height:180px}.inline-illustration svg{width:100%}}
+
+
+/* V13 — oportunidad para colaboradores */
+.opportunity-card {
+  border: 1px solid rgba(8,127,142,.18);
+  background: linear-gradient(145deg, #ffffff 0%, #f3fbfa 100%);
+}
+.opportunity-card p {
+  margin-bottom: 12px;
+}
+@media (max-width: 700px) {
+  .opportunity-card h2 {
+    font-size: 1.25rem;
+  }
+}
