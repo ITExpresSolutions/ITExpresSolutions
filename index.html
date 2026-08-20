@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ITExpresSolutions - Soporte técnico remoto y reparación de equipos de cómputo en Ciudad de México y todo México.">
+  <meta name="description" content="ITExpresSolutions - Soporte técnico, asistencia remota y soluciones digitales para personas y PyMEs en México.">
   <meta name="theme-color" content="#062f52">
   <title>ITExpresSolutions | Soporte Técnico</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Intro -->
   <div class="video-intro" id="videoIntro" aria-hidden="false">
     <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto">
       <source src="hero-intro.mp4" type="video/mp4">
@@ -21,345 +22,257 @@
       <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
     </div>
   </div>
+
   <header class="header">
     <div class="container nav">
-      <a class="brand" href="#inicio" aria-label="ITExpresSolutions inicio">
+      <a class="brand" href="#inicio" data-page="inicio" aria-label="ITExpresSolutions inicio">
         <img src="assets/logo-badge.png" alt="Logo ITExpresSolutions">
         <span>ITExpres<span>Solutions</span></span>
       </a>
       <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-      <nav id="main-nav">
-        <a href="#servicios">Servicios</a>
-        <a href="#soporte">Soporte remoto</a>
-        <a href="#software">Software</a>
-        <a href="#digital">PyMEs</a>
-        <a href="#plataformas">Programas</a>
-        <a href="#solicitar">Solicitar soporte</a>
-        <a href="#nosotros">Nosotros</a>
-        <a href="#contacto">Contacto</a>
+      <nav id="main-nav" aria-label="Navegación principal">
+        <a href="#inicio" data-page="inicio">Inicio</a>
+        <a href="#servicios" data-page="servicios">Servicios</a>
+        <a href="#pymes" data-page="pymes">PyMEs</a>
+        <a href="#remoto" data-page="remoto">Soporte remoto</a>
+        <a href="#nosotros" data-page="nosotros">Nosotros</a>
+        <a href="#contacto" data-page="contacto">Contacto</a>
       </nav>
       <a class="btn btn-small desktop-call" href="tel:+525663885856">📞 Llamar</a>
     </div>
   </header>
 
   <main>
-    <section id="inicio" class="hero hero-video">
-      <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="assets/logo.jpg">
-        <source src="hero-bg.mp4" type="video/mp4">
-      </video>
-      <div class="hero-video-overlay"></div>
-      <div class="container hero-content">
-        <div class="hero-copy">
-          <div class="eyebrow">SOPORTE TÉCNICO • CDMX • REMOTO EN TODO MÉXICO</div>
-          <h1>Tu tecnología funcionando.<br><span>Sin complicaciones.</span></h1>
-          <p>Reparación, mantenimiento y soporte técnico para computadoras, redes, impresoras, celulares y mucho más.</p>
-          <div class="hero-actions">
-            <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
-            <a class="btn btn-outline" href="https://forms.gle/6QHaxfYMQFeeVf3RA" target="_blank" rel="noopener">📋 Solicitar soporte</a>
-          </div>
-          <div class="trust">
-            <span>✓ Atención personalizada</span>
-            <span>✓ Soporte remoto</span>
-            <span>✓ Lunes a viernes 9 AM–9 PM</span>
+    <!-- HOME -->
+    <section class="page-panel hero-page" data-panel="inicio">
+      <section class="hero hero-video" id="inicio">
+        <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="assets/logo.jpg">
+          <source src="hero-bg.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-overlay"></div>
+        <div class="container hero-content">
+          <div class="hero-copy">
+            <div class="eyebrow">SOPORTE TÉCNICO • CDMX • REMOTO EN TODO MÉXICO</div>
+            <h1>Tu tecnología funcionando.<br><span>Sin complicaciones.</span></h1>
+            <p>Soporte técnico, reparación y soluciones digitales para personas, hogares y pequeñas empresas.</p>
+            <div class="hero-actions">
+              <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
+              <a class="btn btn-outline" href="#contacto" data-page="contacto">📋 Solicitar soporte</a>
+            </div>
+            <div class="trust">
+              <span>✓ Más de 15 años de experiencia</span>
+              <span>✓ Atención personalizada</span>
+              <span>✓ Lunes a viernes 9 AM–9 PM</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="quick" aria-label="Acciones rápidas">
-      <div class="container quick-grid">
-        <a href="tel:+525663885856"><strong>📞 Soporte telefónico</strong><small>Habla directamente con un técnico</small></a>
-        <a href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
-        <a href="#soporte"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar</small></a>
-      </div>
-    </section>
+      <section class="quick" aria-label="Acciones rápidas">
+        <div class="container quick-grid">
+          <a href="tel:+525663885856"><strong>📞 Soporte telefónico</strong><small>Habla directamente con un técnico</small></a>
+          <a href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
+          <a href="#remoto" data-page="remoto"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar de México</small></a>
+        </div>
+      </section>
 
-    <section id="servicios" class="section">
-      <div class="container">
-        <div class="section-head">
+      <section class="section home-intro">
+        <div class="container split-feature">
           <div>
-            <div class="eyebrow">NUESTROS SERVICIOS</div>
-            <h2>Soluciones para tu tecnología</h2>
+            <div class="eyebrow">UNA SOLUCIÓN, MUCHAS NECESIDADES</div>
+            <h2>La tecnología debería ayudarte, no darte más problemas.</h2>
+            <p>Organizamos nuestros servicios por áreas para que encuentres rápidamente la ayuda que necesitas, sin tener que leer una página interminable.</p>
+            <div class="feature-buttons">
+              <a class="btn" href="#servicios" data-page="servicios">Ver servicios</a>
+              <a class="text-link" href="#pymes" data-page="pymes">Soluciones para PyMEs →</a>
+            </div>
           </div>
-          <p>Atendemos usuarios particulares y pequeños negocios, de forma presencial en Ciudad de México y remotamente en todo México.</p>
+          <div class="illustration-card">
+            <img src="assets/illustration-support.svg" alt="Ilustración de soporte técnico">
+          </div>
         </div>
-        <div class="cards">
+      </section>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="page-panel section" data-panel="servicios" id="servicios">
+      <div class="container">
+        <div class="page-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">SERVICIOS</div>
+            <h1>Todo tu soporte técnico, organizado en un solo lugar.</h1>
+            <p>Atención presencial en Ciudad de México y soporte remoto en todo México.</p>
+          </div>
+          <div class="page-hero-art"><img src="assets/illustration-services.svg" alt="Ilustración de servicios tecnológicos"></div>
+        </div>
+
+        <div class="cards service-cards">
           <article class="card"><div class="icon">💻</div><h3>Computadoras</h3><p>Diagnóstico, reparación, mantenimiento, instalación y optimización de Windows y equipos.</p></article>
-          <article class="card"><div class="icon">🛡️</div><h3>Virus y seguridad</h3><p>Detección y eliminación de malware, configuración de seguridad y recomendaciones.</p></article>
-          <article class="card"><div class="icon">🌐</div><h3>Redes e Internet</h3><p>Configuración de Wi‑Fi, routers, redes domésticas y solución de problemas de conexión.</p></article>
+          <article class="card"><div class="icon">🛡️</div><h3>Virus y seguridad</h3><p>Detección de malware, limpieza, configuración de seguridad y recomendaciones.</p></article>
+          <article class="card"><div class="icon">🌐</div><h3>Redes e Internet</h3><p>Wi‑Fi, routers, redes domésticas y solución de problemas de conexión.</p></article>
           <article class="card"><div class="icon">🖨️</div><h3>Impresoras</h3><p>Instalación, configuración, controladores y solución de problemas de impresión.</p></article>
           <article class="card"><div class="icon">📱</div><h3>Celulares y dispositivos</h3><p>Configuración, cuentas, aplicaciones, conectividad y asistencia técnica.</p></article>
-          <article class="card"><div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Asistencia para equipos, usuarios, redes y mantenimiento tecnológico básico.</p></article>
+          <article class="card"><div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Equipos, usuarios, redes y mantenimiento tecnológico para pequeñas empresas.</p></article>
         </div>
-      </div>
-    </section>
 
-
-    <section id="software" class="section software">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">SOFTWARE Y PLATAFORMAS</div>
-            <h2>Soporte para tus herramientas digitales</h2>
-          </div>
-          <p>Instalación, configuración, actualización y soporte para herramientas de uso personal y empresarial.</p>
+        <div class="subsection-head">
+          <div><div class="eyebrow">SOFTWARE Y PLATAFORMAS</div><h2>También te ayudamos con tus programas.</h2></div>
+          <p>Instalación, configuración, actualización y orientación. El servicio depende de la licencia y condiciones de cada fabricante.</p>
         </div>
-        <div class="software-grid">
-          <div class="software-item"><div class="software-logo office">365</div><strong>Microsoft 365</strong><span>Office y Outlook</span></div>
-          <div class="software-item"><div class="software-logo windows">⊞</div><strong>Windows</strong><span>Instalación y optimización</span></div>
-          <div class="software-item"><div class="software-logo google">G</div><strong>Google Workspace</strong><span>Gmail, Drive y más</span></div>
-          <div class="software-item"><div class="software-logo adobe">A</div><strong>Adobe</strong><span>Instalación y configuración</span></div>
-          <div class="software-item"><div class="software-logo eset">ESET</div><strong>Antivirus</strong><span>Seguridad y protección</span></div>
-          <div class="software-item"><div class="software-logo remote">↗</div><strong>Soporte remoto</strong><span>Asistencia a distancia</span></div>
-        </div>
-        <p class="software-note">El soporte está sujeto a las licencias y condiciones de cada fabricante.</p>
-      </div>
-    </section>
-
-    <section id="digital" class="section digital-services">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">SOLUCIONES DIGITALES PARA PYMES</div>
-            <h2>Impulsa la presencia digital de tu negocio</h2>
-          </div>
-          <p>También ayudamos a pequeñas y medianas empresas a crear y mantener una presencia digital profesional.</p>
-        </div>
-        <div class="digital-grid">
-          <article class="digital-card">
-            <div class="digital-icon">📱</div>
-            <h3>Gestión de redes sociales</h3>
-            <p>Ayudamos con la configuración y gestión de perfiles empresariales.</p>
-            <ul><li>Configuración de perfiles</li><li>Publicaciones y contenido</li><li>Información de contacto</li><li>Orientación de presencia digital</li></ul>
-          </article>
-          <article class="digital-card">
-            <div class="digital-icon">🌐</div>
-            <h3>Páginas web</h3>
-            <p>Páginas sencillas y profesionales para mostrar tus productos o servicios.</p>
-            <ul><li>Páginas informativas</li><li>Catálogo de servicios</li><li>WhatsApp y formularios</li><li>Mantenimiento y actualización</li></ul>
-          </article>
-          <article class="digital-card">
-            <div class="digital-icon">📈</div>
-            <h3>Presencia digital</h3>
-            <p>Organizamos la información de tu negocio para facilitar que tus clientes te encuentren.</p>
-            <ul><li>Google Business Profile</li><li>Datos de contacto</li><li>Enlaces y perfiles</li><li>Orientación básica de marketing</li></ul>
-          </article>
-        </div>
-      </div>
-    </section>
-<section id="plataformas" class="section platforms">
-      <div class="container">
-        <div class="section-head platforms-head">
-          <div>
-            <div class="eyebrow">PLATAFORMAS Y SISTEMAS</div>
-            <h2>Soporte para tus programas y sistemas</h2>
-          </div>
-          <p>Ayudamos con instalación, configuración, actualización, diagnóstico y soporte remoto para las herramientas más utilizadas.</p>
-        </div>
-        <div class="platform-logo-grid">
+        <div class="platform-logo-grid compact-platforms">
           <div class="platform-logo-card"><div class="platform-mark ms">⊞</div><strong>Microsoft 365</strong><span>Office · Outlook · Teams</span></div>
           <div class="platform-logo-card"><div class="platform-mark win">⊞</div><strong>Windows</strong><span>Configuración · Optimización</span></div>
           <div class="platform-logo-card"><div class="platform-mark google">G</div><strong>Google</strong><span>Gmail · Drive · Workspace</span></div>
           <div class="platform-logo-card"><div class="platform-mark adobe">A</div><strong>Adobe</strong><span>Acrobat · Creative Cloud</span></div>
-          <div class="platform-logo-card"><div class="platform-mark eset">ESET</div><strong>ESET</strong><span>Antivirus · Seguridad</span></div>
+          <div class="platform-logo-card"><div class="platform-mark eset">ESET</div><strong>Antivirus</strong><span>Seguridad · Protección</span></div>
           <div class="platform-logo-card"><div class="platform-mark bit">B</div><strong>Bitdefender</strong><span>Seguridad · Antivirus</span></div>
           <div class="platform-logo-card"><div class="platform-mark zoom">Z</div><strong>Zoom</strong><span>Videoconferencias</span></div>
-          <div class="platform-logo-card"><div class="platform-mark any">A</div><strong>AnyDesk</strong><span>Soporte remoto</span></div>
-          <div class="platform-logo-card"><div class="platform-mark team">T</div><strong>TeamViewer</strong><span>Acceso remoto</span></div>
-          <div class="platform-logo-card"><div class="platform-mark printer">▣</div><strong>Impresoras</strong><span>Drivers · Configuración</span></div>
-          <div class="platform-logo-card"><div class="platform-mark net">⌁</div><strong>Redes</strong><span>Wi‑Fi · Routers · LAN</span></div>
-          <div class="platform-logo-card"><div class="platform-mark cloud">☁</div><strong>Servicios en la nube</strong><span>Configuración · Migración</span></div>
-        </div>
-        <p class="platforms-note">El soporte puede variar según el software, versión, licencia y condiciones de cada fabricante. No afirmamos ser distribuidores ni representantes oficiales de estas marcas.</p>
-      </div>
-    </section>
-
-
-    <section id="soporte" class="section support">
-      <div class="container support-grid">
-        <div>
-          <div class="eyebrow">ASISTENCIA REMOTA</div>
-          <h2>¿Estás lejos? Podemos ayudarte de forma remota.</h2>
-          <p>Cuéntanos qué problema tienes. Te orientamos por teléfono y, cuando sea necesario, podemos utilizar una herramienta de acceso remoto para revisar tu equipo con tu autorización.</p>
-          <div class="notice"><strong>🔐 Seguridad primero</strong><br>El acceso remoto debe ser autorizado por ti y solo durante la sesión de soporte. Nunca compartas contraseñas personales.</div>
-          <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte%20remoto." target="_blank" rel="noopener">🖥️ Solicitar soporte remoto</a>
-        </div>
-        <div class="support-panel">
-          <div class="panel-logo"><img src="assets/logo-badge.png" alt="ITExpresSolutions"></div>
-          <span class="pill">SERVICIO REMOTO</span>
-          <h3>Soporte en todo México</h3>
-          <p>Ciudad de México: atención local<br>Resto del país: atención remota</p>
-          <a href="tel:+525663885856">+52 56 6388 5856</a>
+          <div class="platform-logo-card"><div class="platform-mark any">↗</div><strong>AnyDesk</strong><span>Soporte remoto</span></div>
+          <div class="platform-logo-card"><div class="platform-mark team">↗</div><strong>TeamViewer</strong><span>Soporte remoto</span></div>
+          <div class="platform-logo-card"><div class="platform-mark printer">🖨</div><strong>Impresoras</strong><span>Drivers · Configuración</span></div>
+          <div class="platform-logo-card"><div class="platform-mark net">⌁</div><strong>Redes</strong><span>Wi‑Fi · Routers</span></div>
+          <div class="platform-logo-card"><div class="platform-mark cloud">☁</div><strong>Nube</strong><span>Configuración · Migración</span></div>
         </div>
       </div>
     </section>
-<section id="nosotros" class="section about">
+
+    <!-- PYMES -->
+    <section class="page-panel section" data-panel="pymes" id="pymes">
       <div class="container">
-        <div class="section-head">
-          <div>
+        <div class="page-hero reverse-art">
+          <div class="page-hero-copy">
+            <div class="eyebrow">SOLUCIONES DIGITALES PARA PYMEs</div>
+            <h1>Haz que tu negocio también se vea profesional en Internet.</h1>
+            <p>Ayudamos a pequeñas y medianas empresas con páginas web, redes sociales y presencia digital.</p>
+          </div>
+          <div class="page-hero-art"><img src="assets/illustration-digital.svg" alt="Ilustración de soluciones digitales para empresas"></div>
+        </div>
+
+        <div class="digital-grid">
+          <article class="digital-card"><div class="digital-icon">📱</div><h3>Gestión de redes sociales</h3><p>Configuración y apoyo para perfiles empresariales.</p><ul><li>Perfiles profesionales</li><li>Publicaciones y contenido</li><li>Información de contacto</li><li>Orientación digital</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">🌐</div><h3>Páginas web</h3><p>Webs sencillas, profesionales y adaptadas a celulares.</p><ul><li>Páginas informativas</li><li>Catálogo de servicios</li><li>WhatsApp y formularios</li><li>Mantenimiento y actualización</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">📈</div><h3>Presencia digital</h3><p>Organizamos la información para que tus clientes puedan encontrarte.</p><ul><li>Google Business Profile</li><li>Datos de contacto</li><li>Enlaces y perfiles</li><li>Orientación básica de marketing</li></ul></article>
+        </div>
+
+        <div class="cta-strip"><div><strong>¿Tienes un pequeño negocio?</strong><span>Cuéntanos qué quieres mejorar y te orientamos.</span></div><a class="btn" href="#contacto" data-page="contacto">Hablar con nosotros</a></div>
+      </div>
+    </section>
+
+    <!-- REMOTE -->
+    <section class="page-panel section" data-panel="remoto" id="remoto">
+      <div class="container">
+        <div class="page-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">ASISTENCIA REMOTA</div>
+            <h1>¿Estás lejos? Podemos ayudarte sin que salgas de casa.</h1>
+            <p>Primero hablamos contigo por teléfono o WhatsApp. Si es necesario, podemos utilizar una herramienta de acceso remoto con tu autorización.</p>
+            <div class="hero-actions inner-actions"><a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte%20remoto." target="_blank" rel="noopener">🖥️ Solicitar soporte remoto</a><a class="btn btn-outline dark-outline" href="tel:+525663885856">📞 Llamar</a></div>
+          </div>
+          <div class="page-hero-art"><img src="assets/illustration-remote.svg" alt="Ilustración de soporte remoto"></div>
+        </div>
+
+        <div class="remote-grid">
+          <div class="notice large-notice"><strong>🔐 Seguridad primero</strong><p>El acceso remoto debe ser autorizado por ti y solo durante la sesión de soporte. Nunca compartas contraseñas personales ni códigos de seguridad bancarios.</p></div>
+          <div class="remote-panel"><span class="pill">SERVICIO REMOTO</span><h3>Todo México</h3><p>Ciudad de México: atención local<br>Resto del país: atención remota</p><a href="tel:+525663885856">+52 56 6388 5856</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="page-panel section" data-panel="nosotros" id="nosotros">
+      <div class="container">
+        <div class="page-hero reverse-art">
+          <div class="page-hero-copy">
             <div class="eyebrow">SOBRE ITEXPRESSOLUTIONS</div>
-            <h2>Experiencia, tecnología y personas detrás de cada solución.</h2>
+            <h1>Experiencia, tecnología y personas detrás de cada solución.</h1>
+            <p>Más de 15 años brindando soporte técnico y soluciones para personas, negocios y PyMEs.</p>
           </div>
-          <p>Más de 15 años brindando soporte técnico y soluciones para personas, negocios y pequeñas y medianas empresas.</p>
+          <div class="page-hero-art"><img src="assets/illustration-about.svg" alt="Ilustración del equipo de ITExpresSolutions"></div>
         </div>
-        <div class="about-grid">
+
+        <div class="about-grid clean-about">
           <div class="about-copy">
-            <div class="about-highlight">
-              <span class="about-number">15+</span>
-              <span><strong>Años de experiencia</strong><small>en soporte técnico y soluciones tecnológicas</small></span>
-            </div>
-            <h3>Fundado por JB</h3>
-            <p>ITExpresSolutions fue fundado por <strong>JB</strong> con la visión de ofrecer soporte técnico confiable, accesible y profesional, tanto de forma presencial como remota.</p>
+            <div class="about-highlight"><span class="about-number">15+</span><span><strong>Años de experiencia</strong><small>en soporte técnico y soluciones tecnológicas</small></span></div>
+            <h2>Fundado por JB</h2>
+            <p>ITExpresSolutions nació con la visión de ofrecer soporte técnico confiable, accesible y profesional, tanto presencial como remoto.</p>
             <p>Trabajamos con una red de <strong>jóvenes y experimentados ingenieros y técnicos alrededor de todo México</strong>, conectando talento con personas y empresas que necesitan soluciones tecnológicas.</p>
-            <p>Este modelo también permite que nuestros colaboradores puedan realizar <strong>trabajo remoto y generar ingresos extra en su tiempo libre</strong>, mientras ayudamos a nuestros clientes a resolver sus necesidades de tecnología.</p>
+            <p>Este modelo también permite que nuestros colaboradores puedan realizar <strong>trabajo remoto y generar ingresos extra en su tiempo libre</strong>, mientras ayudamos a nuestros clientes.</p>
           </div>
-          <div class="about-panel">
-            <div class="about-panel-icon">👨‍💻</div>
-            <h3>Una red de talento en todo México</h3>
-            <p>Soporte presencial en Ciudad de México y atención remota para clientes en cualquier parte del país.</p>
-            <div class="about-points">
-              <span>✓ Soporte remoto</span>
-              <span>✓ Técnicos e ingenieros</span>
-              <span>✓ Atención nacional</span>
-              <span>✓ Oportunidades de trabajo remoto</span>
-            </div>
-          </div>
+          <div class="values-card"><div class="values-icon">🤝</div><h3>Una red de talento en México</h3><p>Soporte presencial en CDMX y atención remota para clientes en cualquier parte del país.</p><div class="about-points"><span>✓ Técnicos e ingenieros</span><span>✓ Atención nacional</span><span>✓ Soporte remoto</span><span>✓ Trabajo flexible</span></div></div>
         </div>
       </div>
     </section>
 
-    <section id="solicitar" class="section request-section">
-      <div class="container request-box">
-        <div class="request-copy">
-          <div class="eyebrow">SOLICITUD DE SOPORTE</div>
-          <h2>Cuéntanos qué problema tienes.</h2>
-          <p>Envía tu solicitud y podremos revisar los detalles antes de contactarte. El formulario quedará conectado a tu cuenta de Google para recibir las solicitudes por correo.</p>
-          <div class="request-points">
-            <span>✓ Datos del cliente</span>
-            <span>✓ Tipo de equipo</span>
-            <span>✓ Descripción del problema</span>
-            <span>✓ Preferencia de atención</span>
+    <!-- CONTACT -->
+    <section class="page-panel section" data-panel="contacto" id="contacto">
+      <div class="container">
+        <div class="page-hero contact-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">CONTACTO Y SOLICITUD DE SOPORTE</div>
+            <h1>Cuéntanos qué problema tienes.</h1>
+            <p>Elige la forma que te resulte más cómoda: WhatsApp, llamada, correo o nuestro formulario de soporte.</p>
           </div>
+          <div class="page-hero-art"><img src="assets/illustration-contact.svg" alt="Ilustración de contacto y soporte"></div>
         </div>
-        <div class="request-card">
-          <div class="request-icon">🛠️</div>
-          <h3>¿Necesitas asistencia?</h3>
-          <p>Completa una solicitud de soporte técnico.</p>
-          <button class="btn" type="button" id="openSupportForm">📋 Solicitar soporte</button>
-          <a class="request-alt" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte." target="_blank" rel="noopener">O escríbenos por WhatsApp →</a>
-          <a class="request-alt" href="https://forms.gle/6QHaxfYMQFeeVf3RA" target="_blank" rel="noopener">Abrir formulario en otra ventana →</a>
-        </div>
-      </div>
-    </section>
 
-    <div class="modal" id="supportModal" aria-hidden="true">
-      <div class="modal-backdrop" id="closeSupportBackdrop"></div>
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="supportModalTitle">
-        <button class="modal-close" id="closeSupportForm" aria-label="Cerrar">×</button>
-        <div class="eyebrow">SOLICITAR SOPORTE</div>
-        <h2 id="supportModalTitle">Solicitud de servicio</h2>
-        <p class="modal-intro">Completa tus datos. El formulario de Google será conectado aquí para que la solicitud llegue a ITExpresSolutions.</p>
-        <div class="google-form-placeholder">
-          <div class="placeholder-icon">📨</div>
-          <h3>Formulario seguro de soporte</h3>
-          <p>En el siguiente paso conectaremos tu Google Form con esta ventana. Tus respuestas podrán guardarse automáticamente en Google Sheets y generar notificaciones en tu Gmail.</p>
-          <button class="btn" type="button" id="openGoogleFormSetup">Abrir formulario de soporte</button>
-        </div>
-      </div>
-    </div>
-
-    <section id="contacto" class="section contact">
-      <div class="container contact-box">
-        <div>
-          <div class="eyebrow">¿NECESITAS AYUDA?</div>
-          <h2>Hablemos de tu problema.</h2>
-          <p>Explícanos qué necesitas y te indicaremos la mejor forma de solucionarlo.</p>
-        </div>
-        <div class="contact-actions">
-          <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
-          <a class="btn btn-outline" href="mailto:ITExpresSolutions@gmail.com?subject=Solicitud%20de%20soporte%20t%C3%A9cnico">✉️ Correo</a>
-          <a class="phone" href="tel:+525663885856">📞 +52 56 6388 5856</a>
+        <div class="contact-layout">
+          <div class="contact-main">
+            <div class="contact-card primary-contact"><div class="contact-icon">📋</div><h2>Solicitar soporte técnico</h2><p>Completa el formulario con los datos de tu equipo y el problema. Las respuestas quedan registradas en Google Sheets.</p><a class="btn" href="https://forms.gle/6QHaxfYMQFeeVf3RA" target="_blank" rel="noopener">Abrir formulario</a></div>
+            <div class="contact-card"><div class="contact-icon">💬</div><h2>WhatsApp</h2><p>Escríbenos y cuéntanos brevemente qué necesitas.</p><a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">Enviar WhatsApp</a></div>
+          </div>
+          <aside class="contact-side">
+            <div class="contact-info"><span>📞</span><div><strong>Teléfono</strong><a href="tel:+525663885856">+52 56 6388 5856</a></div></div>
+            <div class="contact-info"><span>✉️</span><div><strong>Correo</strong><a href="mailto:ITExpresSolutions@gmail.com">ITExpresSolutions@gmail.com</a></div></div>
+            <div class="contact-info"><span>📍</span><div><strong>Servicio</strong><p>Ciudad de México presencial<br>Todo México remoto</p></div></div>
+            <div class="contact-info"><span>🕘</span><div><strong>Horario</strong><p>Lunes a viernes<br>9:00 AM – 9:00 PM</p></div></div>
+          </aside>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container footer-inner">
-      <div><strong>ITExpresSolutions</strong><br><span>Reparación y mantenimiento de equipo de cómputo</span></div>
-      <div>Ciudad de México • Soporte remoto en todo México</div>
-      <div>© 2026 ITExpresSolutions</div>
-    </div>
+    <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
   </footer>
 
   <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
 
-  <script>
+<script>
+  const intro = document.querySelector('#videoIntro');
+  const introVideo = document.querySelector('#introVideo');
+  const skipIntro = document.querySelector('#skipIntro');
+  const heroVideo = document.querySelector('#heroVideo');
+  function enterSite(){
+    if(!intro) return;
+    intro.classList.add('hide'); intro.setAttribute('aria-hidden','true'); document.body.classList.remove('intro-active');
+    setTimeout(()=>intro.remove(),900);
+    if(heroVideo){heroVideo.currentTime=0; heroVideo.play().catch(()=>{});}
+  }
+  document.body.classList.add('intro-active');
+  skipIntro.addEventListener('click',enterSite);
+  introVideo.addEventListener('ended',enterSite);
+  introVideo.addEventListener('error',()=>setTimeout(enterSite,1200));
+  if(heroVideo){heroVideo.loop=true; heroVideo.muted=true; heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});}
 
-    const intro = document.querySelector('#videoIntro');
-    const introVideo = document.querySelector('#introVideo');
-    const skipIntro = document.querySelector('#skipIntro');
-    const heroVideo = document.querySelector('#heroVideo');
+  const nav=document.querySelector('#main-nav');
+  const toggle=document.querySelector('.menu-toggle');
+  const panels=[...document.querySelectorAll('.page-panel')];
+  const links=[...document.querySelectorAll('[data-page]')];
 
-    function enterSite() {
-      if (!intro) return;
-      intro.classList.add('hide');
-      intro.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('intro-active');
-      setTimeout(() => intro.remove(), 900);
-      if (heroVideo) {
-        heroVideo.currentTime = 0;
-        heroVideo.play().catch(() => {});
-      }
-    }
-
-    document.body.classList.add('intro-active');
-    skipIntro.addEventListener('click', enterSite);
-    introVideo.addEventListener('ended', enterSite);
-    introVideo.addEventListener('error', () => setTimeout(enterSite, 1200));
-
-    // The same video remains as the hero background after the intro.
-    if (heroVideo) {
-      heroVideo.loop = true;
-      heroVideo.muted = true;
-      heroVideo.addEventListener('canplay', () => heroVideo.play().catch(() => {}), {once:true});
-    }
-
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('#main-nav');
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open);
-    });
-    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-      nav.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }));
-
-    const modal = document.querySelector('#supportModal');
-    const openBtn = document.querySelector('#openSupportForm');
-    const closeBtn = document.querySelector('#closeSupportForm');
-    const backdrop = document.querySelector('#closeSupportBackdrop');
-    const setupBtn = document.querySelector('#openGoogleFormSetup');
-
-    function openModal() {
-      modal.classList.add('show');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('no-scroll');
-    }
-    function closeModal() {
-      modal.classList.remove('show');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('no-scroll');
-    }
-    openBtn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-    setupBtn.addEventListener('click', () => {
-      window.open('https://forms.gle/6QHaxfYMQFeeVf3RA', '_blank', 'noopener');
-    });
-  </script>
+  function showPage(page, updateHash=true){
+    const valid=panels.some(p=>p.dataset.panel===page) ? page : 'inicio';
+    panels.forEach(p=>p.classList.toggle('active',p.dataset.panel===valid));
+    document.querySelectorAll('#main-nav a[data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===valid));
+    nav.classList.remove('open'); toggle.setAttribute('aria-expanded','false');
+    if(updateHash && location.hash !== '#'+valid) history.pushState({page:valid},'', '#'+valid);
+    window.scrollTo({top:0,behavior:'smooth'});
+    document.title = valid==='inicio' ? 'ITExpresSolutions | Soporte Técnico' : 'ITExpresSolutions | '+valid.charAt(0).toUpperCase()+valid.slice(1);
+  }
+  links.forEach(link=>link.addEventListener('click',e=>{e.preventDefault(); showPage(link.dataset.page,true);}));
+  toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',open);});
+  window.addEventListener('popstate',()=>showPage(location.hash.replace('#','')||'inicio',false));
+  window.addEventListener('hashchange',()=>showPage(location.hash.replace('#','')||'inicio',false));
+  showPage(location.hash.replace('#','')||'inicio',false);
+</script>
 </body>
 </html>

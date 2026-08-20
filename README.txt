@@ -1,20 +1,21 @@
-# ITExpresSolutions - V10
+ITExpresSolutions — Sitio web V11
 
-V10 agrega:
-- Sección "Nosotros" con más de 15 años de experiencia.
-- Fundado por JB.
-- Red de jóvenes y experimentados ingenieros y técnicos alrededor de México.
-- Modelo de trabajo remoto que permite a colaboradores generar ingresos extra en su tiempo libre.
-- Nueva sección inferior de programas, plataformas y sistemas a los que damos soporte.
-- Logos/identificadores visuales para Microsoft 365, Windows, Google Workspace, Adobe, ESET, Bitdefender, Zoom, AnyDesk, TeamViewer, impresoras, redes y servicios en la nube.
-- Aviso para no presentar estas marcas como asociaciones oficiales.
-- Responsive optimizado para escritorio, tablet y móvil.
+Rediseño en formato de pestañas para evitar una página demasiado larga.
 
-Archivos:
-- index.html
-- style.css
-- hero-intro.mp4
-- hero-bg.mp4
-- hero-video.mp4
-- assets/logo.jpg
-- assets/logo-badge.png
+Pestañas:
+- Inicio
+- Servicios (incluye software y plataformas)
+- PyMEs (redes sociales y páginas web)
+- Soporte remoto
+- Nosotros
+- Contacto
+
+Incluye ilustraciones SVG propias, video de intro y video de fondo, WhatsApp, teléfono y formulario de Google.
+
+Publicación gratuita:
+1. En GitHub abre el repositorio itexpressolutions.github.io.
+2. Reemplaza los archivos de la versión anterior por todos los archivos de esta versión.
+3. Mantén la carpeta assets.
+4. GitHub Pages publicará los cambios automáticamente.
+
+El sitio es estático y no necesita servidor de pago.
