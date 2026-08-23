@@ -1,0 +1,3 @@
+ITExpresSolutions V20 - Logout visual fix
+
+Se corrigió el contraste, tamaño, borde, posición y comportamiento responsive del botón Cerrar sesión. No se modificaron las políticas RLS ni las claves de Supabase.
