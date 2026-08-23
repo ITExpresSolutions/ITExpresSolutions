@@ -26,3 +26,5 @@ Las ilustraciones ahora están integradas directamente dentro de index.html para
 
 
 V13: se eliminó la referencia al fundador y se agregó una sección de oportunidades para técnicos/ingenieros en Contacto.
+
+V14: optimización de carga. Videos comprimidos, posters instantáneos, logo WebP ligero y fallback para conexiones lentas.

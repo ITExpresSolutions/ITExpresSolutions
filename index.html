@@ -6,17 +6,19 @@
   <meta name="description" content="ITExpresSolutions - Soporte técnico, asistencia remota y soluciones digitales para personas y PyMEs en México.">
   <meta name="theme-color" content="#062f52">
   <title>ITExpresSolutions | Soporte Técnico</title>
+  <link rel="preload" as="image" href="assets/optimized/logo-badge.webp" fetchpriority="high">
+  <link rel="preload" as="video" href="optimized/hero-intro.mp4" type="video/mp4" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Intro -->
   <div class="video-intro" id="videoIntro" aria-hidden="false">
-    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto">
-      <source src="hero-intro.mp4" type="video/mp4">
+    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto" poster="assets/intro-poster.jpg">
+      <source src="optimized/hero-intro.mp4" type="video/mp4">
     </video>
     <div class="video-intro-shade"></div>
     <div class="video-intro-brand">
-      <img src="assets/logo-badge.png" alt="ITExpresSolutions">
+      <img src="assets/optimized/logo-badge.webp" alt="ITExpresSolutions">
       <div class="intro-name">ITExpres<span>Solutions</span></div>
       <div class="intro-tagline">Soporte técnico y soluciones digitales</div>
       <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
@@ -26,7 +28,7 @@
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" data-page="inicio" aria-label="ITExpresSolutions inicio">
-        <img src="assets/logo-badge.png" alt="Logo ITExpresSolutions">
+        <img src="assets/optimized/logo-badge.webp" alt="Logo ITExpresSolutions">
         <span>ITExpres<span>Solutions</span></span>
       </a>
       <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
@@ -46,8 +48,8 @@
     <!-- HOME -->
     <section class="page-panel hero-page" data-panel="inicio">
       <section class="hero hero-video" id="inicio">
-        <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="assets/logo.jpg">
-          <source src="hero-bg.mp4" type="video/mp4">
+        <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="assets/hero-poster.jpg">
+          <source src="optimized/hero-bg.mp4" type="video/mp4">
         </video>
         <div class="hero-video-overlay"></div>
         <div class="container hero-content">
@@ -248,17 +250,29 @@
   const introVideo = document.querySelector('#introVideo');
   const skipIntro = document.querySelector('#skipIntro');
   const heroVideo = document.querySelector('#heroVideo');
+  let entered = false;
   function enterSite(){
-    if(!intro) return;
+    if(!intro || entered) return;
+    entered = true;
     intro.classList.add('hide'); intro.setAttribute('aria-hidden','true'); document.body.classList.remove('intro-active');
     setTimeout(()=>intro.remove(),900);
-    if(heroVideo){heroVideo.currentTime=0; heroVideo.play().catch(()=>{});}
+    if(heroVideo){ heroVideo.muted=true; heroVideo.play().catch(()=>{}); }
   }
   document.body.classList.add('intro-active');
   skipIntro.addEventListener('click',enterSite);
   introVideo.addEventListener('ended',enterSite);
-  introVideo.addEventListener('error',()=>setTimeout(enterSite,1200));
-  if(heroVideo){heroVideo.loop=true; heroVideo.muted=true; heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});}
+  introVideo.addEventListener('error',enterSite);
+  // En conexiones lentas, no dejamos al visitante atrapado esperando el video.
+  const slowConnection = navigator.connection && /(^|-)2g|3g/.test(navigator.connection.effectiveType || '');
+  if(slowConnection || navigator.connection?.saveData){
+    setTimeout(enterSite, 1200);
+  } else {
+    setTimeout(()=>{ if(!entered && introVideo.readyState < 2) enterSite(); }, 8000);
+  }
+  if(heroVideo){
+    heroVideo.loop=true; heroVideo.muted=true;
+    heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});
+  }
 
   const nav=document.querySelector('#main-nav');
   const toggle=document.querySelector('.menu-toggle');

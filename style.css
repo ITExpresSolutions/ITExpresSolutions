@@ -37,3 +37,8 @@ body:has(.page-panel.active[data-panel="inicio"]) .header{background:rgba(255,25
     font-size: 1.25rem;
   }
 }
+
+
+/* V14: videos y recursos optimizados para conexiones lentas */
+.video-intro-media,.hero-video-bg{background:#031621;}
+@media (prefers-reduced-motion: reduce){.video-intro{display:none!important}.hero-video-bg{display:none}.hero{background-image:url('assets/hero-poster.jpg');background-size:cover;background-position:center;}}
