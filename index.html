@@ -274,7 +274,7 @@
       <div id="dashboard" class="portal-dashboard" hidden>
         <div class="portal-dashboard-head">
           <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
-          <button class="btn btn-outline portal-logout" id="logoutBtn" type="button">Cerrar sesión</button>
+          <button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button>
         </div>
 
         <div id="adminPanel" hidden>
@@ -347,7 +347,12 @@
 
   async function loadProfile(user){
     const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('id',user.id).maybeSingle();
-    if(error) throw error;
+    if(error){
+      if(String(error.message||'').toLowerCase().includes('permission denied')){
+        throw new Error('Supabase rechazó el acceso a public_profiles. Ejecuta supabase_fix.sql en Supabase SQL Editor y vuelve a intentar.');
+      }
+      throw error;
+    }
     if(!data) throw new Error('Tu usuario no tiene un perfil en public_profiles.');
     if(data.activo===false) throw new Error('Tu perfil está desactivado.');
     return data;

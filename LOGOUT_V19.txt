@@ -1,0 +1,5 @@
+ITExpresSolutions V19 - Logout
+
+Se reforzó el botón Cerrar sesión del portal y su integración con Supabase Auth.
+Sube/reemplaza los archivos de esta versión en la rama main de GitHub Pages.
+No contiene claves secretas de Supabase.
