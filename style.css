@@ -92,3 +92,56 @@ body:has(.page-panel.active[data-panel="inicio"]) .header{background:rgba(255,25
     min-width:0;
   }
 }
+
+
+/* V21 - Security badge */
+.security-badge{
+  position:fixed;
+  left:18px;
+  bottom:18px;
+  z-index:85;
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 13px;
+  border:1px solid #cfe0e7;
+  border-radius:13px;
+  background:rgba(255,255,255,.96);
+  color:#073b57;
+  box-shadow:0 8px 24px rgba(4,48,75,.12);
+  backdrop-filter:blur(10px);
+}
+.security-badge-icon{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:#e8f7ef;
+  font-size:15px;
+}
+.security-badge strong,
+.security-badge small{
+  display:block;
+  line-height:1.15;
+}
+.security-badge strong{
+  font-size:11px;
+  font-weight:900;
+}
+.security-badge small{
+  margin-top:3px;
+  color:#70858f;
+  font-size:9px;
+  font-weight:700;
+}
+@media(max-width:520px){
+  .security-badge{
+    left:12px;
+    bottom:12px;
+    padding:8px 10px;
+  }
+  .security-badge-icon{width:26px;height:26px}
+  .security-badge strong{font-size:10px}
+  .security-badge small{font-size:8px}
+}

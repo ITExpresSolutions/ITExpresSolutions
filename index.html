@@ -481,7 +481,11 @@
     panels.forEach(p=>p.classList.toggle('active',p.dataset.panel===valid));
     document.querySelectorAll('#main-nav a[data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===valid));
     nav.classList.remove('open'); toggle.setAttribute('aria-expanded','false');
-    if(updateHash && location.hash !== '#'+valid) history.pushState({page:valid},'', '#'+valid);
+    if(updateHash){
+      const target = valid === 'inicio' ? location.pathname + location.search : location.pathname + '#' + valid;
+      const current = location.pathname + location.search + location.hash;
+      if(current !== target) history.pushState({page:valid},'', target);
+    }
     window.scrollTo({top:0,behavior:'smooth'});
     document.title = valid==='inicio' ? 'ITExpresSolutions | Soporte Técnico' : 'ITExpresSolutions | '+valid.charAt(0).toUpperCase()+valid.slice(1);
   }
@@ -491,5 +495,11 @@
   window.addEventListener('hashchange',()=>showPage(location.hash.replace('#','')||'inicio',false));
   showPage(location.hash.replace('#','')||'inicio',false);
 </script>
+
+<div class="security-badge" aria-label="Conexión segura">
+  <span class="security-badge-icon">🔒</span>
+  <span><strong>Conexión segura</strong><small>Acceso protegido</small></span>
+</div>
+
 </body>
 </html>

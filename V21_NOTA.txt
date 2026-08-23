@@ -1,0 +1,6 @@
+ITExpresSolutions V21
+
+- Añade un indicador visual de conexión segura en la parte inferior izquierda.
+- La página Inicio ya no conserva #inicio en la URL.
+- Para eliminar /ITExpresSolutions/ del enlace de GitHub Pages se requiere renombrar el repositorio a itexpressolutions.github.io o configurar un dominio propio.
+- No se modificaron las políticas RLS ni se incluyeron secret keys.
