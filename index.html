@@ -12,6 +12,8 @@
   <link rel="apple-touch-icon" href="favicon.png?v=16">
   <link rel="preload" as="video" href="hero-intro.mp4" type="video/mp4" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
+  <!-- Supabase: la Publishable Key es segura para uso en navegador cuando RLS está configurado. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- Intro -->
@@ -42,6 +44,7 @@
         <a href="#remoto" data-page="remoto">Soporte remoto</a>
         <a href="#nosotros" data-page="nosotros">Nosotros</a>
         <a href="#contacto" data-page="contacto">Contacto</a>
+        <a href="#portal" data-page="portal" class="portal-link">🔐 Portal</a>
       </nav>
       <a class="btn btn-small desktop-call" href="tel:+525663885856">📞 Llamar</a>
     </div>
@@ -242,11 +245,197 @@
     </section>
   </main>
 
+  <!-- PORTAL ITEXPRESSOLUTIONS: LOGIN + PANEL DE ADMIN/TÉCNICO -->
+  <section class="page-panel section portal-page" data-panel="portal" id="portal">
+    <div class="container">
+      <div class="page-hero portal-hero">
+        <div class="page-hero-copy">
+          <div class="eyebrow">PORTAL ITEXPRESSOLUTIONS</div>
+          <h1>Gestión de técnicos y trabajos.</h1>
+          <p>Acceso privado para administración y técnicos autorizados.</p>
+        </div>
+        <div class="portal-status-card">
+          <div class="portal-status-dot" id="portalStatusDot"></div>
+          <div><strong id="portalStatus">No has iniciado sesión</strong><small id="portalEmail">Acceso protegido por Supabase</small></div>
+        </div>
+      </div>
+
+      <div id="loginCard" class="portal-card login-card">
+        <div class="portal-card-head"><div><div class="eyebrow">ACCESO</div><h2>Iniciar sesión</h2></div><span class="portal-lock">🔐</span></div>
+        <form id="loginForm" class="portal-form">
+          <label>Correo electrónico<input id="loginEmail" type="email" autocomplete="email" required placeholder="tu@itexpressolutions.com"></label>
+          <label>Contraseña<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+          <button class="btn" type="submit">Entrar al portal</button>
+          <button class="portal-text-btn" id="forgotPassword" type="button">¿Olvidaste tu contraseña?</button>
+          <div class="portal-message" id="loginMessage" role="status"></div>
+        </form>
+      </div>
+
+      <div id="dashboard" class="portal-dashboard" hidden>
+        <div class="portal-dashboard-head">
+          <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
+          <button class="btn btn-outline portal-logout" id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>
+
+        <div id="adminPanel" hidden>
+          <div class="portal-grid-2">
+            <div class="portal-card">
+              <div class="portal-card-head"><div><h3>Nuevo trabajo</h3><p>Asigna una solicitud a un técnico.</p></div><span>🛠️</span></div>
+              <form id="jobForm" class="portal-form">
+                <div class="portal-form-grid">
+                  <label>Título *<input id="jobTitulo" required maxlength="160" placeholder="Ej. Instalación de equipo"></label>
+                  <label>Tipo de servicio<input id="jobTipo" maxlength="120" placeholder="Soporte técnico"></label>
+                  <label>Cliente<input id="jobCliente" maxlength="120" placeholder="Nombre del cliente"></label>
+                  <label>Teléfono<input id="jobTelefono" maxlength="50" placeholder="56 0000 0000"></label>
+                  <label>Correo<input id="jobEmail" type="email" maxlength="160" placeholder="cliente@email.com"></label>
+                  <label>Ciudad<input id="jobCiudad" maxlength="100" value="Ciudad de México"></label>
+                  <label class="span-2">Dirección<input id="jobDireccion" maxlength="250" placeholder="Dirección del servicio"></label>
+                  <label>Prioridad<select id="jobPrioridad"><option value="normal">Normal</option><option value="baja">Baja</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select></label>
+                  <label>Fecha programada<input id="jobFecha" type="datetime-local"></label>
+                  <label>Técnico<select id="jobTecnico" required><option value="">Seleccionar técnico...</option></select></label>
+                </div>
+                <label>Descripción<textarea id="jobDescripcion" rows="4" placeholder="Describe el problema o trabajo solicitado."></textarea></label>
+                <button class="btn" type="submit">Crear y asignar trabajo</button>
+                <div class="portal-message" id="jobMessage" role="status"></div>
+              </form>
+            </div>
+
+            <div class="portal-card">
+              <div class="portal-card-head"><div><h3>Técnicos</h3><p>Usuarios con perfil técnico.</p></div><span>👨‍💻</span></div>
+              <div id="technicianList" class="technician-list"><div class="portal-empty">Cargando técnicos...</div></div>
+            </div>
+          </div>
+          <div class="portal-card portal-table-card">
+            <div class="portal-card-head"><div><h3>Todos los trabajos</h3><p>Vista administrativa de solicitudes.</p></div><button class="portal-refresh" id="adminRefresh" type="button">↻ Actualizar</button></div>
+            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Técnico</th><th>Programado</th></tr></thead><tbody id="adminJobsBody"></tbody></table></div>
+          </div>
+        </div>
+
+        <div id="techPanel" hidden>
+          <div class="portal-card portal-table-card">
+            <div class="portal-card-head"><div><h3>Mis trabajos</h3><p>Solicitudes asignadas a tu cuenta.</p></div><button class="portal-refresh" id="techRefresh" type="button">↻ Actualizar</button></div>
+            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Programado</th><th>Acción</th></tr></thead><tbody id="techJobsBody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
   </footer>
 
   <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+
+<script>
+(function(){
+  const SUPABASE_URL = 'https://wfdxbgohwejawmkpninz.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  window.ITExpresSupabase = sb;
+
+  const $ = id => document.getElementById(id);
+  const loginCard = $('loginCard'), dashboard = $('dashboard'), loginForm = $('loginForm');
+  const adminPanel = $('adminPanel'), techPanel = $('techPanel');
+  let currentUser = null, currentProfile = null;
+
+  function msg(el, text, type=''){ if(!el) return; el.textContent=text; el.className='portal-message '+type; }
+  function esc(v){ return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function formatDate(v){ if(!v) return '—'; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'}); }
+  function statusLabel(v){ return ({pendiente:'Pendiente',asignado:'Asignado',en_proceso:'En proceso',completado:'Completado',cancelado:'Cancelado'}[v] || v || 'Pendiente'); }
+  function statusClass(v){ return 'status-'+String(v||'pendiente').toLowerCase().replace(/\s+/g,'_'); }
+
+  async function loadProfile(user){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('id',user.id).maybeSingle();
+    if(error) throw error;
+    if(!data) throw new Error('Tu usuario no tiene un perfil en public_profiles.');
+    if(data.activo===false) throw new Error('Tu perfil está desactivado.');
+    return data;
+  }
+
+  async function refreshPortal(){
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){ currentUser=null; currentProfile=null; loginCard.hidden=false; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
+    try{
+      currentUser=session.user; currentProfile=await loadProfile(currentUser);
+      loginCard.hidden=true; dashboard.hidden=false;
+      $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
+      $('portalEmail').textContent=currentProfile.email || currentUser.email;
+      $('portalStatusDot').classList.add('online');
+      $('dashboardEyebrow').textContent=currentProfile.rol==='admin'?'ADMINISTRACIÓN':'TÉCNICO';
+      $('dashboardTitle').textContent=currentProfile.rol==='admin'?'Panel de administración':'Panel de técnico';
+      $('dashboardSubtitle').textContent=currentProfile.nombre ? 'Hola, '+currentProfile.nombre+'.' : 'Sesión iniciada correctamente.';
+      adminPanel.hidden=currentProfile.rol!=='admin'; techPanel.hidden=currentProfile.rol==='admin';
+      if(currentProfile.rol==='admin') await loadAdmin(); else await loadTech();
+    }catch(e){ await sb.auth.signOut(); loginCard.hidden=false; dashboard.hidden=true; msg($('loginMessage'),e.message||'No se pudo cargar tu perfil.','error'); }
+  }
+
+  loginForm.addEventListener('submit',async e=>{
+    e.preventDefault(); msg($('loginMessage'),'Iniciando sesión…');
+    const email=$('loginEmail').value.trim(), password=$('loginPassword').value;
+    const {error}=await sb.auth.signInWithPassword({email,password});
+    if(error){ msg($('loginMessage'),error.message==='Invalid login credentials'?'Correo o contraseña incorrectos.':error.message,'error'); return; }
+    msg($('loginMessage'),'Sesión iniciada.','success'); await refreshPortal();
+  });
+  $('forgotPassword').addEventListener('click',async()=>{
+    const email=$('loginEmail').value.trim();
+    if(!email){ msg($('loginMessage'),'Escribe primero tu correo electrónico.','error'); return; }
+    const redirect=window.location.origin+window.location.pathname+'#portal';
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirect});
+    msg($('loginMessage'),error?error.message:'Te enviamos las instrucciones para restablecer tu contraseña.','success');
+  });
+  $('logoutBtn').addEventListener('click',async()=>{ await sb.auth.signOut(); await refreshPortal(); });
+  sb.auth.onAuthStateChange(()=>setTimeout(refreshPortal,0));
+
+  async function loadTechnicians(){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
+    if(error) throw error;
+    $('jobTecnico').innerHTML='<option value="">Seleccionar técnico...</option>'+(data||[]).map(t=>`<option value="${esc(t.id)}">${esc(t.nombre||t.email)}${t.especialidad?' · '+esc(t.especialidad):''}</option>`).join('');
+    $('technicianList').innerHTML=data?.length?data.map(t=>`<div class="tech-row"><div class="tech-avatar">${esc((t.nombre||'T').charAt(0).toUpperCase())}</div><div><strong>${esc(t.nombre||'Sin nombre')}</strong><small>${esc(t.email)}${t.especialidad?' · '+esc(t.especialidad):''}</small></div><span class="tech-active">Activo</span></div>`).join(''):'<div class="portal-empty">No hay técnicos activos.</div>';
+  }
+
+  async function loadAdmin(){
+    try{
+      await loadTechnicians();
+      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,ciudad,tipo_servicio,prioridad,estado,tecnico_id,fecha_programada,creado_at').order('creado_at',{ascending:false});
+      if(error) throw error;
+      const ids=[...new Set((data||[]).map(x=>x.tecnico_id).filter(Boolean))];
+      let names={};
+      if(ids.length){ const r=await sb.from('public_profiles').select('id,nombre,email').in('id',ids); (r.data||[]).forEach(t=>names[t.id]=t.nombre||t.email); }
+      $('adminJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${esc(names[j.tecnico_id]||'Sin asignar')}</td><td>${formatDate(j.fecha_programada)}</td></tr>`).join(''):'<tr><td colspan="6" class="portal-empty">No hay trabajos registrados.</td></tr>';
+    }catch(e){ msg($('jobMessage'),e.message||'No se pudieron cargar los datos.','error'); }
+  }
+
+  $('jobForm').addEventListener('submit',async e=>{
+    e.preventDefault(); msg($('jobMessage'),'Creando trabajo…');
+    const fecha=$('jobFecha').value ? new Date($('jobFecha').value).toISOString() : null;
+    const payload={titulo:$('jobTitulo').value.trim(),descripcion:$('jobDescripcion').value.trim()||null,cliente_nombre:$('jobCliente').value.trim()||null,cliente_telefono:$('jobTelefono').value.trim()||null,cliente_email:$('jobEmail').value.trim()||null,direccion:$('jobDireccion').value.trim()||null,ciudad:$('jobCiudad').value.trim()||null,tipo_servicio:$('jobTipo').value.trim()||null,prioridad:$('jobPrioridad').value,estado:'pendiente',tecnico_id:$('jobTecnico').value||null,fecha_programada:fecha,fecha_asignacion:$('jobTecnico').value?new Date().toISOString():null};
+    const {error}=await sb.from('trabajos').insert(payload);
+    if(error){ msg($('jobMessage'),error.message,'error'); return; }
+    msg($('jobMessage'),'Trabajo creado correctamente.','success'); $('jobForm').reset(); $('jobCiudad').value='Ciudad de México'; $('jobPrioridad').value='normal'; await loadAdmin();
+  });
+  $('adminRefresh').addEventListener('click',loadAdmin);
+
+  async function loadTech(){
+    try{
+      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,direccion,ciudad,tipo_servicio,prioridad,estado,fecha_programada,creado_at').eq('tecnico_id',currentUser.id).order('fecha_programada',{ascending:true,nullsFirst:false});
+      if(error) throw error;
+      $('techJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||j.descripcion||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||j.direccion||j.ciudad||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${formatDate(j.fecha_programada)}</td><td><select class="job-status-select" data-job-id="${esc(j.id)}"><option value="pendiente" ${j.estado==='pendiente'?'selected':''}>Pendiente</option><option value="en_proceso" ${j.estado==='en_proceso'?'selected':''}>En proceso</option><option value="completado" ${j.estado==='completado'?'selected':''}>Completado</option><option value="cancelado" ${j.estado==='cancelado'?'selected':''}>Cancelado</option></select></td></tr>`).join(''):'<tr><td colspan="6" class="portal-empty">No tienes trabajos asignados.</td></tr>';
+      document.querySelectorAll('.job-status-select').forEach(sel=>sel.addEventListener('change',updateJobStatus));
+    }catch(e){ $('techJobsBody').innerHTML='<tr><td colspan="6" class="portal-empty">'+esc(e.message)+'</td></tr>'; }
+  }
+  async function updateJobStatus(e){
+    const id=e.target.dataset.jobId, estado=e.target.value;
+    e.target.disabled=true;
+    const {error}=await sb.from('trabajos').update({estado,actualizado_at:new Date().toISOString()}).eq('id',id).eq('tecnico_id',currentUser.id);
+    e.target.disabled=false;
+    if(error){ alert('No se pudo actualizar: '+error.message); await loadTech(); }
+    else await loadTech();
+  }
+  $('techRefresh').addEventListener('click',loadTech);
+  refreshPortal();
+})();
+</script>
 
 <script>
   const intro = document.querySelector('#videoIntro');
