@@ -271,6 +271,16 @@
         </form>
       </div>
 
+      <div id="setPasswordCard" class="portal-card login-card" hidden>
+        <div class="portal-card-head"><div><div class="eyebrow">INVITACIÓN</div><h2>Bienvenido a ITExpresSolutions</h2><p>Configura tu contraseña para activar tu acceso al portal de técnicos.</p></div><span class="portal-lock">🔐</span></div>
+        <form id="setPasswordForm" class="portal-form">
+          <label>Nueva contraseña<input id="setPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Mínimo 8 caracteres"></label>
+          <label>Confirmar contraseña<input id="setPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="Repite la contraseña"></label>
+          <button class="btn" type="submit">Activar mi cuenta</button>
+          <div class="portal-message" id="setPasswordMessage" role="status"></div>
+        </form>
+      </div>
+
       <div id="dashboard" class="portal-dashboard" hidden>
         <div class="portal-dashboard-head">
           <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
@@ -335,7 +345,7 @@
   window.ITExpresSupabase = sb;
 
   const $ = id => document.getElementById(id);
-  const loginCard = $('loginCard'), dashboard = $('dashboard'), loginForm = $('loginForm');
+  const loginCard = $('loginCard'), setPasswordCard = $('setPasswordCard'), dashboard = $('dashboard'), loginForm = $('loginForm'), setPasswordForm = $('setPasswordForm');
   const adminPanel = $('adminPanel'), techPanel = $('techPanel');
   let currentUser = null, currentProfile = null;
 
@@ -358,12 +368,31 @@
     return data;
   }
 
+  function authHashType(){
+    const hash=window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+    return new URLSearchParams(hash).get('type');
+  }
+
+  function showSetPassword(){
+    loginCard.hidden=true;
+    setPasswordCard.hidden=false;
+    dashboard.hidden=true;
+    $('portalStatus').textContent='Invitación recibida';
+    $('portalEmail').textContent='Crea tu contraseña para continuar';
+  }
+
   async function refreshPortal(){
     const {data:{session}}=await sb.auth.getSession();
-    if(!session){ currentUser=null; currentProfile=null; loginCard.hidden=false; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
+    const type=authHashType();
+    if((type==='invite' || type==='recovery') && session){
+      currentUser=session.user;
+      showSetPassword();
+      return;
+    }
+    if(!session){ currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
     try{
       currentUser=session.user; currentProfile=await loadProfile(currentUser);
-      loginCard.hidden=true; dashboard.hidden=false;
+      loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
       $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
       $('portalEmail').textContent=currentProfile.email || currentUser.email;
       $('portalStatusDot').classList.add('online');
@@ -385,12 +414,26 @@
   $('forgotPassword').addEventListener('click',async()=>{
     const email=$('loginEmail').value.trim();
     if(!email){ msg($('loginMessage'),'Escribe primero tu correo electrónico.','error'); return; }
-    const redirect=window.location.origin+window.location.pathname+'#portal';
+    const redirect='https://itexpressolutions.com/#portal';
     const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirect});
     msg($('loginMessage'),error?error.message:'Te enviamos las instrucciones para restablecer tu contraseña.','success');
   });
+
+  setPasswordForm.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const password=$('setPassword').value;
+    const confirm=$('setPasswordConfirm').value;
+    if(password.length<8){ msg($('setPasswordMessage'),'La contraseña debe tener al menos 8 caracteres.','error'); return; }
+    if(password!==confirm){ msg($('setPasswordMessage'),'Las contraseñas no coinciden.','error'); return; }
+    msg($('setPasswordMessage'),'Activando tu cuenta…');
+    const {error}=await sb.auth.updateUser({password});
+    if(error){ msg($('setPasswordMessage'),error.message,'error'); return; }
+    history.replaceState({},'',window.location.pathname+'#portal');
+    msg($('setPasswordMessage'),'Cuenta activada. Entrando al portal…','success');
+    await refreshPortal();
+  });
   $('logoutBtn').addEventListener('click',async()=>{ await sb.auth.signOut(); await refreshPortal(); });
-  sb.auth.onAuthStateChange(()=>setTimeout(refreshPortal,0));
+  sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY' || event==='SIGNED_IN') setTimeout(refreshPortal,0); });
 
   async function loadTechnicians(){
     const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
