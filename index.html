@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ITExpresSolutions - Soporte técnico, asistencia remota y soluciones digitales para personas y PyMEs en México.">
+  <meta name="theme-color" content="#062f52">
+  <title>ITExpresSolutions | Soporte Técnico</title>
+  <link rel="preload" as="image" href="logo-badge.webp" fetchpriority="high">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=16">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=16">
+  <link rel="apple-touch-icon" href="favicon.png?v=16">
+  <link rel="preload" as="video" href="hero-intro.mp4" type="video/mp4" fetchpriority="high">
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase: la Publishable Key es segura para uso en navegador cuando RLS está configurado. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Intro -->
+  <div class="video-intro" id="videoIntro" aria-hidden="false">
+    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto" poster="intro-poster.jpg">
+      <source src="hero-intro.mp4" type="video/mp4">
+    </video>
+    <div class="video-intro-shade"></div>
+    <div class="video-intro-brand">
+      <img src="logo-badge.webp" alt="ITExpresSolutions">
+      <div class="intro-name">ITExpres<span>Solutions</span></div>
+      <div class="intro-tagline">Soporte técnico y soluciones digitales</div>
+      <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="#inicio" data-page="inicio" aria-label="ITExpresSolutions inicio">
+        <img src="logo-badge.webp" alt="Logo ITExpresSolutions">
+        <span>ITExpres<span>Solutions</span></span>
+      </a>
+      <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      <nav id="main-nav" aria-label="Navegación principal">
+        <a href="#inicio" data-page="inicio">Inicio</a>
+        <a href="#servicios" data-page="servicios">Servicios</a>
+        <a href="#pymes" data-page="pymes">PyMEs</a>
+        <a href="#remoto" data-page="remoto">Soporte remoto</a>
+        <a href="#nosotros" data-page="nosotros">Nosotros</a>
+        <a href="#contacto" data-page="contacto">Contacto</a>
+        <a href="#portal" data-page="portal" class="portal-link">🔐 Portal</a>
+      </nav>
+      <a class="btn btn-small desktop-call" href="tel:+525663885856">📞 Llamar</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="page-panel hero-page" data-panel="inicio">
+      <section class="hero hero-video" id="inicio">
+        <video class="hero-video-bg" id="heroVideo" autoplay muted playsinline preload="auto" poster="hero-poster.jpg">
+          <source src="hero-bg.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-overlay"></div>
+        <div class="container hero-content">
+          <div class="hero-copy">
+            <div class="eyebrow">SOPORTE TÉCNICO • CDMX • REMOTO EN TODO MÉXICO</div>
+            <h1>Tu tecnología funcionando.<br><span>Sin complicaciones.</span></h1>
+            <p>Soporte técnico, reparación y soluciones digitales para personas, hogares y pequeñas empresas.</p>
+            <div class="hero-actions">
+              <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
+              <a class="btn btn-outline" href="#contacto" data-page="contacto">📋 Solicitar soporte</a>
+            </div>
+            <div class="trust">
+              <span>✓ Más de 15 años de experiencia</span>
+              <span>✓ Atención personalizada</span>
+              <span>✓ Lunes a viernes 9 AM–9 PM</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick" aria-label="Acciones rápidas">
+        <div class="container quick-grid">
+          <a href="tel:+525663885856"><strong>📞 Soporte telefónico</strong><small>Habla directamente con un técnico</small></a>
+          <a href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
+          <a href="#remoto" data-page="remoto"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar de México</small></a>
+        </div>
+      </section>
+
+      <section class="section home-intro">
+        <div class="container split-feature">
+          <div>
+            <div class="eyebrow">UNA SOLUCIÓN, MUCHAS NECESIDADES</div>
+            <h2>La tecnología debería ayudarte, no darte más problemas.</h2>
+            <p>Organizamos nuestros servicios por áreas para que encuentres rápidamente la ayuda que necesitas, sin tener que leer una página interminable.</p>
+            <div class="feature-buttons">
+              <a class="btn" href="#servicios" data-page="servicios">Ver servicios</a>
+              <a class="text-link" href="#pymes" data-page="pymes">Soluciones para PyMEs →</a>
+            </div>
+          </div>
+          <div class="illustration-card">
+            <div class="inline-illustration" role="img" aria-label="Ilustración de soporte técnico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-support" x1="0" x2="1"><stop stop-color="#087f8e"/><stop offset="1" stop-color="#43d58e"/></linearGradient></defs><rect x="80" y="80" width="390" height="245" rx="22" fill="#062f52"/><rect x="105" y="105" width="340" height="185" rx="12" fill="#eef9fb"/><path d="M155 230h100l28-48 44 72 37-55 30 31" fill="none" stroke="url(#g-support)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="390" cy="145" r="15" fill="#43d58e"/><path d="M205 350h140" stroke="#0a6fae" stroke-width="18" stroke-linecap="round"/><path d="M275 325v25M345 325v25" stroke="#062f52" stroke-width="10"/><path d="M470 115l40 40-40 40" fill="none" stroke="#43d58e" stroke-width="12" stroke-linecap="round"/><circle cx="510" cy="155" r="38" fill="#e4faf2" stroke="#43d58e" stroke-width="5"/><path d="M495 155l12 12 22-25" fill="none" stroke="#087f8e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="page-panel section" data-panel="servicios" id="servicios">
+      <div class="container">
+        <div class="page-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">SERVICIOS</div>
+            <h1>Todo tu soporte técnico, organizado en un solo lugar.</h1>
+            <p>Atención presencial en Ciudad de México y soporte remoto en todo México.</p>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de servicios tecnológicos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-services" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="80" y="90" width="205" height="135" rx="16" fill="#062f52"/><rect x="100" y="110" width="165" height="92" rx="9" fill="#f2fafc"/><rect x="125" y="255" width="155" height="18" rx="9" fill="#0a6fae"/><rect x="175" y="225" width="55" height="45" rx="8" fill="#087f8e"/><circle cx="400" cy="145" r="72" fill="#e8faf4" stroke="#43d58e" stroke-width="8"/><path d="M400 105v80M360 145h80" stroke="#087f8e" stroke-width="16" stroke-linecap="round"/><path d="M352 225c-34 28-50 67-40 103 8 30 39 43 67 29l27-13 27 13c28 14 59 1 67-29 10-36-6-75-40-103" fill="#eef7fa" stroke="#062f52" stroke-width="8"/><path d="M348 282h104" stroke="#43d58e" stroke-width="12" stroke-linecap="round"/><path d="M335 80l38-25 38 25M510 80l-38-25-38 25" fill="none" stroke="url(#g-services)" stroke-width="9" stroke-linecap="round"/></svg></div></div>
+        </div>
+
+        <div class="cards service-cards">
+          <article class="card"><div class="icon">💻</div><h3>Computadoras</h3><p>Diagnóstico, reparación, mantenimiento, instalación y optimización de Windows y equipos.</p></article>
+          <article class="card"><div class="icon">🛡️</div><h3>Virus y seguridad</h3><p>Detección de malware, limpieza, configuración de seguridad y recomendaciones.</p></article>
+          <article class="card"><div class="icon">🌐</div><h3>Redes e Internet</h3><p>Wi‑Fi, routers, redes domésticas y solución de problemas de conexión.</p></article>
+          <article class="card"><div class="icon">🖨️</div><h3>Impresoras</h3><p>Instalación, configuración, controladores y solución de problemas de impresión.</p></article>
+          <article class="card"><div class="icon">📱</div><h3>Celulares y dispositivos</h3><p>Configuración, cuentas, aplicaciones, conectividad y asistencia técnica.</p></article>
+          <article class="card"><div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Equipos, usuarios, redes y mantenimiento tecnológico para pequeñas empresas.</p></article>
+        </div>
+
+        <div class="subsection-head">
+          <div><div class="eyebrow">SOFTWARE Y PLATAFORMAS</div><h2>También te ayudamos con tus programas.</h2></div>
+          <p>Instalación, configuración, actualización y orientación. El servicio depende de la licencia y condiciones de cada fabricante.</p>
+        </div>
+        <div class="platform-logo-grid compact-platforms">
+          <div class="platform-logo-card"><div class="platform-mark ms">⊞</div><strong>Microsoft 365</strong><span>Office · Outlook · Teams</span></div>
+          <div class="platform-logo-card"><div class="platform-mark win">⊞</div><strong>Windows</strong><span>Configuración · Optimización</span></div>
+          <div class="platform-logo-card"><div class="platform-mark google">G</div><strong>Google</strong><span>Gmail · Drive · Workspace</span></div>
+          <div class="platform-logo-card"><div class="platform-mark adobe">A</div><strong>Adobe</strong><span>Acrobat · Creative Cloud</span></div>
+          <div class="platform-logo-card"><div class="platform-mark eset">ESET</div><strong>Antivirus</strong><span>Seguridad · Protección</span></div>
+          <div class="platform-logo-card"><div class="platform-mark bit">B</div><strong>Bitdefender</strong><span>Seguridad · Antivirus</span></div>
+          <div class="platform-logo-card"><div class="platform-mark zoom">Z</div><strong>Zoom</strong><span>Videoconferencias</span></div>
+          <div class="platform-logo-card"><div class="platform-mark any">↗</div><strong>AnyDesk</strong><span>Soporte remoto</span></div>
+          <div class="platform-logo-card"><div class="platform-mark team">↗</div><strong>TeamViewer</strong><span>Soporte remoto</span></div>
+          <div class="platform-logo-card"><div class="platform-mark printer">🖨</div><strong>Impresoras</strong><span>Drivers · Configuración</span></div>
+          <div class="platform-logo-card"><div class="platform-mark net">⌁</div><strong>Redes</strong><span>Wi‑Fi · Routers</span></div>
+          <div class="platform-logo-card"><div class="platform-mark cloud">☁</div><strong>Nube</strong><span>Configuración · Migración</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PYMES -->
+    <section class="page-panel section" data-panel="pymes" id="pymes">
+      <div class="container">
+        <div class="page-hero reverse-art">
+          <div class="page-hero-copy">
+            <div class="eyebrow">SOLUCIONES DIGITALES PARA PYMEs</div>
+            <h1>Haz que tu negocio también se vea profesional en Internet.</h1>
+            <p>Ayudamos a pequeñas y medianas empresas con páginas web, redes sociales y presencia digital.</p>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de soluciones digitales para empresas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-digital" x1="0" x2="1"><stop stop-color="#087f8e"/><stop offset="1" stop-color="#43d58e"/></linearGradient></defs><rect x="92" y="62" width="315" height="225" rx="18" fill="#062f52"/><rect x="114" y="84" width="271" height="181" rx="11" fill="#f1fafc"/><rect x="140" y="112" width="95" height="15" rx="7" fill="#d6e9ef"/><rect x="140" y="142" width="200" height="12" rx="6" fill="#d6e9ef"/><rect x="140" y="168" width="150" height="12" rx="6" fill="#d6e9ef"/><path d="M143 232l58-34 48 20 80-72" fill="none" stroke="url(#g-digital)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M140 320h220" stroke="#0a6fae" stroke-width="18" stroke-linecap="round"/><path d="M205 288v32M295 288v32" stroke="#062f52" stroke-width="10"/><circle cx="475" cy="145" r="75" fill="#e5faf3" stroke="#43d58e" stroke-width="7"/><path d="M437 145h76M475 107v76" stroke="#087f8e" stroke-width="12" stroke-linecap="round"/><circle cx="475" cy="145" r="23" fill="#fff" stroke="#087f8e" stroke-width="8"/></svg></div></div>
+        </div>
+
+        <div class="digital-grid">
+          <article class="digital-card"><div class="digital-icon">📱</div><h3>Gestión de redes sociales</h3><p>Configuración y apoyo para perfiles empresariales.</p><ul><li>Perfiles profesionales</li><li>Publicaciones y contenido</li><li>Información de contacto</li><li>Orientación digital</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">🌐</div><h3>Páginas web</h3><p>Webs sencillas, profesionales y adaptadas a celulares.</p><ul><li>Páginas informativas</li><li>Catálogo de servicios</li><li>WhatsApp y formularios</li><li>Mantenimiento y actualización</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">📈</div><h3>Presencia digital</h3><p>Organizamos la información para que tus clientes puedan encontrarte.</p><ul><li>Google Business Profile</li><li>Datos de contacto</li><li>Enlaces y perfiles</li><li>Orientación básica de marketing</li></ul></article>
+        </div>
+
+        <div class="cta-strip"><div><strong>¿Tienes un pequeño negocio?</strong><span>Cuéntanos qué quieres mejorar y te orientamos.</span></div><a class="btn" href="#contacto" data-page="contacto">Hablar con nosotros</a></div>
+      </div>
+    </section>
+
+    <!-- REMOTE -->
+    <section class="page-panel section" data-panel="remoto" id="remoto">
+      <div class="container">
+        <div class="page-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">ASISTENCIA REMOTA</div>
+            <h1>¿Estás lejos? Podemos ayudarte sin que salgas de casa.</h1>
+            <p>Primero hablamos contigo por teléfono o WhatsApp. Si es necesario, podemos utilizar una herramienta de acceso remoto con tu autorización.</p>
+            <div class="hero-actions inner-actions"><a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte%20remoto." target="_blank" rel="noopener">🖥️ Solicitar soporte remoto</a><a class="btn btn-outline dark-outline" href="tel:+525663885856">📞 Llamar</a></div>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de soporte remoto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-remote" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="70" y="90" width="240" height="160" rx="16" fill="#062f52"/><rect x="92" y="112" width="196" height="115" rx="9" fill="#eef9fb"/><circle cx="190" cy="170" r="35" fill="#e4faf2" stroke="#43d58e" stroke-width="7"/><path d="M174 170l12 12 23-27" fill="none" stroke="#087f8e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="135" y="270" width="110" height="15" rx="7" fill="#0a6fae"/><path d="M190 250v20" stroke="#062f52" stroke-width="9"/><rect x="370" y="125" width="170" height="125" rx="18" fill="#fff" stroke="#d9e9ef" stroke-width="5"/><circle cx="455" cy="188" r="34" fill="#e9f9f5"/><path d="M455 166v25M443 179h24" stroke="#087f8e" stroke-width="9" stroke-linecap="round"/><path d="M310 165c28-24 50-31 76-8M310 215c28 24 50 31 76 8" fill="none" stroke="url(#g-remote)" stroke-width="10" stroke-linecap="round"/><path d="M340 157l-3 18 18-5M340 223l-3-18 18 5" fill="none" stroke="#43d58e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="455" cy="325" r="55" fill="#062f52"/><path d="M455 290v70M420 325h70" stroke="#43d58e" stroke-width="9" stroke-linecap="round"/></svg></div></div>
+        </div>
+
+        <div class="remote-grid">
+          <div class="notice large-notice"><strong>🔐 Seguridad primero</strong><p>El acceso remoto debe ser autorizado por ti y solo durante la sesión de soporte. Nunca compartas contraseñas personales ni códigos de seguridad bancarios.</p></div>
+          <div class="remote-panel"><span class="pill">SERVICIO REMOTO</span><h3>Todo México</h3><p>Ciudad de México: atención local<br>Resto del país: atención remota</p><a href="tel:+525663885856">+52 56 6388 5856</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="page-panel section" data-panel="nosotros" id="nosotros">
+      <div class="container">
+        <div class="page-hero reverse-art">
+          <div class="page-hero-copy">
+            <div class="eyebrow">SOBRE ITEXPRESSOLUTIONS</div>
+            <h1>Experiencia, tecnología y personas detrás de cada solución.</h1>
+            <p>Más de 15 años brindando soporte técnico y soluciones para personas, negocios y PyMEs.</p>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración del equipo de ITExpresSolutions"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-about" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><circle cx="310" cy="210" r="125" fill="#e9faf5"/><circle cx="245" cy="175" r="43" fill="#fff" stroke="#087f8e" stroke-width="8"/><circle cx="375" cy="175" r="43" fill="#fff" stroke="#0a6fae" stroke-width="8"/><path d="M180 315c15-63 46-90 83-90s68 27 83 90" fill="#062f52"/><path d="M310 315c15-63 46-90 83-90s68 27 83 90" fill="#087f8e"/><path d="M274 195h72" stroke="#43d58e" stroke-width="10" stroke-linecap="round"/><path d="M310 90v-38M215 115l-28-28M405 115l28-28" stroke="url(#g-about)" stroke-width="9" stroke-linecap="round"/><circle cx="310" cy="52" r="12" fill="#43d58e"/><path d="M125 340h370" stroke="#c9dfe6" stroke-width="9" stroke-linecap="round"/></svg></div></div>
+        </div>
+
+        <div class="about-grid clean-about">
+          <div class="about-copy">
+            <div class="about-highlight"><span class="about-number">15+</span><span><strong>Años de experiencia</strong><small>en soporte técnico y soluciones tecnológicas</small></span></div>
+                        <p>ITExpresSolutions ofrece soporte técnico confiable, accesible y profesional, tanto presencial como remoto.</p>
+            <p>Trabajamos con una red de <strong>jóvenes y experimentados ingenieros y técnicos alrededor de todo México</strong>, conectando talento con personas y empresas que necesitan soluciones tecnológicas.</p>
+            <p>Este modelo también permite que nuestros colaboradores puedan realizar <strong>trabajo remoto y generar ingresos extra en su tiempo libre</strong>, mientras ayudamos a nuestros clientes.</p>
+          </div>
+          <div class="values-card"><div class="values-icon">🤝</div><h3>Una red de talento en México</h3><p>Soporte presencial en CDMX y atención remota para clientes en cualquier parte del país.</p><div class="about-points"><span>✓ Técnicos e ingenieros</span><span>✓ Atención nacional</span><span>✓ Soporte remoto</span><span>✓ Trabajo flexible</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="page-panel section" data-panel="contacto" id="contacto">
+      <div class="container">
+        <div class="page-hero contact-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">CONTACTO Y SOLICITUD DE SOPORTE</div>
+            <h1>Cuéntanos qué problema tienes.</h1>
+            <p>Elige la forma que te resulte más cómoda: WhatsApp, llamada, correo o nuestro formulario de soporte.</p>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de contacto y soporte"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-contact" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="95" y="70" width="315" height="245" rx="22" fill="#fff" stroke="#d7e8ee" stroke-width="6"/><rect x="125" y="108" width="150" height="16" rx="8" fill="#dcebf0"/><rect x="125" y="142" width="230" height="12" rx="6" fill="#dcebf0"/><rect x="125" y="168" width="185" height="12" rx="6" fill="#dcebf0"/><rect x="125" y="205" width="230" height="65" rx="10" fill="#f2fafc"/><path d="M145 222l95 54 95-54" fill="none" stroke="#087f8e" stroke-width="7"/><circle cx="455" cy="205" r="76" fill="#e7faf4" stroke="#43d58e" stroke-width="7"/><path d="M420 205h70M455 170v70" stroke="#087f8e" stroke-width="12" stroke-linecap="round"/><path d="M190 340h260" stroke="url(#g-contact)" stroke-width="18" stroke-linecap="round"/></svg></div></div>
+        </div>
+
+        <div class="contact-layout">
+          <div class="contact-main">
+            <div class="contact-card primary-contact"><div class="contact-icon">📋</div><h2>Solicitar soporte técnico</h2><p>Completa el formulario con los datos de tu equipo y el problema. Las respuestas quedan registradas en Google Sheets.</p><a class="btn" href="https://forms.gle/6QHaxfYMQFeeVf3RA" target="_blank" rel="noopener">Abrir formulario</a></div>
+            <div class="contact-card"><div class="contact-icon">💬</div><h2>WhatsApp</h2><p>Escríbenos y cuéntanos brevemente qué necesitas.</p><a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">Enviar WhatsApp</a></div>
+            <div class="contact-card opportunity-card">
+              <div class="contact-icon">💻</div>
+              <h2>¿Buscas proyectos fuera de tu jornada laboral?</h2>
+              <p>Si tienes experiencia comprobada en soporte técnico, informática, redes, sistemas, páginas web u otras áreas de tecnología, puedes enviarnos tu CV.</p>
+              <p>Te compartiremos información sobre cómo puedes participar en proyectos remotos con nosotros y generar ingresos extra desde casa, de acuerdo con tu experiencia y disponibilidad.</p>
+              <a class="btn" href="mailto:ITExpresSolutions@gmail.com?subject=CV%20-%20Proyectos%20remotos%20ITExpresSolutions&body=Hola%20ITExpresSolutions,%20quiero%20recibir%20informaci%C3%B3n%20sobre%20proyectos%20remotos.%20Adjunto%20mi%20CV." >Enviar CV por correo</a>
+            </div>
+          </div>
+          <aside class="contact-side">
+            <div class="contact-info"><span>📞</span><div><strong>Teléfono</strong><a href="tel:+525663885856">+52 56 6388 5856</a></div></div>
+            <div class="contact-info"><span>✉️</span><div><strong>Correo</strong><a href="mailto:ITExpresSolutions@gmail.com">ITExpresSolutions@gmail.com</a></div></div>
+            <div class="contact-info"><span>📍</span><div><strong>Servicio</strong><p>Ciudad de México presencial<br>Todo México remoto</p></div></div>
+            <div class="contact-info"><span>🕘</span><div><strong>Horario</strong><p>Lunes a viernes<br>9:00 AM – 9:00 PM</p></div></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PORTAL ITEXPRESSOLUTIONS: LOGIN + PANEL DE ADMIN/TÉCNICO -->
+  <section class="page-panel section portal-page" data-panel="portal" id="portal">
+    <div class="container">
+      <div class="page-hero portal-hero">
+        <div class="page-hero-copy">
+          <div class="eyebrow">PORTAL ITEXPRESSOLUTIONS</div>
+          <h1>Gestión de técnicos y trabajos.</h1>
+          <p>Acceso privado para administración y técnicos autorizados.</p>
+        </div>
+        <div class="portal-status-card">
+          <div class="portal-status-dot" id="portalStatusDot"></div>
+          <div><strong id="portalStatus">No has iniciado sesión</strong><small id="portalEmail">Acceso protegido por Supabase</small></div>
+        </div>
+      </div>
+
+      <div id="loginCard" class="portal-card login-card">
+        <div class="portal-card-head"><div><div class="eyebrow">ACCESO</div><h2>Iniciar sesión</h2></div><span class="portal-lock">🔐</span></div>
+        <form id="loginForm" class="portal-form">
+          <label>Correo electrónico<input id="loginEmail" type="email" autocomplete="email" required placeholder="tu@itexpressolutions.com"></label>
+          <label>Contraseña<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+          <button class="btn" type="submit">Entrar al portal</button>
+          <button class="portal-text-btn" id="forgotPassword" type="button">¿Olvidaste tu contraseña?</button>
+          <div class="portal-message" id="loginMessage" role="status"></div>
+        </form>
+      </div>
+
+      <div id="setPasswordCard" class="portal-card login-card" hidden>
+        <div class="portal-card-head"><div><div class="eyebrow">INVITACIÓN</div><h2>Bienvenido a ITExpresSolutions</h2><p>Configura tu contraseña para activar tu acceso al portal de técnicos.</p></div><span class="portal-lock">🔐</span></div>
+        <form id="setPasswordForm" class="portal-form">
+          <label>Nueva contraseña<input id="setPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Mínimo 8 caracteres"></label>
+          <label>Confirmar contraseña<input id="setPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="Repite la contraseña"></label>
+          <button class="btn" type="submit">Activar mi cuenta</button>
+          <div class="portal-message" id="setPasswordMessage" role="status"></div>
+        </form>
+      </div>
+
+      <div id="dashboard" class="portal-dashboard" hidden>
+        <div class="portal-dashboard-head">
+          <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
+          <div class="portal-head-actions"><div class="notification-wrap"><button class="notification-btn" id="notificationBtn" type="button" aria-label="Notificaciones" title="Notificaciones" aria-expanded="false" aria-controls="notificationPanel">🔔<span id="notificationCount" hidden>0</span></button><div class="notification-panel" id="notificationPanel" hidden><div class="notification-panel-head"><strong>Notificaciones</strong><button type="button" id="markAllReadBtn" class="notification-mark">Marcar leídas</button></div><div id="notificationList" class="notification-list"><div class="notification-empty">No tienes notificaciones.</div></div></div></div><button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button></div>
+        </div>
+
+        <div id="adminPanel" hidden>
+          <div class="portal-grid-2">
+            <div class="portal-card">
+              <div class="portal-card-head"><div><h3>Nuevo trabajo</h3><p>Asigna una solicitud a un técnico.</p></div><span>🛠️</span></div>
+              <form id="jobForm" class="portal-form">
+                <div class="portal-form-grid">
+                  <label>Título *<input id="jobTitulo" required maxlength="160" placeholder="Ej. Instalación de equipo"></label>
+                  <label>Tipo de servicio<input id="jobTipo" maxlength="120" placeholder="Soporte técnico"></label>
+                  <label>Cliente<input id="jobCliente" maxlength="120" placeholder="Nombre del cliente"></label>
+                  <label>Teléfono<input id="jobTelefono" maxlength="50" placeholder="56 0000 0000"></label>
+                  <label>Correo<input id="jobEmail" type="email" maxlength="160" placeholder="cliente@email.com"></label>
+                  <label>Ciudad<input id="jobCiudad" maxlength="100" value="Ciudad de México"></label>
+                  <label class="span-2">Dirección<input id="jobDireccion" maxlength="250" placeholder="Dirección del servicio"></label>
+                  <label>Prioridad<select id="jobPrioridad"><option value="normal">Normal</option><option value="baja">Baja</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select></label>
+                  <label>Fecha programada<input id="jobFecha" type="datetime-local"></label>
+                  <label>Técnico<select id="jobTecnico" required><option value="">Seleccionar técnico...</option></select></label>
+                </div>
+                <label>Descripción<textarea id="jobDescripcion" rows="4" placeholder="Describe el problema o trabajo solicitado."></textarea></label>
+                <button class="btn" type="submit">Crear y asignar trabajo</button>
+                <div class="portal-message" id="jobMessage" role="status"></div>
+              </form>
+            </div>
+
+            <div class="portal-card">
+              <div class="portal-card-head"><div><h3>Técnicos</h3><p>Usuarios con perfil técnico.</p></div><span>👨‍💻</span></div>
+              <div id="technicianList" class="technician-list"><div class="portal-empty">Cargando técnicos...</div></div>
+            </div>
+          </div>
+          <div class="portal-card portal-table-card">
+            <div class="portal-card-head"><div><h3>Todos los trabajos</h3><p>Vista administrativa de solicitudes.</p></div><button class="portal-refresh" id="adminRefresh" type="button">↻ Actualizar</button></div>
+            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Técnico</th><th>Programado</th><th>Asignación</th></tr></thead><tbody id="adminJobsBody"></tbody></table></div>
+          </div>
+        </div>
+
+        <div id="techPanel" hidden>
+          <div class="portal-card portal-table-card">
+            <div class="portal-card-head"><div><h3>Mis trabajos</h3><p>Solicitudes asignadas a tu cuenta.</p></div><button class="portal-refresh" id="techRefresh" type="button">↻ Actualizar</button></div>
+            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Programado</th><th>Acción</th></tr></thead><tbody id="techJobsBody"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
+  </footer>
+
+  <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+
+<script>
+(function(){
+  const SUPABASE_URL = 'https://wfdxbgohwejawmkpninz.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  window.ITExpresSupabase = sb;
+
+  const $ = id => document.getElementById(id);
+  const loginCard = $('loginCard'), setPasswordCard = $('setPasswordCard'), dashboard = $('dashboard'), loginForm = $('loginForm'), setPasswordForm = $('setPasswordForm');
+  const adminPanel = $('adminPanel'), techPanel = $('techPanel');
+  let currentUser = null, currentProfile = null;
+
+  function msg(el, text, type=''){ if(!el) return; el.textContent=text; el.className='portal-message '+type; }
+  function esc(v){ return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function formatDate(v){ if(!v) return '—'; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'}); }
+  function statusLabel(v){ return ({pendiente:'Pendiente',asignado:'Asignado',en_proceso:'En proceso',completado:'Completado',cancelado:'Cancelado'}[v] || v || 'Pendiente'); }
+  function statusClass(v){ return 'status-'+String(v||'pendiente').toLowerCase().replace(/\s+/g,'_'); }
+
+  async function loadProfile(user){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('id',user.id).maybeSingle();
+    if(error){
+      if(String(error.message||'').toLowerCase().includes('permission denied')){
+        throw new Error('Supabase rechazó el acceso a public_profiles. Ejecuta supabase_fix.sql en Supabase SQL Editor y vuelve a intentar.');
+      }
+      throw error;
+    }
+    if(!data) throw new Error('Tu usuario no tiene un perfil en public_profiles.');
+    if(data.activo===false) throw new Error('Tu perfil está desactivado.');
+    return data;
+  }
+
+  function authHashType(){
+    const hash=window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+    return new URLSearchParams(hash).get('type');
+  }
+
+  function showSetPassword(){
+    loginCard.hidden=true;
+    setPasswordCard.hidden=false;
+    dashboard.hidden=true;
+    $('portalStatus').textContent='Invitación recibida';
+    $('portalEmail').textContent='Crea tu contraseña para continuar';
+  }
+
+  async function refreshPortal(){
+    const {data:{session}}=await sb.auth.getSession();
+    const type=authHashType();
+    if((type==='invite' || type==='recovery') && session){
+      currentUser=session.user;
+      showSetPassword();
+      return;
+    }
+    if(!session){ if(notificationChannel){ try{ sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; } notifications=[]; renderNotifications(); currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
+    try{
+      currentUser=session.user; currentProfile=await loadProfile(currentUser);
+      loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
+      $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
+      $('portalEmail').textContent=currentProfile.email || currentUser.email;
+      $('portalStatusDot').classList.add('online');
+      $('dashboardEyebrow').textContent=currentProfile.rol==='admin'?'ADMINISTRACIÓN':'TÉCNICO';
+      $('dashboardTitle').textContent=currentProfile.rol==='admin'?'Panel de administración':'Panel de técnico';
+      $('dashboardSubtitle').textContent=currentProfile.nombre ? 'Hola, '+currentProfile.nombre+'.' : 'Sesión iniciada correctamente.';
+      adminPanel.hidden=currentProfile.rol!=='admin'; techPanel.hidden=currentProfile.rol==='admin';
+      await loadNotifications();
+      await subscribeNotifications();
+      enableBrowserNotifications();
+      if(currentProfile.rol==='admin') await loadAdmin(); else await loadTech();
+    }catch(e){ await sb.auth.signOut(); loginCard.hidden=false; dashboard.hidden=true; msg($('loginMessage'),e.message||'No se pudo cargar tu perfil.','error'); }
+  }
+
+  loginForm.addEventListener('submit',async e=>{
+    e.preventDefault(); msg($('loginMessage'),'Iniciando sesión…');
+    const email=$('loginEmail').value.trim(), password=$('loginPassword').value;
+    const {error}=await sb.auth.signInWithPassword({email,password});
+    if(error){ msg($('loginMessage'),error.message==='Invalid login credentials'?'Correo o contraseña incorrectos.':error.message,'error'); return; }
+    msg($('loginMessage'),'Sesión iniciada.','success'); await refreshPortal();
+  });
+  $('forgotPassword').addEventListener('click',async()=>{
+    const email=$('loginEmail').value.trim();
+    if(!email){ msg($('loginMessage'),'Escribe primero tu correo electrónico.','error'); return; }
+    const redirect='https://itexpressolutions.com/#portal';
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirect});
+    msg($('loginMessage'),error?error.message:'Te enviamos las instrucciones para restablecer tu contraseña.','success');
+  });
+
+  setPasswordForm.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const password=$('setPassword').value;
+    const confirm=$('setPasswordConfirm').value;
+    if(password.length<8){ msg($('setPasswordMessage'),'La contraseña debe tener al menos 8 caracteres.','error'); return; }
+    if(password!==confirm){ msg($('setPasswordMessage'),'Las contraseñas no coinciden.','error'); return; }
+    msg($('setPasswordMessage'),'Activando tu cuenta…');
+    const {error}=await sb.auth.updateUser({password});
+    if(error){ msg($('setPasswordMessage'),error.message,'error'); return; }
+    history.replaceState({},'',window.location.pathname+'#portal');
+    msg($('setPasswordMessage'),'Cuenta activada. Entrando al portal…','success');
+    await refreshPortal();
+  });
+  $('logoutBtn').addEventListener('click',async()=>{ await sb.auth.signOut(); await refreshPortal(); });
+  sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY' || event==='SIGNED_IN') setTimeout(refreshPortal,0); });
+
+  let notificationChannel=null;
+  let notifications=[];
+
+  function renderNotifications(){
+    const unread=notifications.filter(n=>!n.leida).length;
+    const count=$('notificationCount');
+    count.textContent=unread>99?'99+':String(unread);
+    count.hidden=unread===0;
+    const list=$('notificationList');
+    if(!list) return;
+    list.innerHTML=notifications.length ? notifications.slice(0,20).map(n=>`<button type="button" class="notification-item ${n.leida?'read':'unread'}" data-notification-id="${esc(n.id)}" data-trabajo-id="${esc(n.trabajo_id||'')}"><span class="notification-item-icon">${n.leida?'✓':'🔔'}</span><span class="notification-item-body"><strong>${esc(n.titulo||'Notificación')}</strong><small>${esc(n.mensaje||'')}</small><em>${formatDate(n.creado_at)}</em></span></button>`).join('') : '<div class="notification-empty">No tienes notificaciones.</div>';
+  }
+
+  function showAssignmentNotification(n){
+    const toast=document.createElement('div');
+    toast.className='portal-toast';
+    toast.innerHTML=`<strong>🔔 ${esc(n.titulo||'Nuevo trabajo')}</strong><span>${esc(n.mensaje||'Se te ha asignado un nuevo trabajo.')}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.classList.add('show'),20);
+    setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),250)},6500);
+    if('Notification' in window && Notification.permission==='granted'){
+      try{ new Notification(n.titulo||'Nuevo trabajo asignado',{body:n.mensaje||'Tienes un nuevo trabajo asignado en ITExpresSolutions.'}); }catch(_){}
+    }
+  }
+
+  async function loadNotifications(){
+    if(!currentUser) return;
+    const {data,error}=await sb.from('notificaciones').select('id,tipo,titulo,mensaje,trabajo_id,leida,creado_at').eq('usuario_id',currentUser.id).order('creado_at',{ascending:false}).limit(20);
+    if(error){ console.warn('Notificaciones:',error.message); notifications=[]; renderNotifications(); return; }
+    notifications=data||[];
+    renderNotifications();
+  }
+
+  async function markNotificationsRead(){
+    if(!currentUser) return;
+    const {error}=await sb.from('notificaciones').update({leida:true}).eq('usuario_id',currentUser.id).eq('leida',false);
+    if(!error){ notifications=notifications.map(n=>({...n,leida:true})); renderNotifications(); }
+  }
+
+  async function markOneNotificationRead(id){
+    if(!currentUser || !id) return;
+    const {error}=await sb.from('notificaciones').update({leida:true}).eq('id',id).eq('usuario_id',currentUser.id);
+    if(!error){ notifications=notifications.map(n=>n.id===id?{...n,leida:true}:n); renderNotifications(); }
+  }
+
+  async function subscribeNotifications(){
+    if(notificationChannel){ try{ await sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; }
+    if(!currentUser) return;
+    notificationChannel=sb.channel('notificaciones-'+currentUser.id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'notificaciones',filter:`usuario_id=eq.${currentUser.id}`},payload=>{
+        if(notifications.some(n=>n.id===payload.new.id)) return;
+        notifications=[payload.new,...notifications].slice(0,20);
+        renderNotifications();
+        showAssignmentNotification(payload.new);
+        // Actualiza inmediatamente la tabla del técnico cuando llega una asignación/reasignación.
+        if(currentProfile?.rol==='tecnico'){
+          await loadTech();
+        }
+      })
+      .subscribe(status=>{ console.log('Notificaciones Realtime:',status); });
+  }
+
+  $('notificationBtn').addEventListener('click',()=>{
+    const panel=$('notificationPanel');
+    const open=panel.hidden;
+    panel.hidden=!open;
+    $('notificationBtn').setAttribute('aria-expanded',String(open));
+  });
+  $('markAllReadBtn').addEventListener('click',async()=>{ await markNotificationsRead(); });
+  $('notificationList').addEventListener('click',async e=>{
+    const item=e.target.closest('.notification-item');
+    if(!item) return;
+    await markOneNotificationRead(item.dataset.notificationId);
+    if(item.dataset.trabajoId && currentProfile?.rol==='tecnico'){
+      await loadTech();
+      $('notificationPanel').hidden=true;
+      $('notificationBtn').setAttribute('aria-expanded','false');
+    }
+  });
+  document.addEventListener('click',e=>{
+    const wrap=document.querySelector('.notification-wrap');
+    if(wrap && !wrap.contains(e.target)){ $('notificationPanel').hidden=true; $('notificationBtn').setAttribute('aria-expanded','false'); }
+  });
+
+  async function enableBrowserNotifications(){
+    if('Notification' in window && Notification.permission==='default'){
+      try{ await Notification.requestPermission(); }catch(_){}
+    }
+  }
+
+  async function loadTechnicians(){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
+    if(error) throw error;
+    $('jobTecnico').innerHTML='<option value="">Seleccionar técnico...</option>'+(data||[]).map(t=>`<option value="${esc(t.id)}">${esc(t.nombre||t.email)}${t.especialidad?' · '+esc(t.especialidad):''}</option>`).join('');
+    $('technicianList').innerHTML=data?.length?data.map(t=>`<div class="tech-row"><div class="tech-avatar">${esc((t.nombre||'T').charAt(0).toUpperCase())}</div><div><strong>${esc(t.nombre||'Sin nombre')}</strong><small>${esc(t.email)}${t.especialidad?' · '+esc(t.especialidad):''}</small></div><span class="tech-active">Activo</span></div>`).join(''):'<div class="portal-empty">No hay técnicos activos.</div>';
+  }
+
+  async function loadAdmin(){
+    try{
+      await loadTechnicians();
+      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,ciudad,tipo_servicio,prioridad,estado,tecnico_id,fecha_programada,fecha_asignacion,creado_at').order('creado_at',{ascending:false});
+      if(error) throw error;
+      const technicians=await getTechnicianProfiles();
+      const techOptions='<option value="">Sin asignar</option>'+technicians.map(t=>`<option value="${esc(t.id)}">${esc(t.nombre||t.email)}</option>`).join('');
+      $('adminJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${esc((technicians.find(t=>t.id===j.tecnico_id)||{}).nombre || (technicians.find(t=>t.id===j.tecnico_id)||{}).email || 'Sin asignar')}</td><td>${formatDate(j.fecha_programada)}</td><td><select class="job-tech-select" data-job-id="${esc(j.id)}" aria-label="Asignar técnico a ${esc(j.titulo)}">${technicians.length?techOptions:'<option value="">Sin técnicos activos</option>'}</select></td></tr>`).join(''):'<tr><td colspan="7" class="portal-empty">No hay trabajos registrados.</td></tr>';
+      document.querySelectorAll('.job-tech-select').forEach(sel=>{
+        const job=data.find(j=>j.id===sel.dataset.jobId);
+        if(job){ sel.value=job.tecnico_id||''; sel.dataset.previous=job.tecnico_id||''; }
+        sel.addEventListener('change',updateJobTechnician);
+      });
+    }catch(e){ msg($('jobMessage'),e.message||'No se pudieron cargar los datos.','error'); }
+  }
+
+  async function getTechnicianProfiles(){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
+    if(error) throw error;
+    return data||[];
+  }
+
+  async function updateJobTechnician(e){
+    const select=e.target, id=select.dataset.jobId, tecnico_id=select.value||null;
+    const previous=select.dataset.previous || '';
+    if(tecnico_id===previous) return;
+    select.disabled=true;
+    const payload={tecnico_id,estado:tecnico_id?'asignado':'pendiente',fecha_asignacion:tecnico_id?new Date().toISOString():null,actualizado_at:new Date().toISOString()};
+    const {error}=await sb.from('trabajos').update(payload).eq('id',id);
+    select.disabled=false;
+    if(error){ alert('No se pudo reasignar el trabajo: '+error.message); select.value=previous; return; }
+    select.dataset.previous=tecnico_id||'';
+    await loadAdmin();
+  }
+
+  $('jobForm').addEventListener('submit',async e=>{
+    e.preventDefault(); msg($('jobMessage'),'Creando trabajo…');
+    const fecha=$('jobFecha').value ? new Date($('jobFecha').value).toISOString() : null;
+    const payload={titulo:$('jobTitulo').value.trim(),descripcion:$('jobDescripcion').value.trim()||null,cliente_nombre:$('jobCliente').value.trim()||null,cliente_telefono:$('jobTelefono').value.trim()||null,cliente_email:$('jobEmail').value.trim()||null,direccion:$('jobDireccion').value.trim()||null,ciudad:$('jobCiudad').value.trim()||null,tipo_servicio:$('jobTipo').value.trim()||null,prioridad:$('jobPrioridad').value,estado:$('jobTecnico').value?'asignado':'pendiente',tecnico_id:$('jobTecnico').value||null,fecha_programada:fecha,fecha_asignacion:$('jobTecnico').value?new Date().toISOString():null};
+    const {error}=await sb.from('trabajos').insert(payload);
+    if(error){ msg($('jobMessage'),error.message,'error'); return; }
+    msg($('jobMessage'),'Trabajo creado correctamente.','success'); $('jobForm').reset(); $('jobCiudad').value='Ciudad de México'; $('jobPrioridad').value='normal'; await loadAdmin();
+  });
+  $('adminRefresh').addEventListener('click',loadAdmin);
+
+  async function loadTech(){
+    try{
+      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,direccion,ciudad,tipo_servicio,prioridad,estado,fecha_programada,creado_at').eq('tecnico_id',currentUser.id).order('fecha_programada',{ascending:true,nullsFirst:false});
+      if(error) throw error;
+      $('techJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||j.descripcion||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||j.direccion||j.ciudad||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${formatDate(j.fecha_programada)}</td><td><select class="job-status-select" data-job-id="${esc(j.id)}"><option value="pendiente" ${j.estado==='pendiente'?'selected':''}>Pendiente</option><option value="en_proceso" ${j.estado==='en_proceso'?'selected':''}>En proceso</option><option value="completado" ${j.estado==='completado'?'selected':''}>Completado</option><option value="cancelado" ${j.estado==='cancelado'?'selected':''}>Cancelado</option></select></td></tr>`).join(''):'<tr><td colspan="6" class="portal-empty">No tienes trabajos asignados.</td></tr>';
+      document.querySelectorAll('.job-status-select').forEach(sel=>sel.addEventListener('change',updateJobStatus));
+    }catch(e){ $('techJobsBody').innerHTML='<tr><td colspan="6" class="portal-empty">'+esc(e.message)+'</td></tr>'; }
+  }
+  async function updateJobStatus(e){
+    const id=e.target.dataset.jobId, estado=e.target.value;
+    e.target.disabled=true;
+    const {error}=await sb.from('trabajos').update({estado,actualizado_at:new Date().toISOString()}).eq('id',id).eq('tecnico_id',currentUser.id);
+    e.target.disabled=false;
+    if(error){ alert('No se pudo actualizar: '+error.message); await loadTech(); }
+    else await loadTech();
+  }
+  $('techRefresh').addEventListener('click',loadTech);
+
+  // La actualización principal se hace por Supabase Realtime.
+  // No usamos location.reload() ni un recargado periódico de la página,
+  // para no interrumpir la sesión ni devolver al usuario al video de entrada.
+  refreshPortal();
+})();
+</script>
+
+<script>
+  const intro = document.querySelector('#videoIntro');
+  const introVideo = document.querySelector('#introVideo');
+  const skipIntro = document.querySelector('#skipIntro');
+  const heroVideo = document.querySelector('#heroVideo');
+  let entered = false;
+  function enterSite(){
+    if(!intro || entered) return;
+    entered = true;
+    intro.classList.add('hide'); intro.setAttribute('aria-hidden','true'); document.body.classList.remove('intro-active');
+    setTimeout(()=>intro.remove(),900);
+    if(heroVideo){ heroVideo.muted=true; heroVideo.play().catch(()=>{}); }
+  }
+  document.body.classList.add('intro-active');
+  skipIntro.addEventListener('click',enterSite);
+  introVideo.addEventListener('ended',enterSite);
+  introVideo.addEventListener('error',enterSite);
+  // En conexiones lentas, no dejamos al visitante atrapado esperando el video.
+  const slowConnection = navigator.connection && /(^|-)2g|3g/.test(navigator.connection.effectiveType || '');
+  if(slowConnection || navigator.connection?.saveData){
+    setTimeout(enterSite, 1200);
+  } else {
+    setTimeout(()=>{ if(!entered && introVideo.readyState < 2) enterSite(); }, 8000);
+  }
+  if(heroVideo){
+    heroVideo.loop=true; heroVideo.muted=true;
+    heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});
+  }
+
+  // Si el usuario ya tiene una sesión de Supabase, no le mostramos
+  // nuevamente la pantalla de introducción al recargar el documento.
+  // Esto es importante para el portal de técnicos.
+  (async()=>{
+    try{
+      const client=window.ITExpresSupabase;
+      if(client){
+        const {data:{session}}=await client.auth.getSession();
+        if(session) enterSite();
+      }
+    }catch(_){}
+  })();
+
+  const nav=document.querySelector('#main-nav');
+  const toggle=document.querySelector('.menu-toggle');
+  const panels=[...document.querySelectorAll('.page-panel')];
+  const links=[...document.querySelectorAll('[data-page]')];
+
+  function showPage(page, updateHash=true){
+    const valid=panels.some(p=>p.dataset.panel===page) ? page : 'inicio';
+    panels.forEach(p=>p.classList.toggle('active',p.dataset.panel===valid));
+    document.querySelectorAll('#main-nav a[data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===valid));
+    nav.classList.remove('open'); toggle.setAttribute('aria-expanded','false');
+    if(updateHash){
+      const target = valid === 'inicio' ? location.pathname + location.search : location.pathname + '#' + valid;
+      const current = location.pathname + location.search + location.hash;
+      if(current !== target) history.pushState({page:valid},'', target);
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+    document.title = valid==='inicio' ? 'ITExpresSolutions | Soporte Técnico' : 'ITExpresSolutions | '+valid.charAt(0).toUpperCase()+valid.slice(1);
+  }
+  links.forEach(link=>link.addEventListener('click',e=>{e.preventDefault(); showPage(link.dataset.page,true);}));
+  toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',open);});
+  window.addEventListener('popstate',()=>showPage(location.hash.replace('#','')||'inicio',false));
+  window.addEventListener('hashchange',()=>showPage(location.hash.replace('#','')||'inicio',false));
+  showPage(location.hash.replace('#','')||'inicio',false);
+</script>
+
+<div class="security-badge" aria-label="Conexión segura">
+  <span class="security-badge-icon">🔒</span>
+  <span><strong>Conexión segura</strong><small>Acceso protegido</small></span>
+</div>
+
+</body>
+</html>
