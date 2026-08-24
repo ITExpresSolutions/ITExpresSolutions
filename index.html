@@ -284,7 +284,7 @@
       <div id="dashboard" class="portal-dashboard" hidden>
         <div class="portal-dashboard-head">
           <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
-          <div class="portal-head-actions"><button class="notification-btn" id="notificationBtn" type="button" aria-label="Notificaciones" title="Notificaciones">🔔<span id="notificationCount" hidden>0</span></button><button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button></div>
+          <div class="portal-head-actions"><div class="notification-wrap"><button class="notification-btn" id="notificationBtn" type="button" aria-label="Notificaciones" title="Notificaciones" aria-expanded="false" aria-controls="notificationPanel">🔔<span id="notificationCount" hidden>0</span></button><div class="notification-panel" id="notificationPanel" hidden><div class="notification-panel-head"><strong>Notificaciones</strong><button type="button" id="markAllReadBtn" class="notification-mark">Marcar leídas</button></div><div id="notificationList" class="notification-list"><div class="notification-empty">No tienes notificaciones.</div></div></div></div><button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button></div>
         </div>
 
         <div id="adminPanel" hidden>
@@ -317,7 +317,7 @@
           </div>
           <div class="portal-card portal-table-card">
             <div class="portal-card-head"><div><h3>Todos los trabajos</h3><p>Vista administrativa de solicitudes.</p></div><button class="portal-refresh" id="adminRefresh" type="button">↻ Actualizar</button></div>
-            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Técnico</th><th>Programado</th></tr></thead><tbody id="adminJobsBody"></tbody></table></div>
+            <div class="table-wrap"><table class="portal-table"><thead><tr><th>Trabajo</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Técnico</th><th>Programado</th><th>Asignación</th></tr></thead><tbody id="adminJobsBody"></tbody></table></div>
           </div>
         </div>
 
@@ -446,6 +446,9 @@
     const count=$('notificationCount');
     count.textContent=unread>99?'99+':String(unread);
     count.hidden=unread===0;
+    const list=$('notificationList');
+    if(!list) return;
+    list.innerHTML=notifications.length ? notifications.slice(0,20).map(n=>`<button type="button" class="notification-item ${n.leida?'read':'unread'}" data-notification-id="${esc(n.id)}" data-trabajo-id="${esc(n.trabajo_id||'')}"><span class="notification-item-icon">${n.leida?'✓':'🔔'}</span><span class="notification-item-body"><strong>${esc(n.titulo||'Notificación')}</strong><small>${esc(n.mensaje||'')}</small><em>${formatDate(n.creado_at)}</em></span></button>`).join('') : '<div class="notification-empty">No tienes notificaciones.</div>';
   }
 
   function showAssignmentNotification(n){
@@ -463,7 +466,7 @@
   async function loadNotifications(){
     if(!currentUser) return;
     const {data,error}=await sb.from('notificaciones').select('id,tipo,titulo,mensaje,trabajo_id,leida,creado_at').eq('usuario_id',currentUser.id).order('creado_at',{ascending:false}).limit(20);
-    if(error){ console.warn('Notificaciones:',error.message); return; }
+    if(error){ console.warn('Notificaciones:',error.message); notifications=[]; renderNotifications(); return; }
     notifications=data||[];
     renderNotifications();
   }
@@ -474,22 +477,45 @@
     if(!error){ notifications=notifications.map(n=>({...n,leida:true})); renderNotifications(); }
   }
 
+  async function markOneNotificationRead(id){
+    if(!currentUser || !id) return;
+    const {error}=await sb.from('notificaciones').update({leida:true}).eq('id',id).eq('usuario_id',currentUser.id);
+    if(!error){ notifications=notifications.map(n=>n.id===id?{...n,leida:true}:n); renderNotifications(); }
+  }
+
   async function subscribeNotifications(){
     if(notificationChannel){ try{ await sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; }
     if(!currentUser) return;
     notificationChannel=sb.channel('notificaciones-'+currentUser.id)
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'notificaciones',filter:`usuario_id=eq.${currentUser.id}`},payload=>{
+        if(notifications.some(n=>n.id===payload.new.id)) return;
         notifications=[payload.new,...notifications].slice(0,20);
         renderNotifications();
         showAssignmentNotification(payload.new);
-      }).subscribe();
+      })
+      .subscribe(status=>{ console.log('Notificaciones Realtime:',status); });
   }
 
-  $('notificationBtn').addEventListener('click',async()=>{
-    if(!notifications.length){ alert('No tienes notificaciones.'); return; }
-    const unread=notifications.filter(n=>!n.leida);
-    alert((unread.length?unread:notifications.slice(0,5)).map(n=>`${n.leida?'✓':'🔔'} ${n.titulo}\n${n.mensaje}`).join('\n\n'));
-    if(unread.length) await markNotificationsRead();
+  $('notificationBtn').addEventListener('click',()=>{
+    const panel=$('notificationPanel');
+    const open=panel.hidden;
+    panel.hidden=!open;
+    $('notificationBtn').setAttribute('aria-expanded',String(open));
+  });
+  $('markAllReadBtn').addEventListener('click',async()=>{ await markNotificationsRead(); });
+  $('notificationList').addEventListener('click',async e=>{
+    const item=e.target.closest('.notification-item');
+    if(!item) return;
+    await markOneNotificationRead(item.dataset.notificationId);
+    if(item.dataset.trabajoId && currentProfile?.rol==='tecnico'){
+      await loadTech();
+      $('notificationPanel').hidden=true;
+      $('notificationBtn').setAttribute('aria-expanded','false');
+    }
+  });
+  document.addEventListener('click',e=>{
+    const wrap=document.querySelector('.notification-wrap');
+    if(wrap && !wrap.contains(e.target)){ $('notificationPanel').hidden=true; $('notificationBtn').setAttribute('aria-expanded','false'); }
   });
 
   async function enableBrowserNotifications(){
@@ -508,13 +534,36 @@
   async function loadAdmin(){
     try{
       await loadTechnicians();
-      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,ciudad,tipo_servicio,prioridad,estado,tecnico_id,fecha_programada,creado_at').order('creado_at',{ascending:false});
+      const {data,error}=await sb.from('trabajos').select('id,titulo,descripcion,cliente_nombre,cliente_telefono,cliente_email,ciudad,tipo_servicio,prioridad,estado,tecnico_id,fecha_programada,fecha_asignacion,creado_at').order('creado_at',{ascending:false});
       if(error) throw error;
-      const ids=[...new Set((data||[]).map(x=>x.tecnico_id).filter(Boolean))];
-      let names={};
-      if(ids.length){ const r=await sb.from('public_profiles').select('id,nombre,email').in('id',ids); (r.data||[]).forEach(t=>names[t.id]=t.nombre||t.email); }
-      $('adminJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${esc(names[j.tecnico_id]||'Sin asignar')}</td><td>${formatDate(j.fecha_programada)}</td></tr>`).join(''):'<tr><td colspan="6" class="portal-empty">No hay trabajos registrados.</td></tr>';
+      const technicians=await getTechnicianProfiles();
+      const techOptions='<option value="">Sin asignar</option>'+technicians.map(t=>`<option value="${esc(t.id)}">${esc(t.nombre||t.email)}</option>`).join('');
+      $('adminJobsBody').innerHTML=data?.length?data.map(j=>`<tr><td><strong>${esc(j.titulo)}</strong><small>${esc(j.tipo_servicio||'')}</small></td><td>${esc(j.cliente_nombre||'—')}<small>${esc(j.cliente_telefono||j.cliente_email||'')}</small></td><td><span class="status ${statusClass(j.estado)}">${esc(statusLabel(j.estado))}</span></td><td><span class="priority priority-${esc(j.prioridad)}">${esc(j.prioridad||'normal')}</span></td><td>${esc((technicians.find(t=>t.id===j.tecnico_id)||{}).nombre || (technicians.find(t=>t.id===j.tecnico_id)||{}).email || 'Sin asignar')}</td><td>${formatDate(j.fecha_programada)}</td><td><select class="job-tech-select" data-job-id="${esc(j.id)}" aria-label="Asignar técnico a ${esc(j.titulo)}">${technicians.length?techOptions:'<option value="">Sin técnicos activos</option>'}</select></td></tr>`).join(''):'<tr><td colspan="7" class="portal-empty">No hay trabajos registrados.</td></tr>';
+      document.querySelectorAll('.job-tech-select').forEach(sel=>{
+        const job=data.find(j=>j.id===sel.dataset.jobId);
+        if(job){ sel.value=job.tecnico_id||''; sel.dataset.previous=job.tecnico_id||''; }
+        sel.addEventListener('change',updateJobTechnician);
+      });
     }catch(e){ msg($('jobMessage'),e.message||'No se pudieron cargar los datos.','error'); }
+  }
+
+  async function getTechnicianProfiles(){
+    const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
+    if(error) throw error;
+    return data||[];
+  }
+
+  async function updateJobTechnician(e){
+    const select=e.target, id=select.dataset.jobId, tecnico_id=select.value||null;
+    const previous=select.dataset.previous || '';
+    if(tecnico_id===previous) return;
+    select.disabled=true;
+    const payload={tecnico_id,estado:tecnico_id?'asignado':'pendiente',fecha_asignacion:tecnico_id?new Date().toISOString():null,actualizado_at:new Date().toISOString()};
+    const {error}=await sb.from('trabajos').update(payload).eq('id',id);
+    select.disabled=false;
+    if(error){ alert('No se pudo reasignar el trabajo: '+error.message); select.value=previous; return; }
+    select.dataset.previous=tecnico_id||'';
+    await loadAdmin();
   }
 
   $('jobForm').addEventListener('submit',async e=>{

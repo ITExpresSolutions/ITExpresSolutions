@@ -1,0 +1,2 @@
+V24 - NOTIFICACIONES + REASIGNACION
+Esta versión parte de V23. Incluye panel de notificaciones, Realtime, y selector de técnico para que el administrador pueda reasignar trabajos. También limpia el trigger anterior para evitar duplicados.

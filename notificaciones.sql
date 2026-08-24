@@ -1,5 +1,5 @@
--- ITExpresSolutions - NOTIFICACIONES DE TRABAJOS
--- Ejecutar una vez en Supabase > SQL Editor.
+-- ITExpresSolutions V24 - NOTIFICACIONES + REASIGNACIÓN
+-- Ejecutar UNA VEZ en Supabase > SQL Editor.
 
 create table if not exists public.notificaciones (
   id uuid primary key default gen_random_uuid(),
@@ -22,19 +22,20 @@ drop policy if exists "usuarios marcan sus notificaciones" on public.notificacio
 
 create policy "usuarios ven sus notificaciones"
 on public.notificaciones
-for select
-to authenticated
+for select to authenticated
 using (usuario_id = auth.uid());
 
 create policy "usuarios marcan sus notificaciones"
 on public.notificaciones
-for update
-to authenticated
+for update to authenticated
 using (usuario_id = auth.uid())
 with check (usuario_id = auth.uid());
 
--- Crear una notificación cuando se crea un trabajo ya asignado
--- o cuando un trabajo cambia de técnico.
+-- Elimina el trigger/función antiguos que podían duplicar avisos.
+drop trigger if exists trg_notificar_asignacion on public.trabajos;
+drop trigger if exists trg_notificar_trabajo_asignado on public.trabajos;
+drop function if exists public.notificar_asignacion_trabajo();
+
 create or replace function public.notificar_trabajo_asignado()
 returns trigger
 language plpgsql
@@ -47,9 +48,12 @@ begin
     insert into public.notificaciones(usuario_id, tipo, titulo, mensaje, trabajo_id)
     values (
       new.tecnico_id,
-      'trabajo_asignado',
-      'Nuevo trabajo asignado',
-      'Se te asignó: ' || coalesce(new.titulo, 'Nuevo trabajo') ||
+      case when tg_op = 'INSERT' then 'trabajo_asignado' else 'trabajo_reasignado' end,
+      case when tg_op = 'INSERT' then 'Nuevo trabajo asignado' else 'Trabajo reasignado' end,
+      case when tg_op = 'INSERT'
+        then 'Se te asignó: ' || coalesce(new.titulo, 'Nuevo trabajo')
+        else 'Se te reasignó: ' || coalesce(new.titulo, 'Trabajo')
+      end ||
       case when new.fecha_programada is not null
         then ' • Programado: ' || to_char(new.fecha_programada at time zone 'America/Mexico_City', 'DD/MM/YYYY HH24:MI')
         else '' end,
@@ -65,7 +69,6 @@ create trigger trg_notificar_trabajo_asignado
 after insert or update of tecnico_id on public.trabajos
 for each row execute function public.notificar_trabajo_asignado();
 
--- Activar Realtime para que el técnico reciba el aviso mientras tiene el portal abierto.
 do $$
 begin
   if not exists (
@@ -78,7 +81,10 @@ begin
   end if;
 end $$;
 
--- Verificación
 select count(*) as notificaciones from public.notificaciones;
 select tablename, rowsecurity from pg_tables
 where schemaname='public' and tablename='notificaciones';
+select trigger_name, event_manipulation, action_timing
+from information_schema.triggers
+where event_object_schema='public' and event_object_table='trabajos'
+  and trigger_name like '%notificar%';
