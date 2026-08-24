@@ -494,7 +494,7 @@
         showAssignmentNotification(payload.new);
         // Actualiza inmediatamente la tabla del técnico cuando llega una asignación/reasignación.
         if(currentProfile?.rol==='tecnico'){
-          await loadTech();
+          loadTech();
         }
       })
       .subscribe(status=>{ console.log('Notificaciones Realtime:',status); });
