@@ -3,116 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ITExpresSolutions - Soporte técnico, asistencia remota y soluciones digitales para personas y PyMEs en México y Costa Rica.">
+  <meta name="description" content="ITExpresSolutions - Soporte técnico, asistencia remota y soluciones digitales para personas y PyMEs en México.">
   <meta name="theme-color" content="#062f52">
   <title>ITExpresSolutions | Soporte Técnico</title>
   <link rel="preload" as="image" href="logo-badge.webp" fetchpriority="high">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=16">
   <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=16">
   <link rel="apple-touch-icon" href="favicon.png?v=16">
-  <link rel="preload" as="video" href="hero-intro.mp4" type="video/mp4" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
   <!-- Supabase: la Publishable Key es segura para uso en navegador cuando RLS está configurado. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    .pricing-section{margin:56px 0 20px}
-    .pricing-head{margin-bottom:24px}
-    .pricing-country-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
-    .pricing-country-card{background:#fff;border:1px solid #d9e9ef;border-radius:22px;padding:24px;box-shadow:0 10px 28px rgba(6,47,82,.07)}
-    .pricing-country-title{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-    .pricing-country-title>span{font-size:2.25rem;line-height:1}
-    .pricing-country-title strong{display:block;font-size:1.25rem;color:#062f52}
-    .pricing-country-title small{display:block;color:#607789;margin-top:3px}
-    .pricing-list{display:grid;gap:0}
-    .pricing-row{display:flex;justify-content:space-between;gap:18px;padding:14px 0;border-top:1px solid #e5eef2;align-items:center}
-    .pricing-row span{color:#27475c}
-    .pricing-row strong{color:#087f8e;white-space:nowrap;font-size:1.02rem}
-    .pricing-note{margin-top:18px;padding:16px 18px;border-radius:14px;background:#eef9fb;border:1px solid #cfe8ee;color:#355466}
-    .pricing-sources{font-size:.78rem;color:#718694;margin:12px 2px 0}
-    @media (max-width:760px){.pricing-country-grid{grid-template-columns:1fr}.pricing-country-card{padding:20px}.pricing-row{align-items:flex-start}.pricing-row span{max-width:65%}}
-  </style>
-
-    <style>
-      .founder-message{
-        margin-top:26px;
-        padding-top:22px;
-        border-top:1px solid rgba(6,47,82,.10);
-      }
-      .founder-heading{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        margin-bottom:16px;
-      }
-      .founder-icon{
-        font-size:1.45rem;
-      }
-      .founder-heading strong{
-        display:block;
-      }
-      .founder-heading small{
-        display:block;
-        margin-top:3px;
-        opacity:.72;
-      }
-      .founder-message p{
-        margin:0 0 12px;
-      }
-      .founder-signature{
-        margin-top:4px;
-        margin-left:8px;
-        font-size:.78rem;
-        font-style:italic;
-        font-weight:400;
-        letter-spacing:.16em;
-        opacity:.62;
-        transform:rotate(-4deg);
-        display:inline-block;
-      }
-      .values-divider{
-        height:1px;
-        margin:22px 0;
-        background:rgba(6,47,82,.10);
-      }
-      .about-values{
-        display:grid;
-        gap:13px;
-        margin-top:16px;
-      }
-      .about-value{
-        padding-top:13px;
-        border-top:1px solid rgba(6,47,82,.08);
-      }
-      .about-value:first-child{
-        border-top:0;
-        padding-top:0;
-      }
-      .value-title{
-        font-weight:800;
-        margin-bottom:5px;
-      }
-      .about-value p{
-        margin:0;
-      }
-    </style>
-
 </head>
 <body>
-  <!-- Intro -->
-  <div class="video-intro" id="videoIntro" aria-hidden="false">
-    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto" poster="intro-poster.jpg">
-      <source src="hero-intro.mp4" type="video/mp4">
-    </video>
-    <div class="video-intro-shade"></div>
-    <div class="video-intro-brand">
-      <img src="logo-badge.webp" alt="ITExpresSolutions">
-      <div class="intro-name">ITExpres<span>Solutions</span></div>
-      <div class="intro-tagline">Soporte técnico y soluciones digitales</div>
-      <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
-    </div>
-  </div>
-
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" data-page="inicio" aria-label="ITExpresSolutions inicio">
@@ -143,13 +45,9 @@
         <div class="hero-video-overlay"></div>
         <div class="container hero-content">
           <div class="hero-copy">
-            <div class="eyebrow">
-  <span class="country-badge">🇲🇽 MÉXICO</span>
-  <span class="country-separator">•</span>
-  <span class="country-badge">🇨🇷 COSTA RICA</span>
-</div>
+            <div class="eyebrow">SOPORTE TÉCNICO • CDMX • REMOTO EN TODO MÉXICO</div>
             <h1>Tu tecnología funcionando.<br><span>Sin complicaciones.</span></h1>
-            <p>Soporte técnico, reparación y soluciones digitales para personas, hogares y pequeñas empresas en México y Costa Rica.</p>
+            <p>Soporte técnico, reparación y soluciones digitales para personas, hogares y pequeñas empresas.</p>
             <div class="hero-actions">
               <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
               <a class="btn btn-outline" href="#contacto" data-page="contacto">📋 Solicitar soporte</a>
@@ -167,7 +65,7 @@
         <div class="container quick-grid">
           <a href="tel:+525663885856"><strong>📞 Soporte telefónico</strong><small>Habla directamente con un técnico</small></a>
           <a href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
-          <a href="#remoto" data-page="remoto"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar de México y Costa Rica</small></a>
+          <a href="#remoto" data-page="remoto"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar de México</small></a>
         </div>
       </section>
 
@@ -196,7 +94,7 @@
           <div class="page-hero-copy">
             <div class="eyebrow">SERVICIOS</div>
             <h1>Todo tu soporte técnico, organizado en un solo lugar.</h1>
-            <p>Atención en México y Costa Rica, con soporte remoto y cobertura local según disponibilidad.</p>
+            <p>Atención presencial en Ciudad de México y soporte remoto en todo México.</p>
           </div>
           <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de servicios tecnológicos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-services" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="80" y="90" width="205" height="135" rx="16" fill="#062f52"/><rect x="100" y="110" width="165" height="92" rx="9" fill="#f2fafc"/><rect x="125" y="255" width="155" height="18" rx="9" fill="#0a6fae"/><rect x="175" y="225" width="55" height="45" rx="8" fill="#087f8e"/><circle cx="400" cy="145" r="72" fill="#e8faf4" stroke="#43d58e" stroke-width="8"/><path d="M400 105v80M360 145h80" stroke="#087f8e" stroke-width="16" stroke-linecap="round"/><path d="M352 225c-34 28-50 67-40 103 8 30 39 43 67 29l27-13 27 13c28 14 59 1 67-29 10-36-6-75-40-103" fill="#eef7fa" stroke="#062f52" stroke-width="8"/><path d="M348 282h104" stroke="#43d58e" stroke-width="12" stroke-linecap="round"/><path d="M335 80l38-25 38 25M510 80l-38-25-38 25" fill="none" stroke="url(#g-services)" stroke-width="9" stroke-linecap="round"/></svg></div></div>
         </div>
@@ -209,41 +107,6 @@
           <article class="card"><div class="icon">📱</div><h3>Celulares y dispositivos</h3><p>Configuración, cuentas, aplicaciones, conectividad y asistencia técnica.</p></article>
           <article class="card"><div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Equipos, usuarios, redes y mantenimiento tecnológico para pequeñas empresas.</p></article>
         </div>
-
-        <section class="pricing-section" aria-labelledby="precios-title">
-          <div class="subsection-head pricing-head">
-            <div><div class="eyebrow">PRECIOS DE REFERENCIA 2026</div><h2 id="precios-title">¿Cuánto cuesta un servicio técnico?</h2></div>
-            <p>Mostramos rangos aproximados de mercado para que tengas una idea antes de solicitar el servicio. El precio final depende del diagnóstico, dificultad, traslado y piezas o licencias necesarias.</p>
-          </div>
-          <div class="pricing-country-grid">
-            <div class="pricing-country-card">
-              <div class="pricing-country-title"><span>🇲🇽</span><div><strong>México</strong><small>Precios aproximados en pesos mexicanos (MXN)</small></div></div>
-              <div class="pricing-list">
-                <div class="pricing-row"><span>🩺 Diagnóstico / soporte remoto</span><strong>$350–$600</strong></div>
-                <div class="pricing-row"><span>🧹 Mantenimiento y optimización</span><strong>$400–$900</strong></div>
-                <div class="pricing-row"><span>🪟 Formateo + instalación de sistema</span><strong>$700–$1,200</strong></div>
-                <div class="pricing-row"><span>🛡️ Eliminación de virus / malware</span><strong>$300–$500</strong></div>
-                <div class="pricing-row"><span>🌐 Configuración Wi‑Fi / red</span><strong>$500–$900</strong></div>
-                <div class="pricing-row"><span>🖨️ Configuración de impresora</span><strong>$400–$800</strong></div>
-                <div class="pricing-row"><span>🏠 Servicio a domicilio</span><strong>$700–$1,000+</strong></div>
-              </div>
-            </div>
-            <div class="pricing-country-card">
-              <div class="pricing-country-title"><span>🇨🇷</span><div><strong>Costa Rica</strong><small>Precios aproximados en colones costarricenses (CRC)</small></div></div>
-              <div class="pricing-list">
-                <div class="pricing-row"><span>🩺 Diagnóstico / soporte remoto</span><strong>₡6,000–₡10,000</strong></div>
-                <div class="pricing-row"><span>🧹 Mantenimiento y optimización</span><strong>₡12,000–₡20,000</strong></div>
-                <div class="pricing-row"><span>🪟 Formateo + instalación de sistema</span><strong>₡12,000–₡18,000</strong></div>
-                <div class="pricing-row"><span>🛡️ Eliminación de virus / malware</span><strong>₡10,000–₡15,000</strong></div>
-                <div class="pricing-row"><span>🌐 Configuración Wi‑Fi / red</span><strong>₡8,000–₡18,000</strong></div>
-                <div class="pricing-row"><span>🖨️ Configuración de impresora</span><strong>₡8,000–₡15,000</strong></div>
-                <div class="pricing-row"><span>🏠 Servicio a domicilio</span><strong>₡15,000–₡25,000+</strong></div>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-note"><strong>ℹ️ Importante:</strong> son precios orientativos, no tarifas definitivas. No incluyen piezas, licencias, componentes ni trabajos especiales. Antes de comenzar te confirmamos el costo.</div>
-          <p class="pricing-sources">Referencias de mercado consultadas: Soteira, SOATI y Cronoshare (México); Teknika CR, RDC y PCTodoCR (Costa Rica). Los rangos se presentan como referencia y pueden variar por ciudad, modalidad y complejidad.</p>
-        </section>
 
         <div class="subsection-head">
           <div><div class="eyebrow">SOFTWARE Y PLATAFORMAS</div><h2>También te ayudamos con tus programas.</h2></div>
@@ -303,7 +166,7 @@
 
         <div class="remote-grid">
           <div class="notice large-notice"><strong>🔐 Seguridad primero</strong><p>El acceso remoto debe ser autorizado por ti y solo durante la sesión de soporte. Nunca compartas contraseñas personales ni códigos de seguridad bancarios.</p></div>
-          <div class="remote-panel"><span class="pill">SERVICIO REMOTO</span><h3>México y Costa Rica</h3><p>Atención en México y Costa Rica<br>Soporte remoto disponible</p><a href="tel:+525663885856">+52 56 6388 5856</a></div>
+          <div class="remote-panel"><span class="pill">SERVICIO REMOTO</span><h3>Todo México</h3><p>Ciudad de México: atención local<br>Resto del país: atención remota</p><a href="tel:+525663885856">+52 56 6388 5856</a></div>
         </div>
       </div>
     </section>
@@ -320,86 +183,19 @@
           <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración del equipo de ITExpresSolutions"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-about" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><circle cx="310" cy="210" r="125" fill="#e9faf5"/><circle cx="245" cy="175" r="43" fill="#fff" stroke="#087f8e" stroke-width="8"/><circle cx="375" cy="175" r="43" fill="#fff" stroke="#0a6fae" stroke-width="8"/><path d="M180 315c15-63 46-90 83-90s68 27 83 90" fill="#062f52"/><path d="M310 315c15-63 46-90 83-90s68 27 83 90" fill="#087f8e"/><path d="M274 195h72" stroke="#43d58e" stroke-width="10" stroke-linecap="round"/><path d="M310 90v-38M215 115l-28-28M405 115l28-28" stroke="url(#g-about)" stroke-width="9" stroke-linecap="round"/><circle cx="310" cy="52" r="12" fill="#43d58e"/><path d="M125 340h370" stroke="#c9dfe6" stroke-width="9" stroke-linecap="round"/></svg></div></div>
         </div>
 
-        
         <div class="about-grid clean-about">
           <div class="about-copy">
-            <div class="about-highlight">
-              <span class="about-number">15+</span>
-              <span>
-                <strong>Años de experiencia</strong>
-                <small>en soporte técnico y soluciones tecnológicas</small>
-              </span>
-            </div>
-
-            <p>ITExpresSolutions ofrece soporte técnico confiable, accesible y profesional, tanto presencial como remoto.</p>
-
+            <div class="about-highlight"><span class="about-number">15+</span><span><strong>Años de experiencia</strong><small>en soporte técnico y soluciones tecnológicas</small></span></div>
+                        <p>ITExpresSolutions ofrece soporte técnico confiable, accesible y profesional, tanto presencial como remoto.</p>
             <p>Trabajamos con una red de <strong>jóvenes y experimentados ingenieros y técnicos alrededor de todo México</strong>, conectando talento con personas y empresas que necesitan soluciones tecnológicas.</p>
-
             <p>Este modelo también permite que nuestros colaboradores puedan realizar <strong>trabajo remoto y generar ingresos extra en su tiempo libre</strong>, mientras ayudamos a nuestros clientes.</p>
-
-            <div class="founder-message">
-              <div class="founder-heading">
-                <span class="founder-icon">🙏</span>
-                <span>
-                  <strong>Un proyecto puesto en manos de Dios</strong>
-                  <small>Palabras del fundador</small>
-                </span>
-              </div>
-
-              <p><strong>“Antes que nada, doy gracias a Dios por el regalo de la vida y por permitirme dar el primer paso en este proyecto.</strong></p>
-
-              <p>ITExpresSolutions representa un sueño que apenas comienza. No sé hasta dónde llegará, pero sí sé que quiero poner este proyecto en las manos de Dios y caminar confiando en Su dirección.</p>
-
-              <p>Si Dios lo permite, algún día este proyecto será mucho más grande de lo que hoy puedo imaginar.</p>
-
-              <p>Mi compromiso es trabajar con honestidad, servir con excelencia y tratar a cada cliente con respeto y dignidad.</p>
-
-              <p><strong>Este es el comienzo de algo que espero que Dios lleve mucho más lejos de lo que mis propios ojos pueden ver.”</strong></p>
-
-              <div class="founder-signature">JABM</div>
-            </div>
           </div>
-
-          <div class="values-card">
-            <div class="values-icon">🤝</div>
-            <h3>Una red de talento en México</h3>
-            <p>Soporte presencial en CDMX y atención remota para clientes en cualquier parte del país.</p>
-            <div class="about-points">
-              <span>✓ Técnicos e ingenieros</span>
-              <span>✓ Atención nacional</span>
-              <span>✓ Soporte remoto</span>
-              <span>✓ Trabajo flexible</span>
-            </div>
-
-            <div class="values-divider"></div>
-
-            <h3>Nuestros valores</h3>
-            <div class="about-values">
-              <div class="about-value">
-                <div class="value-title">🤝 Confianza y fidelidad</div>
-                <p>Construimos relaciones basadas en cumplir nuestra palabra y hacer lo correcto, incluso cuando nadie nos está observando.</p>
-              </div>
-              <div class="about-value">
-                <div class="value-title">❤️ Respeto</div>
-                <p>Tratamos a cada cliente, compañero y colaborador con dignidad, paciencia y consideración.</p>
-              </div>
-              <div class="about-value">
-                <div class="value-title">🛠️ Servicio</div>
-                <p>No solamente resolvemos problemas; buscamos servir a las personas y ayudarlas de la mejor manera posible.</p>
-              </div>
-              <div class="about-value">
-                <div class="value-title">⚖️ Honestidad e integridad</div>
-                <p>Creemos en hablar con la verdad, ser transparentes y hacer negocios de manera correcta.</p>
-              </div>
-              <div class="about-value">
-                <div class="value-title">⭐ Excelencia</div>
-                <p>Procuramos hacer nuestro trabajo con dedicación y calidad, buscando siempre mejorar.</p>
-              </div>
-            </div>
-          </div>
+          <div class="values-card"><div class="values-icon">🤝</div><h3>Una red de talento en México</h3><p>Soporte presencial en CDMX y atención remota para clientes en cualquier parte del país.</p><div class="about-points"><span>✓ Técnicos e ingenieros</span><span>✓ Atención nacional</span><span>✓ Soporte remoto</span><span>✓ Trabajo flexible</span></div></div>
         </div>
       </div>
     </section>
+
+    <!-- CONTACT -->
     <section class="page-panel section" data-panel="contacto" id="contacto">
       <div class="container">
         <div class="page-hero contact-hero">
@@ -426,7 +222,7 @@
           <aside class="contact-side">
             <div class="contact-info"><span>📞</span><div><strong>Teléfono</strong><a href="tel:+525663885856">+52 56 6388 5856</a></div></div>
             <div class="contact-info"><span>✉️</span><div><strong>Correo</strong><a href="mailto:ITExpresSolutions@gmail.com">ITExpresSolutions@gmail.com</a></div></div>
-            <div class="contact-info"><span>📍</span><div><strong>Servicio</strong><p>Ciudad de México presencial<br>México y Costa Rica remoto</p></div></div>
+            <div class="contact-info"><span>📍</span><div><strong>Servicio</strong><p>Ciudad de México presencial<br>Todo México remoto</p></div></div>
             <div class="contact-info"><span>🕘</span><div><strong>Horario</strong><p>Lunes a viernes<br>9:00 AM – 9:00 PM</p></div></div>
           </aside>
         </div>
@@ -521,7 +317,7 @@
   </section>
 
   <footer>
-    <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>México y Costa Rica • Soporte remoto</div><div>© 2026 ITExpresSolutions</div></div>
+    <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
   </footer>
 
   <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
@@ -681,10 +477,6 @@
         notifications=[payload.new,...notifications].slice(0,20);
         renderNotifications();
         showAssignmentNotification(payload.new);
-        // Actualiza inmediatamente la tabla del técnico cuando llega una asignación/reasignación.
-        if(currentProfile?.rol==='tecnico'){
-          loadTech();
-        }
       })
       .subscribe(status=>{ console.log('Notificaciones Realtime:',status); });
   }
@@ -786,56 +578,11 @@
     else await loadTech();
   }
   $('techRefresh').addEventListener('click',loadTech);
-
-  // La actualización principal se hace por Supabase Realtime.
-  // No usamos location.reload() ni un recargado periódico de la página,
-  // para no interrumpir la sesión ni devolver al usuario al video de entrada.
   refreshPortal();
 })();
 </script>
 
 <script>
-  const intro = document.querySelector('#videoIntro');
-  const introVideo = document.querySelector('#introVideo');
-  const skipIntro = document.querySelector('#skipIntro');
-  const heroVideo = document.querySelector('#heroVideo');
-  let entered = false;
-  function enterSite(){
-    if(!intro || entered) return;
-    entered = true;
-    intro.classList.add('hide'); intro.setAttribute('aria-hidden','true'); document.body.classList.remove('intro-active');
-    setTimeout(()=>intro.remove(),900);
-    if(heroVideo){ heroVideo.muted=true; heroVideo.play().catch(()=>{}); }
-  }
-  document.body.classList.add('intro-active');
-  skipIntro.addEventListener('click',enterSite);
-  introVideo.addEventListener('ended',enterSite);
-  introVideo.addEventListener('error',enterSite);
-  // En conexiones lentas, no dejamos al visitante atrapado esperando el video.
-  const slowConnection = navigator.connection && /(^|-)2g|3g/.test(navigator.connection.effectiveType || '');
-  if(slowConnection || navigator.connection?.saveData){
-    setTimeout(enterSite, 1200);
-  } else {
-    setTimeout(()=>{ if(!entered && introVideo.readyState < 2) enterSite(); }, 8000);
-  }
-  if(heroVideo){
-    heroVideo.loop=true; heroVideo.muted=true;
-    heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});
-  }
-
-  // Si el usuario ya tiene una sesión de Supabase, no le mostramos
-  // nuevamente la pantalla de introducción al recargar el documento.
-  // Esto es importante para el portal de técnicos.
-  (async()=>{
-    try{
-      const client=window.ITExpresSupabase;
-      if(client){
-        const {data:{session}}=await client.auth.getSession();
-        if(session) enterSite();
-      }
-    }catch(_){}
-  })();
-
   const nav=document.querySelector('#main-nav');
   const toggle=document.querySelector('.menu-toggle');
   const panels=[...document.querySelectorAll('.page-panel')];
