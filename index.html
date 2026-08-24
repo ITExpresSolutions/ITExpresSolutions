@@ -284,7 +284,7 @@
       <div id="dashboard" class="portal-dashboard" hidden>
         <div class="portal-dashboard-head">
           <div><div class="eyebrow" id="dashboardEyebrow">PANEL</div><h2 id="dashboardTitle">Panel</h2><p id="dashboardSubtitle"></p></div>
-          <button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button>
+          <div class="portal-head-actions"><button class="notification-btn" id="notificationBtn" type="button" aria-label="Notificaciones" title="Notificaciones">🔔<span id="notificationCount" hidden>0</span></button><button class="btn btn-outline portal-logout" id="logoutBtn" type="button">🚪 Cerrar sesión</button></div>
         </div>
 
         <div id="adminPanel" hidden>
@@ -389,7 +389,7 @@
       showSetPassword();
       return;
     }
-    if(!session){ currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
+    if(!session){ if(notificationChannel){ try{ sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; } notifications=[]; renderNotifications(); currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
     try{
       currentUser=session.user; currentProfile=await loadProfile(currentUser);
       loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
@@ -400,6 +400,9 @@
       $('dashboardTitle').textContent=currentProfile.rol==='admin'?'Panel de administración':'Panel de técnico';
       $('dashboardSubtitle').textContent=currentProfile.nombre ? 'Hola, '+currentProfile.nombre+'.' : 'Sesión iniciada correctamente.';
       adminPanel.hidden=currentProfile.rol!=='admin'; techPanel.hidden=currentProfile.rol==='admin';
+      await loadNotifications();
+      await subscribeNotifications();
+      enableBrowserNotifications();
       if(currentProfile.rol==='admin') await loadAdmin(); else await loadTech();
     }catch(e){ await sb.auth.signOut(); loginCard.hidden=false; dashboard.hidden=true; msg($('loginMessage'),e.message||'No se pudo cargar tu perfil.','error'); }
   }
@@ -435,6 +438,66 @@
   $('logoutBtn').addEventListener('click',async()=>{ await sb.auth.signOut(); await refreshPortal(); });
   sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY' || event==='SIGNED_IN') setTimeout(refreshPortal,0); });
 
+  let notificationChannel=null;
+  let notifications=[];
+
+  function renderNotifications(){
+    const unread=notifications.filter(n=>!n.leida).length;
+    const count=$('notificationCount');
+    count.textContent=unread>99?'99+':String(unread);
+    count.hidden=unread===0;
+  }
+
+  function showAssignmentNotification(n){
+    const toast=document.createElement('div');
+    toast.className='portal-toast';
+    toast.innerHTML=`<strong>🔔 ${esc(n.titulo||'Nuevo trabajo')}</strong><span>${esc(n.mensaje||'Se te ha asignado un nuevo trabajo.')}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.classList.add('show'),20);
+    setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),250)},6500);
+    if('Notification' in window && Notification.permission==='granted'){
+      try{ new Notification(n.titulo||'Nuevo trabajo asignado',{body:n.mensaje||'Tienes un nuevo trabajo asignado en ITExpresSolutions.'}); }catch(_){}
+    }
+  }
+
+  async function loadNotifications(){
+    if(!currentUser) return;
+    const {data,error}=await sb.from('notificaciones').select('id,tipo,titulo,mensaje,trabajo_id,leida,creado_at').eq('usuario_id',currentUser.id).order('creado_at',{ascending:false}).limit(20);
+    if(error){ console.warn('Notificaciones:',error.message); return; }
+    notifications=data||[];
+    renderNotifications();
+  }
+
+  async function markNotificationsRead(){
+    if(!currentUser) return;
+    const {error}=await sb.from('notificaciones').update({leida:true}).eq('usuario_id',currentUser.id).eq('leida',false);
+    if(!error){ notifications=notifications.map(n=>({...n,leida:true})); renderNotifications(); }
+  }
+
+  async function subscribeNotifications(){
+    if(notificationChannel){ try{ await sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; }
+    if(!currentUser) return;
+    notificationChannel=sb.channel('notificaciones-'+currentUser.id)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'notificaciones',filter:`usuario_id=eq.${currentUser.id}`},payload=>{
+        notifications=[payload.new,...notifications].slice(0,20);
+        renderNotifications();
+        showAssignmentNotification(payload.new);
+      }).subscribe();
+  }
+
+  $('notificationBtn').addEventListener('click',async()=>{
+    if(!notifications.length){ alert('No tienes notificaciones.'); return; }
+    const unread=notifications.filter(n=>!n.leida);
+    alert((unread.length?unread:notifications.slice(0,5)).map(n=>`${n.leida?'✓':'🔔'} ${n.titulo}\n${n.mensaje}`).join('\n\n'));
+    if(unread.length) await markNotificationsRead();
+  });
+
+  async function enableBrowserNotifications(){
+    if('Notification' in window && Notification.permission==='default'){
+      try{ await Notification.requestPermission(); }catch(_){}
+    }
+  }
+
   async function loadTechnicians(){
     const {data,error}=await sb.from('public_profiles').select('id,email,nombre,telefono,especialidad,rol,activo').eq('rol','tecnico').eq('activo',true).order('nombre',{ascending:true});
     if(error) throw error;
@@ -457,7 +520,7 @@
   $('jobForm').addEventListener('submit',async e=>{
     e.preventDefault(); msg($('jobMessage'),'Creando trabajo…');
     const fecha=$('jobFecha').value ? new Date($('jobFecha').value).toISOString() : null;
-    const payload={titulo:$('jobTitulo').value.trim(),descripcion:$('jobDescripcion').value.trim()||null,cliente_nombre:$('jobCliente').value.trim()||null,cliente_telefono:$('jobTelefono').value.trim()||null,cliente_email:$('jobEmail').value.trim()||null,direccion:$('jobDireccion').value.trim()||null,ciudad:$('jobCiudad').value.trim()||null,tipo_servicio:$('jobTipo').value.trim()||null,prioridad:$('jobPrioridad').value,estado:'pendiente',tecnico_id:$('jobTecnico').value||null,fecha_programada:fecha,fecha_asignacion:$('jobTecnico').value?new Date().toISOString():null};
+    const payload={titulo:$('jobTitulo').value.trim(),descripcion:$('jobDescripcion').value.trim()||null,cliente_nombre:$('jobCliente').value.trim()||null,cliente_telefono:$('jobTelefono').value.trim()||null,cliente_email:$('jobEmail').value.trim()||null,direccion:$('jobDireccion').value.trim()||null,ciudad:$('jobCiudad').value.trim()||null,tipo_servicio:$('jobTipo').value.trim()||null,prioridad:$('jobPrioridad').value,estado:$('jobTecnico').value?'asignado':'pendiente',tecnico_id:$('jobTecnico').value||null,fecha_programada:fecha,fecha_asignacion:$('jobTecnico').value?new Date().toISOString():null};
     const {error}=await sb.from('trabajos').insert(payload);
     if(error){ msg($('jobMessage'),error.message,'error'); return; }
     msg($('jobMessage'),'Trabajo creado correctamente.','success'); $('jobForm').reset(); $('jobCiudad').value='Ciudad de México'; $('jobPrioridad').value='normal'; await loadAdmin();
