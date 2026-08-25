@@ -1,0 +1,11 @@
+ITExpresSolutions V25 - BOT DE SERVICIO
+
+Se agregó un asistente de servicio en el botón verde inferior derecho.
+- No requiere API key ni servidor adicional.
+- Orienta sobre servicios, soporte remoto y cotización.
+- Recopila datos básicos de una solicitud dentro del chat.
+- Al finalizar permite enviar el resumen por WhatsApp o abrir el Google Form existente.
+- Supabase continúa reservado para el portal privado de administración/técnicos.
+- No se modificaron las políticas RLS ni las claves de Supabase.
+
+Para publicar: reemplazar index.html y style.css en GitHub Pages.

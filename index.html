@@ -320,7 +320,147 @@
     <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
   </footer>
 
-  <a class="float-wa" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
+  <!-- BOT DE SERVICIO -->
+  <button class="service-bot-toggle" id="serviceBotToggle" type="button" aria-label="Abrir asistente de servicio" aria-expanded="false" aria-controls="serviceBot">
+    <span class="service-bot-icon" aria-hidden="true">💬</span>
+    <span class="service-bot-badge" aria-hidden="true"></span>
+  </button>
+
+  <section class="service-bot" id="serviceBot" hidden aria-label="Asistente de servicio ITExpresSolutions">
+    <div class="service-bot-head">
+      <div class="service-bot-brand">
+        <div class="service-bot-avatar">IT</div>
+        <div>
+          <strong>ITExpresSolutions</strong>
+          <span><i></i> Asistente de servicio</span>
+        </div>
+      </div>
+      <button class="service-bot-close" id="serviceBotClose" type="button" aria-label="Cerrar asistente">×</button>
+    </div>
+
+    <div class="service-bot-messages" id="serviceBotMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <div class="service-bot-quick" id="serviceBotQuick"></div>
+
+    <form class="service-bot-input" id="serviceBotInputForm" autocomplete="off">
+      <input id="serviceBotInput" type="text" maxlength="500" placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje">
+      <button type="submit" aria-label="Enviar mensaje">➤</button>
+    </form>
+  </section>
+
+<script>
+/* V25 — Bot de servicio. No usa claves/API públicas.
+   Orienta al cliente, recopila datos y deriva a Google Forms o WhatsApp.
+   Supabase queda reservado para el portal privado. */
+(function(){
+  const toggle=document.getElementById('serviceBotToggle');
+  const panel=document.getElementById('serviceBot');
+  const close=document.getElementById('serviceBotClose');
+  const messages=document.getElementById('serviceBotMessages');
+  const quick=document.getElementById('serviceBotQuick');
+  const form=document.getElementById('serviceBotInputForm');
+  const input=document.getElementById('serviceBotInput');
+  if(!toggle||!panel||!close||!messages||!quick||!form||!input)return;
+
+  const FORM_URL='https://forms.gle/6QHaxfYMQFeeVf3RA';
+  const WHATSAPP='525663885856';
+  const state={step:'menu',data:{}};
+
+  function addMessage(text,who='bot',isHtml=false){
+    const row=document.createElement('div'); row.className='service-bot-message '+who;
+    const bubble=document.createElement('div'); bubble.className='service-bot-bubble';
+    if(isHtml) bubble.innerHTML=text; else bubble.textContent=text;
+    row.appendChild(bubble); messages.appendChild(row); messages.scrollTop=messages.scrollHeight;
+  }
+  function setQuick(items){
+    quick.innerHTML='';
+    (items||[]).forEach(item=>{
+      const b=document.createElement('button'); b.type='button'; b.textContent=item.label;
+      b.addEventListener('click',()=>handleChoice(item.value,item.label)); quick.appendChild(b);
+    });
+  }
+  function safe(v){return String(v||'').trim().slice(0,500)}
+  function waUrl(){
+    const d=state.data;
+    const lines=['Hola ITExpresSolutions, necesito soporte técnico.',
+      d.nombre?'Nombre: '+d.nombre:'',d.ciudad?'Ciudad: '+d.ciudad:'',
+      d.servicio?'Servicio: '+d.servicio:'',d.equipo?'Equipo: '+d.equipo:'',
+      d.problema?'Problema: '+d.problema:'',d.prioridad?'Prioridad: '+d.prioridad:'',
+      d.contacto?'Contacto: '+d.contacto:''].filter(Boolean);
+    return 'https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(lines.join('\n'));
+  }
+  function finishRequest(){
+    addMessage('Perfecto. Ya tenemos los datos básicos. Puedes enviarlos por WhatsApp para que un técnico te atienda, o completar el formulario oficial para registrar la solicitud.');
+    const row=document.createElement('div'); row.className='service-bot-message bot';
+    const bubble=document.createElement('div'); bubble.className='service-bot-bubble';
+    bubble.innerHTML='<strong>¿Cómo quieres continuar?</strong><div class="service-bot-actions">'+
+      '<a class="service-bot-action primary" href="'+waUrl()+'" target="_blank" rel="noopener">💬 Enviar por WhatsApp</a>'+
+      '<a class="service-bot-action" href="'+FORM_URL+'" target="_blank" rel="noopener">📋 Abrir formulario</a>'+
+      '<button type="button" class="service-bot-action" id="serviceBotRestart">↻ Nueva solicitud</button></div>';
+    row.appendChild(bubble); messages.appendChild(row); messages.scrollTop=messages.scrollHeight;
+    document.getElementById('serviceBotRestart').addEventListener('click',restart);
+    state.step='done'; setQuick([]);
+  }
+  function restart(){state.step='menu';state.data={};messages.innerHTML='';start()}
+  function askNext(){
+    if(state.step==='ask_service'){state.step='ask_equipo';addMessage('¿Qué equipo o servicio necesitas atender? Por ejemplo: computadora, impresora, red Wi‑Fi, celular, página web o redes sociales.');setQuick([{label:'Computadora',value:'Computadora'},{label:'Impresora',value:'Impresora'},{label:'Red / Wi‑Fi',value:'Red / Wi‑Fi'},{label:'Celular',value:'Celular'},{label:'Página web',value:'Página web'},{label:'Otro',value:'Otro'}])}
+    else if(state.step==='ask_equipo'){state.step='ask_problem';addMessage('Cuéntame brevemente qué está pasando o qué necesitas hacer.');setQuick([])}
+    else if(state.step==='ask_problem'){state.step='ask_name';addMessage('¿Cuál es tu nombre?');setQuick([])}
+    else if(state.step==='ask_name'){state.step='ask_city';addMessage('¿En qué ciudad estás? Tenemos servicio presencial en Ciudad de México y soporte remoto en todo México.');setQuick([{label:'Ciudad de México',value:'Ciudad de México'},{label:'Otra ciudad',value:'Otra ciudad'}])}
+    else if(state.step==='ask_city'){state.step='ask_contact';addMessage('¿Cuál es el mejor medio para contactarte? Puedes escribir teléfono, WhatsApp o correo.');setQuick([])}
+    else if(state.step==='ask_contact'){state.step='ask_priority';addMessage('¿Qué tan urgente es?');setQuick([{label:'Normal',value:'Normal'},{label:'Alta',value:'Alta'},{label:'Urgente',value:'Urgente'}])}
+    else if(state.step==='ask_priority')finishRequest();
+  }
+  function handleChoice(value,label){
+    if(state.step==='menu'){
+      if(value==='support'){addMessage(label,'user');state.step='ask_service';addMessage('Claro. Te ayudo a preparar tu solicitud de soporte. ¿Qué tipo de ayuda necesitas?');setQuick([{label:'Soporte técnico',value:'Soporte técnico'},{label:'Reparación / mantenimiento',value:'Reparación / mantenimiento'},{label:'Página web / digital',value:'Página web / digital'},{label:'Otro',value:'Otro'}]);return}
+      if(value==='services'){addMessage(label,'user');addMessage('Ofrecemos soporte para Windows y Mac, impresoras, redes y Wi‑Fi, celulares, soporte remoto, páginas web y presencia digital para PyMEs.');setQuick([{label:'Solicitar soporte',value:'support'},{label:'Soporte remoto',value:'remote'},{label:'Hablar con técnico',value:'whatsapp'},{label:'Volver al inicio',value:'menu'}]);return}
+      if(value==='remote'){addMessage(label,'user');addMessage('El soporte remoto está disponible en todo México. Primero revisamos tu problema y te indicamos el siguiente paso.');setQuick([{label:'Solicitar soporte',value:'support'},{label:'WhatsApp',value:'whatsapp'},{label:'Formulario',value:'form'},{label:'Volver',value:'menu'}]);return}
+      if(value==='quote'){addMessage(label,'user');addMessage('La cotización depende del equipo, problema y si el servicio es presencial o remoto. Puedo tomar tus datos y dejarte listo para contactar al equipo.');setQuick([{label:'Empezar solicitud',value:'support'}]);return}
+      if(value==='whatsapp'){addMessage(label,'user');window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent('Hola ITExpresSolutions, necesito información sobre un servicio.'),'_blank','noopener');return}
+      if(value==='form'){addMessage(label,'user');window.open(FORM_URL,'_blank','noopener');return}
+      if(value==='menu'){start();return}
+    }
+    if(state.step==='ask_service'){state.data.servicio=safe(label);addMessage(label,'user');askNext();return}
+    if(state.step==='ask_equipo'){state.data.equipo=safe(label);addMessage(label,'user');askNext();return}
+    if(state.step==='ask_city'){
+      addMessage(label,'user');
+      if(value==='Otra ciudad'){state.step='ask_city_text';addMessage('Perfecto. Escribe el nombre de tu ciudad.');setQuick([])}
+      else{state.data.ciudad=safe(label);askNext()}
+      return;
+    }
+    if(state.step==='ask_priority'){state.data.prioridad=safe(label);addMessage(label,'user');askNext()}
+  }
+  function handleText(text){
+    const value=safe(text); if(!value)return; addMessage(value,'user');
+    if(state.step==='menu'){
+      const lower=value.toLowerCase();
+      if(lower.includes('soporte')||lower.includes('problema')||lower.includes('ayuda')){handleChoice('support','Solicitar soporte');return}
+      if(lower.includes('precio')||lower.includes('cotiz')){handleChoice('quote','Cotización');return}
+      if(lower.includes('whatsapp')||lower.includes('técnico')||lower.includes('tecnico')){handleChoice('whatsapp','Hablar con técnico');return}
+      addMessage('Puedo ayudarte a solicitar soporte, conocer los servicios, consultar sobre soporte remoto o contactar a un técnico.');
+      setQuick([{label:'Solicitar soporte',value:'support'},{label:'Ver servicios',value:'services'},{label:'Soporte remoto',value:'remote'},{label:'Cotización',value:'quote'},{label:'WhatsApp',value:'whatsapp'}]);return;
+    }
+    if(state.step==='ask_service'){state.data.servicio=value;askNext();return}
+    if(state.step==='ask_equipo'){state.data.equipo=value;askNext();return}
+    if(state.step==='ask_problem'){state.data.problema=value;askNext();return}
+    if(state.step==='ask_name'){state.data.nombre=value;askNext();return}
+    if(state.step==='ask_city'){state.data.ciudad=value;askNext();return}
+    if(state.step==='ask_city_text'){state.data.ciudad=value;state.step='ask_contact';addMessage('¿Cuál es el mejor medio para contactarte? Puedes escribir teléfono, WhatsApp o correo.');return}
+    if(state.step==='ask_contact'){state.data.contacto=value;askNext();return}
+    if(state.step==='done')addMessage('Si quieres iniciar otra solicitud, pulsa “Nueva solicitud”.');
+  }
+  function start(){
+    if(!messages.children.length)addMessage('¡Hola! 👋 Soy el asistente de servicio de ITExpresSolutions. Puedo orientarte y preparar una solicitud de soporte.');
+    else addMessage('¿Qué necesitas ahora?');
+    setQuick([{label:'🛠️ Solicitar soporte',value:'support'},{label:'📋 Ver servicios',value:'services'},{label:'🌐 Soporte remoto',value:'remote'},{label:'💰 Cotización',value:'quote'},{label:'💬 Hablar con técnico',value:'whatsapp'}]);
+  }
+  function openBot(){panel.hidden=false;toggle.setAttribute('aria-expanded','true');if(!messages.children.length)start();setTimeout(()=>input.focus(),80)}
+  function closeBot(){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}
+  toggle.addEventListener('click',()=>panel.hidden?openBot():closeBot());
+  close.addEventListener('click',closeBot);
+  form.addEventListener('submit',e=>{e.preventDefault();const text=input.value;input.value='';handleText(text)});
+})();
+</script>
 
 <script>
 (function(){
