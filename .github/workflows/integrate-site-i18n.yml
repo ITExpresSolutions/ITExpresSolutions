@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'site-i18n.js'
+      - '.github/workflows/integrate-site-i18n.yml'
 jobs:
   integrate:
     runs-on: ubuntu-latest
