@@ -1,0 +1,35 @@
+name: Integrate site language layer
+on:
+  push:
+    paths:
+      - 'site-i18n.js'
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Load site language layer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='  <script src="site-i18n.js" defer></script>\n'
+          if 'src="site-i18n.js"' not in s:
+              s=s.replace('</head>', tag+'</head>', 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: load site-wide language layer"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
