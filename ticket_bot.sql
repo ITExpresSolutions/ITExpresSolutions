@@ -1,6 +1,5 @@
 -- ITExpresSolutions - Bot de tickets sin IA
 -- Ejecutar UNA VEZ en Supabase > SQL Editor.
--- Permite que un visitante anónimo cree un ticket desde el bot.
 
 create or replace function public.crear_ticket_web(
   p_pais text,
@@ -26,15 +25,12 @@ begin
   if length(trim(coalesce(p_nombre,''))) < 2 then
     raise exception 'El nombre es obligatorio.';
   end if;
-
   if length(trim(coalesce(p_contacto,''))) < 5 then
     raise exception 'El teléfono, WhatsApp o correo es obligatorio.';
   end if;
-
   if length(trim(coalesce(p_problema,''))) < 5 then
     raise exception 'Describe brevemente el problema o solicitud.';
   end if;
-
   if lower(trim(coalesce(p_pais,''))) not in ('méxico','mexico','costa rica') then
     raise exception 'País no válido.';
   end if;
@@ -46,7 +42,6 @@ begin
   end;
 
   v_titulo := 'Solicitud web - ' || left(trim(coalesce(p_servicio,'Soporte técnico')), 80);
-
   v_descripcion :=
     'País: ' || left(trim(coalesce(p_pais,'')), 80) || E'\n' ||
     'Ciudad: ' || left(trim(coalesce(p_ciudad,'')), 120) || E'\n' ||
@@ -69,3 +64,51 @@ $$;
 
 revoke all on function public.crear_ticket_web(text,text,text,text,text,text,text,text) from public;
 grant execute on function public.crear_ticket_web(text,text,text,text,text,text,text,text) to anon, authenticated;
+
+-- Consulta pública limitada: exige referencia + el mismo contacto usado al abrir el ticket.
+-- No devuelve teléfono/correo ni la descripción completa del problema.
+create or replace function public.consultar_ticket_web(
+  p_referencia text,
+  p_contacto text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_ref text;
+  v_result jsonb;
+begin
+  v_ref := lower(trim(coalesce(p_referencia,'')));
+  if length(v_ref) < 8 then
+    raise exception 'La referencia del ticket no es válida.';
+  end if;
+  if length(trim(coalesce(p_contacto,''))) < 5 then
+    raise exception 'El medio de contacto es obligatorio.';
+  end if;
+
+  select jsonb_build_object(
+    'referencia', upper(left(t.id::text,8)),
+    'estado', t.estado,
+    'prioridad', t.prioridad,
+    'titulo', t.titulo,
+    'ciudad', t.ciudad,
+    'tipo_servicio', t.tipo_servicio
+  )
+  into v_result
+  from public.trabajos t
+  where (lower(t.id::text) = v_ref or lower(left(t.id::text,8)) = v_ref)
+    and lower(trim(coalesce(t.cliente_telefono,''))) = lower(trim(p_contacto))
+  limit 1;
+
+  if v_result is null then
+    raise exception 'No se encontró un ticket con esa referencia y contacto.';
+  end if;
+
+  return v_result;
+end;
+$$;
+
+revoke all on function public.consultar_ticket_web(text,text) from public;
+grant execute on function public.consultar_ticket_web(text,text) to anon, authenticated;
