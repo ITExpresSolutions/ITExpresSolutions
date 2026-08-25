@@ -13,7 +13,6 @@
     const input=document.getElementById('serviceBotInput');
     if(!toggle||!panel||!close||!messages||!quick||!form||!input) return;
 
-    const FORM_URL='https://forms.gle/6QHaxfYMQFeeVf3RA';
     const state={step:'menu',data:{}};
 
     function safe(v,max=500){return String(v??'').trim().slice(0,max);}
@@ -68,20 +67,14 @@
     async function createTicket(){
       state.step='sending';setQuick([],false);addMessage('Creando tu ticket…');
       const sb=window.ITExpresSupabase;
-      if(!sb){addMessage('No se pudo conectar con el sistema de tickets. Puedes usar el formulario para registrar tu solicitud.');showFallback();return;}
+      if(!sb){addMessage('No se pudo conectar con el sistema de tickets. Intenta nuevamente en unos momentos.');setQuick([{label:'↻ Intentar de nuevo',value:'restart'},{label:'🏠 Inicio',value:'home'}],false);return;}
       const d=state.data;
       const {data,error}=await sb.rpc('crear_ticket_web',{p_pais:d.pais,p_ciudad:d.ciudad,p_servicio:d.servicio,p_equipo:d.equipo,p_problema:d.problema,p_nombre:d.nombre,p_contacto:d.contacto,p_prioridad:d.prioridad});
-      if(error){console.error('crear_ticket_web:',error);addMessage('No pude crear el ticket automáticamente. Puedes abrir el formulario para registrar la solicitud.');showFallback();return;}
+      if(error){console.error('crear_ticket_web:',error);addMessage('No pude crear el ticket en este momento. Intenta nuevamente.');setQuick([{label:'↻ Intentar de nuevo',value:'restart'},{label:'🏠 Inicio',value:'home'}],false);return;}
       const ticketId=String(data||'');state.data.ticketId=ticketId;
       const ref=ticketId.slice(0,8).toUpperCase()||'REGISTRADO';state.step='done';
       addMessage('✅ Ticket creado correctamente.');addMessage('Número de referencia: #'+ref);addMessage('Guarda este número. Lo necesitarás para consultar el estado de tu ticket.');
       setQuick([{label:'🔎 Consultar este ticket',value:'lookup_now'},{label:'↻ Abrir otro ticket',value:'restart'},{label:'🏠 Inicio',value:'home'}],false);
-    }
-    function showFallback(){
-      quick.innerHTML='';
-      const a=document.createElement('a');a.className='service-bot-action primary';a.href=FORM_URL;a.target='_blank';a.rel='noopener';a.textContent='📋 Abrir formulario';quick.appendChild(a);
-      const b=document.createElement('button');b.type='button';b.textContent='↻ Intentar de nuevo';b.dataset.ticketValue='restart';b.dataset.ticketLabel='Intentar de nuevo';quick.appendChild(b);
-      const c=document.createElement('button');c.type='button';c.textContent='🏠 Inicio';c.dataset.ticketValue='home';c.dataset.ticketLabel='Inicio';quick.appendChild(c);
     }
 
     function startLookup(prefill){
