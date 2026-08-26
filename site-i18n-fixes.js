@@ -19,9 +19,50 @@
     `;
     document.head.appendChild(style);
   }
+
   function moveLanguageSwitcher(){const nav=document.querySelector('.container.nav');const switcher=document.getElementById('siteLanguageSwitch');const call=nav&&nav.querySelector('.desktop-call');if(nav&&switcher&&call&&switcher.nextElementSibling!==call)nav.insertBefore(switcher,call);}
   function loadPrices(){if(document.getElementById('itxServicePricesScript'))return;const s=document.createElement('script');s.id='itxServicePricesScript';s.src='service-prices.js';s.defer=true;document.head.appendChild(s);}
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
+
+  // Password recovery fix:
+  // The portal used a URL with #portal as redirectTo. Supabase Auth also uses
+  // the URL hash for the recovery tokens, which can corrupt the hash and cause
+  // the portal to report an error. Intercept the click and use a clean URL.
+  function installPasswordRecoveryFix(){
+    document.addEventListener('click', async (event) => {
+      const button = event.target && event.target.closest ? event.target.closest('#forgotPassword') : null;
+      if(!button) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const emailInput = document.getElementById('loginEmail');
+      const message = document.getElementById('loginMessage');
+      const email = (emailInput?.value || '').trim();
+      if(!email){
+        if(typeof window.msg === 'function') window.msg(message,'Escribe primero tu correo electrónico.','error');
+        else if(message) message.textContent='Escribe primero tu correo electrónico.';
+        return;
+      }
+
+      try{
+        if(typeof window.ITExpresSupabase === 'undefined') throw new Error('No se pudo inicializar el servicio de autenticación.');
+        if(message) message.textContent='Enviando instrucciones…';
+        const { error } = await window.ITExpresSupabase.auth.resetPasswordForEmail(email, {
+          redirectTo: 'https://itexpressolutions.com/?recovery=1'
+        });
+        if(message){
+          message.textContent = error ? error.message : 'Te enviamos las instrucciones para restablecer tu contraseña.';
+          message.className = 'portal-message ' + (error ? 'error' : 'success');
+        }
+      }catch(error){
+        if(message){
+          message.textContent = error?.message || 'No se pudo solicitar el cambio de contraseña.';
+          message.className = 'portal-message error';
+        }
+      }
+    }, true);
+  }
+
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();installPasswordRecoveryFix();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
