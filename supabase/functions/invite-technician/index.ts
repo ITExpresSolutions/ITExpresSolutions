@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
 
     const { data: created, error: createError } = await admin.auth.admin.createUser({
       email,
-      email_confirm: true,
+      email_confirm: false,
       user_metadata: { nombre, telefono, especialidad, rol: "tecnico" },
     });
 
