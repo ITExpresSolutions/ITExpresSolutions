@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Encuesta de satisfacción ITExpresSolutions">
+  <title>Encuesta de satisfacción | ITExpresSolutions</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f3f7fa;font-family:Arial,Helvetica,sans-serif;color:#17324d;min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(620px,100%);background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 14px 45px rgba(6,47,82,.14)}.header{background:linear-gradient(135deg,#062f52,#087f8e);padding:30px;color:#fff}.header img{width:62px;height:62px;border-radius:15px;display:block;margin-bottom:15px}.brand{font-size:26px;font-weight:800}.tag{font-size:14px;margin-top:6px;opacity:.9}.content{padding:34px 30px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:1px;color:#087f8e;text-transform:uppercase}.title{font-size:28px;margin:8px 0 14px;color:#062f52}.text{font-size:16px;line-height:1.65;color:#526875}.stars{display:flex;justify-content:center;gap:8px;margin:28px 0 10px}.star{border:0;background:transparent;font-size:42px;cursor:pointer;opacity:.38;transition:.15s;padding:3px}.star:hover,.star.selected{opacity:1;transform:scale(1.08)}.rating-label{text-align:center;color:#607887;font-size:14px;min-height:20px}.field{margin-top:24px}.field label{display:block;font-weight:700;color:#062f52;margin-bottom:8px}.field textarea{width:100%;min-height:110px;border:1px solid #d6e4ea;border-radius:12px;padding:12px;font:inherit;resize:vertical}.submit{width:100%;margin-top:22px;border:0;border-radius:11px;background:#087f8e;color:#fff;font-size:16px;font-weight:800;padding:15px;cursor:pointer}.submit:disabled{opacity:.6;cursor:not-allowed}.message{margin-top:16px;text-align:center;font-weight:700}.footer{background:#f7fafb;border-top:1px solid #e5edf1;padding:20px;text-align:center;font-size:12px;color:#80929d}.footer a{color:#087f8e;text-decoration:none;font-weight:700}.hidden{display:none!important}.success{text-align:center}.success h2{color:#062f52}.error{color:#b42318}.ticket{background:#f4fafb;border:1px solid #dcebf0;border-radius:13px;padding:14px;margin:20px 0;color:#526875;font-size:14px}.ticket strong{color:#062f52}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <img src="logo-badge.webp" alt="ITExpresSolutions">
+      <div class="brand">ITExpresSolutions</div>
+      <div class="tag">Soporte técnico y soluciones digitales</div>
+    </header>
+    <section class="content" id="app">
+      <div id="loading">Cargando encuesta…</div>
+      <div id="survey" class="hidden">
+        <div class="eyebrow">Encuesta de satisfacción</div>
+        <h1 class="title">¿Cómo fue tu experiencia?</h1>
+        <p class="text">Tu opinión nos ayuda a mejorar. Califica el servicio que recibiste de ITExpresSolutions.</p>
+        <div class="ticket" id="ticketInfo"></div>
+        <div class="stars" role="radiogroup" aria-label="Calificación de 1 a 5 estrellas">
+          <button class="star" data-rating="1" aria-label="1 estrella">★</button>
+          <button class="star" data-rating="2" aria-label="2 estrellas">★</button>
+          <button class="star" data-rating="3" aria-label="3 estrellas">★</button>
+          <button class="star" data-rating="4" aria-label="4 estrellas">★</button>
+          <button class="star" data-rating="5" aria-label="5 estrellas">★</button>
+        </div>
+        <div class="rating-label" id="ratingLabel">Selecciona una calificación</div>
+        <div class="field"><label for="comment">¿Quieres contarnos algo más? <span style="font-weight:400;color:#80929d">(opcional)</span></label><textarea id="comment" maxlength="1000" placeholder="Cuéntanos cómo fue tu experiencia…"></textarea></div>
+        <button class="submit" id="submit" disabled>Enviar evaluación</button>
+        <div class="message" id="message"></div>
+      </div>
+      <div id="success" class="success hidden"><div style="font-size:48px">💚</div><h2>¡Gracias por tu opinión!</h2><p class="text">Tu evaluación fue recibida correctamente y nos ayudará a seguir mejorando nuestro servicio.</p><p><a href="https://itexpressolutions.com">Volver a ITExpresSolutions</a></p></div>
+      <div id="error" class="message error hidden"></div>
+    </section>
+    <footer class="footer">ITExpresSolutions · <a href="mailto:itexpressolutions@gmail.com">itexpressolutions@gmail.com</a> · +52 56 6388 5856<br><span style="display:inline-block;margin-top:7px"><a href="https://itexpressolutions.com">🌐 Sitio oficial</a></span></footer>
+  </main>
+<script>
+(async()=>{
+  const token=new URLSearchParams(location.search).get('token');
+  const loading=document.getElementById('loading'),survey=document.getElementById('survey'),success=document.getElementById('success'),errorBox=document.getElementById('error'),info=document.getElementById('ticketInfo'),submit=document.getElementById('submit'),label=document.getElementById('ratingLabel'),comment=document.getElementById('comment'),stars=[...document.querySelectorAll('.star')];
+  if(!token){loading.classList.add('hidden');errorBox.textContent='El enlace de la encuesta no es válido.';errorBox.classList.remove('hidden');return;}
+  let rating=0;
+  const endpoint='https://wfdxbgohwejawmkpninz.supabase.co/functions/v1/send-csat';
+  try{
+    const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',token})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'No se pudo cargar la encuesta.');
+    loading.classList.add('hidden');
+    if(data.survey.respondido_at){success.classList.remove('hidden');return;}
+    info.innerHTML='<strong>Ticket:</strong> #'+String(data.survey.trabajo_id).slice(0,8).toUpperCase();
+    survey.classList.remove('hidden');
+    stars.forEach(s=>s.addEventListener('click',()=>{rating=Number(s.dataset.rating);stars.forEach(x=>x.classList.toggle('selected',Number(x.dataset.rating)<=rating));label.textContent=['','Muy insatisfecho','Insatisfecho','Neutral','Satisfecho','Muy satisfecho'][rating];submit.disabled=false;}));
+    submit.addEventListener('click',async()=>{submit.disabled=true;label.textContent='Enviando…';const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'submit',token,puntuacion:rating,comentario:comment.value})});const out=await res.json();if(!res.ok) throw new Error(out.error||'No se pudo guardar la evaluación.');survey.classList.add('hidden');success.classList.remove('hidden');});
+  }catch(e){loading.classList.add('hidden');errorBox.textContent=e.message||'No se pudo cargar la encuesta.';errorBox.classList.remove('hidden');}
+})();
+</script>
+</body>
+</html>
