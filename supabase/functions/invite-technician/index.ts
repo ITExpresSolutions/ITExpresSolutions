@@ -8,14 +8,27 @@ const corsHeaders = {
 };
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const LEGACY_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const SECRET_KEYS_RAW = Deno.env.get("SUPABASE_SECRET_KEYS");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SITE_URL = "https://itexpressolutions.com";
 const FROM_EMAIL = "ITExpresSolutions <soporte@itexpressolutions.com>";
 const REPLY_TO = "itexpressolutions@gmail.com";
 
-const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
-  auth: { autoRefreshToken: false, persistSession: false },
+function getAdminKey() {
+  if (LEGACY_SERVICE_ROLE_KEY) return LEGACY_SERVICE_ROLE_KEY;
+  if (SECRET_KEYS_RAW) {
+    try {
+      const keys = JSON.parse(SECRET_KEYS_RAW) as Record<string, string>;
+      if (keys.default) return keys.default;
+    } catch (_) {}
+  }
+  throw new Error("No hay una clave administrativa de Supabase disponible para la Edge Function.");
+}
+
+const ADMIN_KEY = getAdminKey();
+const admin = createClient(SUPABASE_URL, ADMIN_KEY, {
+  auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
 });
 
 function json(body: unknown, status = 200) {
