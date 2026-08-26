@@ -23,11 +23,16 @@
       #itxRecoveryCard h2{margin:0 0 8px;color:#062f52;font-size:26px}
       #itxRecoveryCard p{color:#526875;line-height:1.55}
       #itxRecoveryCard label{display:block;margin:16px 0 7px;color:#173042;font-weight:700}
-      #itxRecoveryCard input{width:100%;box-sizing:border-box;border:1px solid #cfe0e6;border-radius:12px;padding:12px 13px;font:inherit}
-      #itxRecoveryCard button{width:100%;margin-top:18px;border:0;border-radius:12px;padding:13px 16px;background:#087f8e;color:#fff;font-weight:800;cursor:pointer}
+      .itxPasswordWrap{position:relative;width:100%}
+      .itxPasswordWrap input{width:100%;box-sizing:border-box;border:1px solid #cfe0e6;border-radius:12px;padding:12px 48px 12px 13px;font:inherit}
+      .itxPasswordToggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:36px;height:36px;margin:0;border:0!important;background:transparent!important;color:#526875!important;padding:0!important;display:grid;place-items:center;font-size:19px;cursor:pointer;box-shadow:none!important}
+      .itxPasswordToggle:hover{color:#087f8e!important}
+      #itxRecoveryCard button#itxRecoverySubmit{width:100%;margin-top:18px;border:0;border-radius:12px;padding:13px 16px;background:#087f8e;color:#fff;font-weight:800;cursor:pointer}
       #itxRecoveryCard button:disabled{opacity:.6;cursor:wait}
       #itxRecoveryMessage{min-height:24px;margin-top:14px;font-size:14px}
       #itxRecoveryMessage.error{color:#b42318} #itxRecoveryMessage.success{color:#087f8e}
+      #itxRecoveryMatch{min-height:20px;margin-top:7px;font-size:13px}
+      #itxRecoveryMatch.match{color:#087f8e} #itxRecoveryMatch.no-match{color:#b42318}
     `;
     document.head.appendChild(style);
   }
@@ -43,9 +48,16 @@
         <p>Escribe una nueva contraseña para recuperar el acceso a tu cuenta de ITExpresSolutions.</p>
         <form id="itxRecoveryForm">
           <label for="itxRecoveryPassword">Nueva contraseña</label>
-          <input id="itxRecoveryPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Mínimo 8 caracteres">
+          <div class="itxPasswordWrap">
+            <input id="itxRecoveryPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Mínimo 8 caracteres">
+            <button class="itxPasswordToggle" type="button" data-target="itxRecoveryPassword" aria-label="Mostrar contraseña" title="Mostrar contraseña">👁</button>
+          </div>
           <label for="itxRecoveryConfirm">Confirmar contraseña</label>
-          <input id="itxRecoveryConfirm" type="password" minlength="8" autocomplete="new-password" required placeholder="Repite la contraseña">
+          <div class="itxPasswordWrap">
+            <input id="itxRecoveryConfirm" type="password" minlength="8" autocomplete="new-password" required placeholder="Repite la contraseña">
+            <button class="itxPasswordToggle" type="button" data-target="itxRecoveryConfirm" aria-label="Mostrar contraseña" title="Mostrar contraseña">👁</button>
+          </div>
+          <div id="itxRecoveryMatch" aria-live="polite"></div>
           <button id="itxRecoverySubmit" type="submit">Cambiar contraseña</button>
           <div id="itxRecoveryMessage" aria-live="polite"></div>
         </form>
@@ -54,15 +66,49 @@
     const form = document.getElementById('itxRecoveryForm');
     const message = document.getElementById('itxRecoveryMessage');
     const submit = document.getElementById('itxRecoverySubmit');
+    const passwordInput = document.getElementById('itxRecoveryPassword');
+    const confirmInput = document.getElementById('itxRecoveryConfirm');
+    const matchMessage = document.getElementById('itxRecoveryMatch');
     if (initialMessage) { message.textContent = initialMessage; message.className = initialType; }
+
+    // Show/hide password buttons so the user can visually verify both fields.
+    overlay.querySelectorAll('.itxPasswordToggle').forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const input = document.getElementById(toggle.dataset.target);
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        toggle.textContent = showing ? '👁' : '🙈';
+        toggle.setAttribute('aria-label', showing ? 'Mostrar contraseña' : 'Ocultar contraseña');
+        toggle.title = showing ? 'Mostrar contraseña' : 'Ocultar contraseña';
+      });
+    });
+
+    function updateMatchIndicator() {
+      if (!confirmInput.value) {
+        matchMessage.textContent = '';
+        matchMessage.className = '';
+        return;
+      }
+      if (passwordInput.value === confirmInput.value) {
+        matchMessage.textContent = '✓ Las contraseñas coinciden.';
+        matchMessage.className = 'match';
+      } else {
+        matchMessage.textContent = '✕ Las contraseñas no coinciden.';
+        matchMessage.className = 'no-match';
+      }
+    }
+
+    passwordInput.addEventListener('input', updateMatchIndicator);
+    confirmInput.addEventListener('input', updateMatchIndicator);
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const password = document.getElementById('itxRecoveryPassword').value;
-      const confirm = document.getElementById('itxRecoveryConfirm').value;
+      const password = passwordInput.value;
+      const confirm = confirmInput.value;
       message.className = '';
+      updateMatchIndicator();
       if (password.length < 8) { message.textContent = 'La contraseña debe tener al menos 8 caracteres.'; message.className = 'error'; return; }
-      if (password !== confirm) { message.textContent = 'Las contraseñas no coinciden.'; message.className = 'error'; return; }
+      if (password !== confirm) { message.textContent = 'Las contraseñas no coinciden. Verifica ambas usando el icono 👁.'; message.className = 'error'; return; }
       if (!auth() || !recoverySessionReady) { message.textContent = 'La sesión de recuperación no está lista. Abre nuevamente el enlace recibido por correo.'; message.className = 'error'; return; }
       submit.disabled = true;
       submit.textContent = 'Guardando…';
