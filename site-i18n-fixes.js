@@ -26,17 +26,12 @@
   function moveLanguageSwitcher(){const nav=document.querySelector('.container.nav');const switcher=document.getElementById('siteLanguageSwitch');const call=nav&&nav.querySelector('.desktop-call');if(nav&&switcher&&call&&switcher.nextElementSibling!==call)nav.insertBefore(switcher,call);}
   function loadPrices(){if(document.getElementById('itxServicePricesScript'))return;const s=document.createElement('script');s.id='itxServicePricesScript';s.src='service-prices.js';s.defer=true;document.head.appendChild(s);}
 
-  // Password recovery fix:
-  // The portal used a URL with #portal as redirectTo. Supabase Auth also uses
-  // the URL hash for the recovery tokens, which can corrupt the hash and cause
-  // the portal to report an error. Intercept the click and use a clean URL.
   function installPasswordRecoveryFix(){
     document.addEventListener('click', async (event) => {
       const button = event.target && event.target.closest ? event.target.closest('#forgotPassword') : null;
       if(!button) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-
       const emailInput = document.getElementById('loginEmail');
       const message = document.getElementById('loginMessage');
       const email = (emailInput?.value || '').trim();
@@ -45,33 +40,31 @@
         else if(message) message.textContent='Escribe primero tu correo electrónico.';
         return;
       }
-
       try{
         if(typeof window.ITExpresSupabase === 'undefined') throw new Error('No se pudo inicializar el servicio de autenticación.');
         if(message) message.textContent='Enviando instrucciones…';
-        const { error } = await window.ITExpresSupabase.auth.resetPasswordForEmail(email, {
-          redirectTo: 'https://itexpressolutions.com/?recovery=1'
-        });
-        if(message){
-          message.textContent = error ? error.message : 'Te enviamos las instrucciones para restablecer tu contraseña.';
-          message.className = 'portal-message ' + (error ? 'error' : 'success');
-        }
+        const { error } = await window.ITExpresSupabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://itexpressolutions.com/?recovery=1' });
+        if(message){ message.textContent = error ? error.message : 'Te enviamos las instrucciones para restablecer tu contraseña.'; message.className = 'portal-message ' + (error ? 'error' : 'success'); }
       }catch(error){
-        if(message){
-          message.textContent = error?.message || 'No se pudo solicitar el cambio de contraseña.';
-          message.className = 'portal-message error';
-        }
+        if(message){ message.textContent = error?.message || 'No se pudo solicitar el cambio de contraseña.'; message.className = 'portal-message error'; }
       }
     }, true);
   }
 
-  // Admin controls: add editable service date and status to the existing
-  // administrative jobs table without changing the ticket schema.
   function toDateTimeLocal(value){
     if(!value) return '';
     const d=new Date(value); if(isNaN(d)) return '';
     const pad=n=>String(n).padStart(2,'0');
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function parseDisplayedDate(text){
+    const m=String(text||'').trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:,?\s+(\d{1,2}):(\d{2}))?/);
+    if(!m) return '';
+    const day=Number(m[1]), month=Number(m[2]), year=Number(m[3]);
+    const hour=Number(m[4]||0), minute=Number(m[5]||0);
+    const d=new Date(year,month-1,day,hour,minute,0,0);
+    return isNaN(d)?'':toDateTimeLocal(d.toISOString());
   }
 
   async function updateAdminJob(id, payload, control, successText){
@@ -80,10 +73,7 @@
     control.disabled=true;
     const {error}=await sb.from('trabajos').update({...payload, actualizado_at:new Date().toISOString()}).eq('id',id);
     control.disabled=false;
-    if(error){
-      alert('No se pudo guardar el cambio: '+error.message);
-      return;
-    }
+    if(error){ alert('No se pudo guardar el cambio: '+error.message); return; }
     control.title=successText || 'Guardado';
     control.dataset.saved='1';
   }
@@ -92,13 +82,11 @@
     const panel=document.getElementById('adminPanel');
     const body=document.getElementById('adminJobsBody');
     if(!panel || panel.hidden || !body) return;
-
     body.querySelectorAll('tr').forEach(row=>{
       const tech=row.querySelector('.job-tech-select');
       if(!tech) return;
       const id=tech.dataset.jobId;
       if(!id) return;
-
       const cells=row.querySelectorAll('td');
       if(cells.length<7) return;
 
@@ -115,14 +103,8 @@
 
       if(!row.querySelector('.itx-admin-service-date')){
         const dateCell=cells[5];
-        const text=dateCell.textContent.trim();
-        let iso='';
-        // The existing table prints a localized date, so use a blank control
-        // when the source value is not directly available in the DOM. The
-        // field is populated on subsequent enhancement when data-date exists.
-        const existing=dateCell.dataset.iso || '';
-        iso=existing || (text==='—' ? '' : '');
-        dateCell.innerHTML=`<input class="itx-admin-service-date" type="datetime-local" value="${toDateTimeLocal(iso)}" data-job-id="${id}" aria-label="Fecha de servicio">`;
+        const localValue=parseDisplayedDate(dateCell.textContent);
+        dateCell.innerHTML=`<input class="itx-admin-service-date" type="datetime-local" value="${localValue}" data-job-id="${id}" aria-label="Fecha de servicio">`;
         const input=dateCell.querySelector('.itx-admin-service-date');
         input.addEventListener('change',()=>updateAdminJob(id,{fecha_programada:input.value?new Date(input.value).toISOString():null},input,'Fecha de servicio guardada'));
       }
