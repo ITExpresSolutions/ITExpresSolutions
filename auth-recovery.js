@@ -1,18 +1,17 @@
 /* ITExpresSolutions - Supabase password recovery UI.
-   The email request is handled by Supabase Auth; this file handles the
-   PASSWORD_RECOVERY session after the user clicks the email link. */
+   Handles both Supabase recovery URL formats: PKCE (?code=...) and implicit (#access_token=...&refresh_token=...&type=recovery).
+*/
 (function () {
   'use strict';
-
   const RECOVERY_PARAM = 'recovery';
-  const sbReady = () => window.ITExpresSupabase && window.ITExpresSupabase.auth;
-
-  function isRecoveryRoute() {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(RECOVERY_PARAM) === '1' ||
-      url.hash.includes('type=recovery') ||
-      url.hash.includes('access_token=');
-  }
+  let recoverySessionReady = false;
+  const auth = () => window.ITExpresSupabase && window.ITExpresSupabase.auth;
+  const getUrl = () => new URL(window.location.href);
+  const isRecoveryRoute = () => {
+    const u = getUrl();
+    const h = u.hash || '';
+    return u.searchParams.get(RECOVERY_PARAM) === '1' || u.searchParams.has('code') || h.includes('type=recovery') || h.includes('access_token=');
+  };
 
   function installStyles() {
     if (document.getElementById('itxRecoveryStyles')) return;
@@ -33,7 +32,7 @@
     document.head.appendChild(style);
   }
 
-  function render() {
+  function render(initialMessage='', initialType='') {
     if (document.getElementById('itxRecoveryOverlay')) return;
     installStyles();
     const overlay = document.createElement('div');
@@ -52,10 +51,11 @@
         </form>
       </section>`;
     document.body.appendChild(overlay);
-
     const form = document.getElementById('itxRecoveryForm');
     const message = document.getElementById('itxRecoveryMessage');
     const submit = document.getElementById('itxRecoverySubmit');
+    if (initialMessage) { message.textContent = initialMessage; message.className = initialType; }
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const password = document.getElementById('itxRecoveryPassword').value;
@@ -63,36 +63,73 @@
       message.className = '';
       if (password.length < 8) { message.textContent = 'La contraseña debe tener al menos 8 caracteres.'; message.className = 'error'; return; }
       if (password !== confirm) { message.textContent = 'Las contraseñas no coinciden.'; message.className = 'error'; return; }
-      if (!sbReady()) { message.textContent = 'El servicio de autenticación todavía no está listo. Recarga la página e inténtalo de nuevo.'; message.className = 'error'; return; }
+      if (!auth() || !recoverySessionReady) { message.textContent = 'La sesión de recuperación no está lista. Abre nuevamente el enlace recibido por correo.'; message.className = 'error'; return; }
       submit.disabled = true;
       submit.textContent = 'Guardando…';
-      const { error } = await window.ITExpresSupabase.auth.updateUser({ password });
-      if (error) {
-        message.textContent = error.message || 'No se pudo actualizar la contraseña.';
+      try {
+        const { data: { session } } = await auth().getSession();
+        if (!session) throw new Error('La sesión de recuperación expiró. Solicita un nuevo enlace.');
+        const { error } = await auth().updateUser({ password });
+        if (error) throw error;
+        message.textContent = 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.';
+        message.className = 'success';
+        setTimeout(async () => {
+          const clean = getUrl();
+          clean.searchParams.delete(RECOVERY_PARAM);
+          clean.searchParams.delete('code');
+          clean.hash = '';
+          try { await auth().signOut(); } catch (_) {}
+          window.history.replaceState({}, '', clean.pathname + clean.search);
+          overlay.remove();
+          window.location.hash = '#portal';
+        }, 1200);
+      } catch (error) {
+        message.textContent = error?.message || 'No se pudo actualizar la contraseña.';
         message.className = 'error';
         submit.disabled = false;
         submit.textContent = 'Cambiar contraseña';
-        return;
       }
-      message.textContent = 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.';
-      message.className = 'success';
-      setTimeout(() => {
-        const clean = new URL(window.location.href);
-        clean.searchParams.delete(RECOVERY_PARAM);
-        clean.hash = '';
-        window.history.replaceState({}, '', clean.pathname + clean.search);
-        overlay.remove();
-        window.location.hash = '#portal';
-      }, 1400);
     });
   }
 
-  function boot() {
-    if (!isRecoveryRoute()) return;
-    render();
-    if (!sbReady()) {
-      setTimeout(() => { if (sbReady()) render(); }, 1200);
+  async function establishRecoverySession() {
+    const a = auth();
+    if (!a) return { ok: false, pending: true };
+    try {
+      const { data: { session } } = await a.getSession();
+      if (session) { recoverySessionReady = true; return { ok: true }; }
+    } catch (_) {}
+    const u = getUrl();
+    const code = u.searchParams.get('code');
+    if (code) {
+      const { error } = await a.exchangeCodeForSession(code);
+      if (error) return { ok: false, error };
+      recoverySessionReady = true;
+      return { ok: true };
     }
+    const hashParams = new URLSearchParams((u.hash || '').replace(/^#/, ''));
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    if (accessToken && refreshToken) {
+      const { error } = await a.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      if (error) return { ok: false, error };
+      recoverySessionReady = true;
+      return { ok: true };
+    }
+    return { ok: false, error: new Error('No se encontró una sesión de recuperación válida.') };
+  }
+
+  async function boot() {
+    if (!isRecoveryRoute()) return;
+    let ready = false;
+    for (let i = 0; i < 30; i++) {
+      if (auth()) { ready = true; break; }
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    if (!ready) { render('El servicio de autenticación todavía no está listo. Recarga la página.', 'error'); return; }
+    const result = await establishRecoverySession();
+    if (result.ok) render();
+    else render(result.error?.message || 'No se pudo establecer la sesión de recuperación. Solicita un nuevo enlace.', 'error');
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

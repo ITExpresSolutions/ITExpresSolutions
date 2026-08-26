@@ -25,7 +25,7 @@
 
   function moveLanguageSwitcher(){const nav=document.querySelector('.container.nav');const switcher=document.getElementById('siteLanguageSwitch');const call=nav&&nav.querySelector('.desktop-call');if(nav&&switcher&&call&&switcher.nextElementSibling!==call)nav.insertBefore(switcher,call);}
   function loadPrices(){if(document.getElementById('itxServicePricesScript'))return;const s=document.createElement('script');s.id='itxServicePricesScript';s.src='service-prices.js';s.defer=true;document.head.appendChild(s);}
-  function loadAuthRecovery(){if(document.getElementById('itxAuthRecoveryScript'))return;const s=document.createElement('script');s.id='itxAuthRecoveryScript';s.src='auth-recovery.js?v=1';s.defer=true;document.head.appendChild(s);}
+  function loadAuthRecovery(){if(document.getElementById('itxAuthRecoveryScript'))return;const s=document.createElement('script');s.id='itxAuthRecoveryScript';s.src='auth-recovery.js?v=2';s.defer=true;document.head.appendChild(s);}
 
   function installPasswordRecoveryFix(){
     document.addEventListener('click', async (event) => {
