@@ -15,7 +15,10 @@
       #serviceBotMessages { min-height:0!important; max-height:min(500px,calc(100vh - 250px))!important; overflow-y:auto!important; }
       #serviceBotQuick { max-width:100%!important; }
       .service-bot-toggle { cursor:pointer!important; }
-      @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important} }
+      .itx-admin-status, .itx-admin-service-date { width:100%; min-width:150px; box-sizing:border-box; border:1px solid rgba(120,150,170,.35); border-radius:10px; padding:8px 9px; font:inherit; background:#fff; color:#173042; }
+      .itx-admin-service-date { min-width:205px; }
+      .itx-admin-status:focus, .itx-admin-service-date:focus { outline:2px solid rgba(67,213,142,.45); outline-offset:1px; }
+      @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px} }
     `;
     document.head.appendChild(style);
   }
@@ -62,7 +65,80 @@
     }, true);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();installPasswordRecoveryFix();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
+  // Admin controls: add editable service date and status to the existing
+  // administrative jobs table without changing the ticket schema.
+  function toDateTimeLocal(value){
+    if(!value) return '';
+    const d=new Date(value); if(isNaN(d)) return '';
+    const pad=n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  async function updateAdminJob(id, payload, control, successText){
+    const sb=window.ITExpresSupabase;
+    if(!sb) return;
+    control.disabled=true;
+    const {error}=await sb.from('trabajos').update({...payload, actualizado_at:new Date().toISOString()}).eq('id',id);
+    control.disabled=false;
+    if(error){
+      alert('No se pudo guardar el cambio: '+error.message);
+      return;
+    }
+    control.title=successText || 'Guardado';
+    control.dataset.saved='1';
+  }
+
+  function enhanceAdminJobs(){
+    const panel=document.getElementById('adminPanel');
+    const body=document.getElementById('adminJobsBody');
+    if(!panel || panel.hidden || !body) return;
+
+    body.querySelectorAll('tr').forEach(row=>{
+      const tech=row.querySelector('.job-tech-select');
+      if(!tech) return;
+      const id=tech.dataset.jobId;
+      if(!id) return;
+
+      const cells=row.querySelectorAll('td');
+      if(cells.length<7) return;
+
+      if(!row.querySelector('.itx-admin-status')){
+        const statusCell=cells[2];
+        const current=statusCell.querySelector('.status')?.textContent?.trim().toLowerCase() || '';
+        const map={'pendiente':'pendiente','asignado':'asignado','en proceso':'en_proceso','completado':'completado','cancelado':'cancelado'};
+        const value=map[current] || 'pendiente';
+        statusCell.innerHTML=`<select class="itx-admin-status" data-job-id="${id}" aria-label="Cambiar estado"><option value="pendiente">Pendiente</option><option value="asignado">Asignado</option><option value="en_proceso">En proceso</option><option value="completado">Completado</option><option value="cancelado">Cancelado</option></select>`;
+        const select=statusCell.querySelector('.itx-admin-status');
+        select.value=value;
+        select.addEventListener('change',()=>updateAdminJob(id,{estado:select.value},select,'Estado guardado'));
+      }
+
+      if(!row.querySelector('.itx-admin-service-date')){
+        const dateCell=cells[5];
+        const text=dateCell.textContent.trim();
+        let iso='';
+        // The existing table prints a localized date, so use a blank control
+        // when the source value is not directly available in the DOM. The
+        // field is populated on subsequent enhancement when data-date exists.
+        const existing=dateCell.dataset.iso || '';
+        iso=existing || (text==='—' ? '' : '');
+        dateCell.innerHTML=`<input class="itx-admin-service-date" type="datetime-local" value="${toDateTimeLocal(iso)}" data-job-id="${id}" aria-label="Fecha de servicio">`;
+        const input=dateCell.querySelector('.itx-admin-service-date');
+        input.addEventListener('change',()=>updateAdminJob(id,{fecha_programada:input.value?new Date(input.value).toISOString():null},input,'Fecha de servicio guardada'));
+      }
+    });
+  }
+
+  function watchAdminJobs(){
+    const body=document.getElementById('adminJobsBody');
+    if(!body) return;
+    const observer=new MutationObserver(()=>enhanceAdminJobs());
+    observer.observe(body,{childList:true,subtree:true});
+    setTimeout(enhanceAdminJobs,500);
+    setTimeout(enhanceAdminJobs,1500);
+  }
+
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
