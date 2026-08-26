@@ -22,7 +22,15 @@
       .itx-login-password-wrap input{padding-right:48px!important}
       .itx-login-password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0!important;background:transparent!important;color:#526875!important;padding:0!important;display:grid;place-items:center;font-size:19px;cursor:pointer;box-shadow:none!important}
       .itx-login-password-toggle:hover{color:#087f8e!important}
-      @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px} }
+      .itx-tech-invite-card{margin-top:18px!important}
+      .itx-tech-invite-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .itx-tech-invite-grid label{display:flex;flex-direction:column;gap:6px;font-weight:700;color:#36515f}
+      .itx-tech-invite-grid input{width:100%;box-sizing:border-box;border:1px solid #d6e4ea;border-radius:10px;padding:11px 12px;font:inherit;background:#fff;color:#173042}
+      .itx-tech-invite-grid input:focus{outline:2px solid rgba(67,213,142,.4);outline-offset:1px}
+      .itx-tech-invite-note{margin:0 0 16px;color:#617785;font-size:.9rem;line-height:1.5}
+      .itx-tech-invite-message{margin-top:10px;font-weight:700}
+      .itx-tech-invite-message.success{color:#087f62}.itx-tech-invite-message.error{color:#b42318}
+      @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px}.itx-tech-invite-grid{grid-template-columns:1fr} }
     `;
     document.head.appendChild(style);
   }
@@ -162,7 +170,68 @@
     setTimeout(enhanceAdminJobs,1500);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
+  function installTechnicianInvite(){
+    const adminPanel=document.getElementById('adminPanel');
+    if(!adminPanel || document.getElementById('itxTechInviteCard')) return;
+    const card=document.createElement('div');
+    card.id='itxTechInviteCard';
+    card.className='portal-card itx-tech-invite-card';
+    card.innerHTML=`
+      <div class="portal-card-head"><div><h3>Invitar técnico</h3><p>Crear la cuenta y enviar el correo de bienvenida.</p></div><span>✉️</span></div>
+      <p class="itx-tech-invite-note">El técnico recibirá su correo de acceso y un enlace seguro para crear su propia contraseña. Por seguridad, nunca enviamos contraseñas por correo.</p>
+      <form id="itxTechInviteForm" class="portal-form" autocomplete="off">
+        <div class="itx-tech-invite-grid">
+          <label>Nombre completo *<input id="itxTechNombre" required maxlength="120" placeholder="Nombre del técnico"></label>
+          <label>Correo electrónico *<input id="itxTechEmail" type="email" required maxlength="160" placeholder="tecnico@correo.com"></label>
+          <label>Teléfono<input id="itxTechTelefono" maxlength="50" placeholder="+52 ..."></label>
+          <label>Especialidad<input id="itxTechEspecialidad" maxlength="120" placeholder="Soporte, redes, hardware..."></label>
+        </div>
+        <button class="btn" type="submit" id="itxTechInviteBtn">✉️ Enviar invitación</button>
+        <div class="itx-tech-invite-message" id="itxTechInviteMessage" role="status"></div>
+      </form>`;
+    const firstCard=adminPanel.querySelector('.portal-grid-2');
+    if(firstCard) firstCard.insertAdjacentElement('afterend',card); else adminPanel.prepend(card);
+
+    const form=card.querySelector('#itxTechInviteForm');
+    const message=card.querySelector('#itxTechInviteMessage');
+    const button=card.querySelector('#itxTechInviteBtn');
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      const sb=window.ITExpresSupabase;
+      if(!sb){message.textContent='El servicio de autenticación todavía no está listo.';message.className='itx-tech-invite-message error';return;}
+      button.disabled=true;
+      message.textContent='Creando cuenta y enviando invitación…';
+      message.className='itx-tech-invite-message';
+      try{
+        const {data,error}=await sb.functions.invoke('invite-technician',{body:{
+          nombre:card.querySelector('#itxTechNombre').value.trim(),
+          email:card.querySelector('#itxTechEmail').value.trim(),
+          telefono:card.querySelector('#itxTechTelefono').value.trim(),
+          especialidad:card.querySelector('#itxTechEspecialidad').value.trim()
+        }});
+        if(error) throw new Error(error.message || 'No se pudo enviar la invitación.');
+        if(data?.error) throw new Error(data.error);
+        message.textContent=data?.message || 'Invitación enviada correctamente.';
+        message.className='itx-tech-invite-message success';
+        form.reset();
+        if(typeof window.loadTechnicians === 'function') await window.loadTechnicians();
+      }catch(error){
+        message.textContent=error?.message || 'No se pudo enviar la invitación.';
+        message.className='itx-tech-invite-message error';
+      }finally{button.disabled=false;}
+    });
+  }
+
+  function watchAdminPanel(){
+    const panel=document.getElementById('adminPanel');
+    if(!panel) return;
+    const observer=new MutationObserver(()=>{if(!panel.hidden)installTechnicianInvite();});
+    observer.observe(panel,{attributes:true,childList:true,subtree:true});
+    setTimeout(()=>{if(!panel.hidden)installTechnicianInvite();},500);
+    setTimeout(()=>{if(!panel.hidden)installTechnicianInvite();},1500);
+  }
+
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
