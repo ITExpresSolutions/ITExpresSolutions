@@ -8,6 +8,7 @@
   <style>
     *{box-sizing:border-box}body{margin:0;background:#f3f7fa;font-family:Arial,Helvetica,sans-serif;color:#17324d;min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(620px,100%);background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 14px 45px rgba(6,47,82,.14)}.header{background:linear-gradient(135deg,#062f52,#087f8e);padding:30px;color:#fff}.header img{width:62px;height:62px;border-radius:15px;display:block;margin-bottom:15px}.brand{font-size:26px;font-weight:800}.tag{font-size:14px;margin-top:6px;opacity:.9}.content{padding:34px 30px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:1px;color:#087f8e;text-transform:uppercase}.title{font-size:28px;margin:8px 0 14px;color:#062f52}.text{font-size:16px;line-height:1.65;color:#526875}.stars{display:flex;justify-content:center;gap:8px;margin:28px 0 10px}.star{border:0;background:transparent;font-size:42px;cursor:pointer;opacity:.38;transition:.15s;padding:3px}.star:hover,.star.selected{opacity:1;transform:scale(1.08)}.rating-label{text-align:center;color:#607887;font-size:14px;min-height:20px}.field{margin-top:24px}.field label{display:block;font-weight:700;color:#062f52;margin-bottom:8px}.field textarea{width:100%;min-height:110px;border:1px solid #d6e4ea;border-radius:12px;padding:12px;font:inherit;resize:vertical}.submit{width:100%;margin-top:22px;border:0;border-radius:11px;background:#087f8e;color:#fff;font-size:16px;font-weight:800;padding:15px;cursor:pointer}.submit:disabled{opacity:.6;cursor:not-allowed}.message{margin-top:16px;text-align:center;font-weight:700}.footer{background:#f7fafb;border-top:1px solid #e5edf1;padding:20px;text-align:center;font-size:12px;color:#80929d}.footer a{color:#087f8e;text-decoration:none;font-weight:700}.hidden{display:none!important}.success{text-align:center}.success h2{color:#062f52}.error{color:#b42318}.ticket{background:#f4fafb;border:1px solid #dcebf0;border-radius:13px;padding:14px;margin:20px 0;color:#526875;font-size:14px}.ticket strong{color:#062f52}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <main class="card">
@@ -45,18 +46,18 @@
   const token=new URLSearchParams(location.search).get('token');
   const loading=document.getElementById('loading'),survey=document.getElementById('survey'),success=document.getElementById('success'),errorBox=document.getElementById('error'),info=document.getElementById('ticketInfo'),submit=document.getElementById('submit'),label=document.getElementById('ratingLabel'),comment=document.getElementById('comment'),stars=[...document.querySelectorAll('.star')];
   if(!token){loading.classList.add('hidden');errorBox.textContent='El enlace de la encuesta no es válido.';errorBox.classList.remove('hidden');return;}
+  const sb=window.supabase.createClient('https://wfdxbgohwejawmkpninz.supabase.co','sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb');
   let rating=0;
-  const endpoint='https://wfdxbgohwejawmkpninz.supabase.co/functions/v1/send-csat';
   try{
-    const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get',token})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||'No se pudo cargar la encuesta.');
+    const {data,error}=await sb.rpc('get_csat_survey',{p_token:token});
+    if(error) throw error;
     loading.classList.add('hidden');
-    if(data.survey.respondido_at){success.classList.remove('hidden');return;}
-    info.innerHTML='<strong>Ticket:</strong> #'+String(data.survey.trabajo_id).slice(0,8).toUpperCase();
+    if(!data || !data.token){throw new Error('Encuesta no encontrada o enlace inválido.');}
+    if(data.respondido_at){success.classList.remove('hidden');return;}
+    info.innerHTML='<strong>Ticket:</strong> #'+String(data.trabajo_id).slice(0,8).toUpperCase();
     survey.classList.remove('hidden');
     stars.forEach(s=>s.addEventListener('click',()=>{rating=Number(s.dataset.rating);stars.forEach(x=>x.classList.toggle('selected',Number(x.dataset.rating)<=rating));label.textContent=['','Muy insatisfecho','Insatisfecho','Neutral','Satisfecho','Muy satisfecho'][rating];submit.disabled=false;}));
-    submit.addEventListener('click',async()=>{submit.disabled=true;label.textContent='Enviando…';const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'submit',token,puntuacion:rating,comentario:comment.value})});const out=await res.json();if(!res.ok) throw new Error(out.error||'No se pudo guardar la evaluación.');survey.classList.add('hidden');success.classList.remove('hidden');});
+    submit.addEventListener('click',async()=>{submit.disabled=true;label.textContent='Enviando…';const {data:result,error:submitError}=await sb.rpc('submit_csat_survey',{p_token:token,p_puntuacion:rating,p_comentario:comment.value});if(submitError)throw submitError;if(!result?.ok)throw new Error(result?.error||'No se pudo guardar la evaluación.');survey.classList.add('hidden');success.classList.remove('hidden');});
   }catch(e){loading.classList.add('hidden');errorBox.textContent=e.message||'No se pudo cargar la encuesta.';errorBox.classList.remove('hidden');}
 })();
 </script>
