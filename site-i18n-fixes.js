@@ -25,6 +25,7 @@
 
   function moveLanguageSwitcher(){const nav=document.querySelector('.container.nav');const switcher=document.getElementById('siteLanguageSwitch');const call=nav&&nav.querySelector('.desktop-call');if(nav&&switcher&&call&&switcher.nextElementSibling!==call)nav.insertBefore(switcher,call);}
   function loadPrices(){if(document.getElementById('itxServicePricesScript'))return;const s=document.createElement('script');s.id='itxServicePricesScript';s.src='service-prices.js';s.defer=true;document.head.appendChild(s);}
+  function loadAuthRecovery(){if(document.getElementById('itxAuthRecoveryScript'))return;const s=document.createElement('script');s.id='itxAuthRecoveryScript';s.src='auth-recovery.js?v=1';s.defer=true;document.head.appendChild(s);}
 
   function installPasswordRecoveryFix(){
     document.addEventListener('click', async (event) => {
@@ -43,7 +44,8 @@
       try{
         if(typeof window.ITExpresSupabase === 'undefined') throw new Error('No se pudo inicializar el servicio de autenticación.');
         if(message) message.textContent='Enviando instrucciones…';
-        const { error } = await window.ITExpresSupabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://itexpressolutions.com/?recovery=1' });
+        const redirectTo = `${window.location.origin}/?recovery=1`;
+        const { error } = await window.ITExpresSupabase.auth.resetPasswordForEmail(email, { redirectTo });
         if(message){ message.textContent = error ? error.message : 'Te enviamos las instrucciones para restablecer tu contraseña.'; message.className = 'portal-message ' + (error ? 'error' : 'success'); }
       }catch(error){
         if(message){ message.textContent = error?.message || 'No se pudo solicitar el cambio de contraseña.'; message.className = 'portal-message error'; }
@@ -120,7 +122,7 @@
     setTimeout(enhanceAdminJobs,1500);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
