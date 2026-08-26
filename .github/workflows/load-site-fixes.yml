@@ -1,0 +1,36 @@
+name: Load site copy fixes
+on:
+  push:
+    paths:
+      - 'site-i18n-fixes.js'
+      - '.github/workflows/load-site-fixes.yml'
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Load copy fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='  <script src="site-i18n-fixes.js" defer></script>\n'
+          if 'src="site-i18n-fixes.js"' not in s:
+              s=s.replace('</head>', tag+'</head>', 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: update Mexico and Costa Rica site copy"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
