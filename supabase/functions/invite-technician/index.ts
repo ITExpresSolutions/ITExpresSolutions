@@ -12,6 +12,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SITE_URL = "https://itexpressolutions.com";
 const FROM_EMAIL = "ITExpresSolutions <soporte@itexpressolutions.com>";
+const REPLY_TO = "itexpressolutions@gmail.com";
 
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
@@ -65,7 +66,7 @@ async function sendWelcomeEmail(to: string, nombre: string, actionLink: string) 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject: "👋 Bienvenido a ITExpresSolutions — Activa tu cuenta de técnico", html }),
+    body: JSON.stringify({ from: FROM_EMAIL, reply_to: REPLY_TO, to: [to], subject: "👋 Bienvenido a ITExpresSolutions — Activa tu cuenta de técnico", html }),
   });
 
   if (!response.ok) {
