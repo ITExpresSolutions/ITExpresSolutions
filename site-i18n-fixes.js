@@ -18,6 +18,10 @@
       .itx-admin-status, .itx-admin-service-date { width:100%; min-width:150px; box-sizing:border-box; border:1px solid rgba(120,150,170,.35); border-radius:10px; padding:8px 9px; font:inherit; background:#fff; color:#173042; }
       .itx-admin-service-date { min-width:205px; }
       .itx-admin-status:focus, .itx-admin-service-date:focus { outline:2px solid rgba(67,213,142,.45); outline-offset:1px; }
+      .itx-login-password-wrap{position:relative;width:100%}
+      .itx-login-password-wrap input{padding-right:48px!important}
+      .itx-login-password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0!important;background:transparent!important;color:#526875!important;padding:0!important;display:grid;place-items:center;font-size:19px;cursor:pointer;box-shadow:none!important}
+      .itx-login-password-toggle:hover{color:#087f8e!important}
       @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px} }
     `;
     document.head.appendChild(style);
@@ -26,6 +30,42 @@
   function moveLanguageSwitcher(){const nav=document.querySelector('.container.nav');const switcher=document.getElementById('siteLanguageSwitch');const call=nav&&nav.querySelector('.desktop-call');if(nav&&switcher&&call&&switcher.nextElementSibling!==call)nav.insertBefore(switcher,call);}
   function loadPrices(){if(document.getElementById('itxServicePricesScript'))return;const s=document.createElement('script');s.id='itxServicePricesScript';s.src='service-prices.js';s.defer=true;document.head.appendChild(s);}
   function loadAuthRecovery(){if(document.getElementById('itxAuthRecoveryScript'))return;const s=document.createElement('script');s.id='itxAuthRecoveryScript';s.src='auth-recovery.js?v=2';s.defer=true;document.head.appendChild(s);}
+
+  function installLoginPasswordToggle(){
+    const install = () => {
+      const email = document.getElementById('loginEmail');
+      if(!email) return;
+      const form = email.closest('form') || email.parentElement?.parentElement;
+      if(!form) return;
+      const password = form.querySelector('input[type="password"]');
+      if(!password || password.dataset.itxEyeInstalled === '1') return;
+      password.dataset.itxEyeInstalled = '1';
+      const wrap = document.createElement('div');
+      wrap.className = 'itx-login-password-wrap';
+      password.parentNode.insertBefore(wrap,password);
+      wrap.appendChild(password);
+      const button = document.createElement('button');
+      button.type='button';
+      button.className='itx-login-password-toggle';
+      button.textContent='👁';
+      button.setAttribute('aria-label','Mostrar contraseña');
+      button.title='Mostrar contraseña';
+      button.addEventListener('click',()=>{
+        const showing=password.type==='text';
+        password.type=showing?'password':'text';
+        button.textContent=showing?'👁':'🙈';
+        button.setAttribute('aria-label',showing?'Mostrar contraseña':'Ocultar contraseña');
+        button.title=showing?'Mostrar contraseña':'Ocultar contraseña';
+      });
+      wrap.appendChild(button);
+    };
+    install();
+    const observer=new MutationObserver(install);
+    observer.observe(document.body,{childList:true,subtree:true});
+    setTimeout(install,300);
+    setTimeout(install,1000);
+    setTimeout(install,2500);
+  }
 
   function installPasswordRecoveryFix(){
     document.addEventListener('click', async (event) => {
@@ -122,7 +162,7 @@
     setTimeout(enhanceAdminJobs,1500);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
