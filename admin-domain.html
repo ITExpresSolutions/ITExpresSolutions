@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dominio, DNS y SSL | ITExpresSolutions</title>
+<style>
+body{margin:0;background:#f3f7fa;color:#17324d;font-family:Arial,Helvetica,sans-serif}.wrap{max-width:980px;margin:auto;padding:22px}.top,.card,.metric{background:#fff;border-radius:18px;box-shadow:0 7px 24px rgba(6,47,82,.08)}.top{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px}.brand{display:flex;gap:12px;align-items:center}.brand img{width:50px;height:50px;border-radius:12px}.brand h1{margin:0;color:#062f52;font-size:22px}.muted,.small{color:#6d808b;font-size:13px;line-height:1.6}.actions{display:flex;gap:8px;flex-wrap:wrap}button,a.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;background:#087f8e;color:#fff;text-decoration:none;cursor:pointer}.secondary{background:#eef6f8;color:#062f52!important}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}.metric{padding:18px}.metric span{display:block;color:#718590;font-size:12px;font-weight:800}.metric strong{display:block;color:#062f52;font-size:22px;margin-top:8px}.ok{color:#087f62!important}.warn{color:#a86a00!important}.bad{color:#b42318!important}.card{padding:20px;margin-bottom:16px}.card h2{margin:0 0 8px;color:#062f52}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #e7eef1}.row:last-child{border-bottom:0}.pill{border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;background:#eef2f4;color:#607887;white-space:nowrap}.pill.ok{background:#e5f7ed}.pill.warn{background:#fff5dc}.pill.bad{background:#fff0ed}.notice{padding:12px;border-radius:11px;background:#eef6f8;color:#24546a;margin-bottom:15px}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;word-break:break-all;color:#526b78}.list{margin:8px 0 0;padding-left:18px}.foot{font-size:12px;color:#718590;line-height:1.6}@media(max-width:700px){.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.grid{grid-template-columns:1fr}.row{align-items:flex-start;flex-direction:column}.pill{white-space:normal}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top">
+<div class="brand"><img src="logo-badge.webp" alt="ITExpresSolutions"><div><h1>🌐 Dominio, DNS y SSL</h1><div class="muted">Verificación de disponibilidad y configuración de ITExpresSolutions</div></div></div>
+<div class="actions"><a class="btn secondary" href="/admin-server.html">🖥️ Estado del sistema</a><button id="refresh">↻ Actualizar</button></div>
+</header>
+<div id="notice" class="notice">Comprobando…</div>
+<section class="grid">
+<div class="metric"><span>🌐 DOMINIO</span><strong id="domain">—</strong></div>
+<div class="metric"><span>🔐 HTTPS / SSL</span><strong id="ssl">—</strong></div>
+<div class="metric"><span>🧭 DNS</span><strong id="dns">—</strong></div>
+</section>
+<section class="card"><h2>🔎 Verificaciones</h2>
+<div class="row"><div><b>Dominio actual</b><div class="small">El panel comprueba que estás usando itexpressolutions.com</div><div id="host" class="code">—</div></div><span id="domainPill" class="pill">Comprobando…</span></div>
+<div class="row"><div><b>HTTPS / SSL</b><div class="small">La página se está sirviendo mediante HTTPS. El navegador valida el certificado TLS antes de cargarla.</div></div><span id="sslPill" class="pill">Comprobando…</span></div>
+<div class="row"><div><b>DNS A del dominio raíz</b><div class="small">Se comparan los registros A con las direcciones oficiales habituales de GitHub Pages.</div><div id="aRecords" class="code">—</div></div><span id="aPill" class="pill">Comprobando…</span></div>
+<div class="row"><div><b>DNS CNAME de www</b><div class="small">Se comprueba si www.itexpressolutions.com apunta al destino de GitHub Pages.</div><div id="wwwRecords" class="code">—</div></div><span id="wwwPill" class="pill">Comprobando…</span></div>
+<div class="row"><div><b>CNAME de GitHub</b><div class="small">Se comprueba el archivo CNAME publicado en el repositorio.</div><div id="cnameFile" class="code">—</div></div><span id="cnamePill" class="pill">Comprobando…</span></div>
+</section>
+<section class="card"><h2>🛡️ Resultado de seguridad</h2><div id="security" class="small">Ejecutando comprobaciones…</div></section>
+<section class="card"><h2>ℹ️ Importante</h2><p class="foot">Desde una página estática de GitHub Pages podemos comprobar HTTPS, el dominio que está cargado y consultar DNS público. La fecha exacta de expiración del certificado TLS y algunos detalles internos de GitHub no están expuestos directamente al navegador; por eso no se inventa ese dato.</p></section>
+</main>
+<script>
+const DOMAIN='itexpressolutions.com';
+const WWW='www.itexpressolutions.com';
+const GH='ITExpresSolutions.github.io';
+const GH_IPS=['185.199.108.153','185.199.109.153','185.199.110.153','185.199.111.153'];
+const $=id=>document.getElementById(id);
+const setP=(id,text,kind='')=>{const e=$(id);e.textContent=text;e.className='pill '+kind};
+async function dns(name,type){const u='https://dns.google/resolve?name='+encodeURIComponent(name)+'&type='+type;const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('DNS HTTP '+r.status);const j=await r.json();return (j.Answer||[]).map(x=>x.data.replace(/\.$/,''));}
+async function cnameFile(){const r=await fetch('https://raw.githubusercontent.com/ITExpresSolutions/ITExpresSolutions/main/CNAME',{cache:'no-store'});if(!r.ok)throw new Error('CNAME HTTP '+r.status);return (await r.text()).trim();}
+async function check(){
+$('notice').textContent='Ejecutando verificación…';
+$('host').textContent=location.hostname||'(sin host)';
+const sameHost=location.hostname===DOMAIN||location.hostname===WWW||location.hostname==='itexpressolutions.github.io';
+setP('domainPill',sameHost?'CORRECTO':'REVISAR',sameHost?'ok':'warn');$('domain').textContent=sameHost?'OK':'REVISAR';
+const https=location.protocol==='https:';
+setP('sslPill',https?'HTTPS OK':'SIN HTTPS',https?'ok':'bad');$('ssl').textContent=https?'OK':'ERROR';
+let a=[],c=[],cf='';
+try{a=await dns(DOMAIN,'A');$('aRecords').textContent=a.length?a.join(' · '):'Sin registros A';const goodA=a.some(x=>GH_IPS.includes(x));setP('aPill',goodA?'OK · GitHub Pages':'REVISAR',goodA?'ok':'warn');}catch(e){$('aRecords').textContent='No se pudo consultar DNS';setP('aPill','N/D','warn')}
+try{c=await dns(WWW,'CNAME');$('wwwRecords').textContent=c.length?c.join(' · '):'Sin CNAME';const goodC=c.some(x=>x.toLowerCase()===GH.toLowerCase());setP('wwwPill',goodC?'OK':'REVISAR',goodC?'ok':'warn');}catch(e){$('wwwRecords').textContent='No se pudo consultar DNS';setP('wwwPill','N/D','warn')}
+try{cf=await cnameFile();$('cnameFile').textContent=cf||'(vacío)';const good=cf.toLowerCase()===DOMAIN;setP('cnamePill',good?'OK':'REVISAR',good?'ok':'warn');}catch(e){$('cnameFile').textContent='No se pudo consultar CNAME';setP('cnamePill','N/D','warn')}
+const dnsOk=a.some(x=>GH_IPS.includes(x));
+$('dns').textContent=dnsOk?'OK':'REVISAR';$('dns').className=dnsOk?'ok':'';
+const issues=[];if(!sameHost)issues.push('El dominio cargado no coincide con el dominio esperado.');if(!https)issues.push('La página no está usando HTTPS.');if(!dnsOk)issues.push('El DNS A no muestra una dirección esperada de GitHub Pages.');if(cf.toLowerCase()!==DOMAIN)issues.push('El archivo CNAME de GitHub no coincide con el dominio esperado.');
+$('security').innerHTML=issues.length?'<b class="bad">⚠️ Revisión necesaria</b><ul class="list">'+issues.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<b class="ok">🟢 Dominio, HTTPS y configuración principal sin problemas detectados.</b>';
+$('notice').textContent='Última comprobación: '+new Date().toLocaleString();
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+$('refresh').onclick=check;check();setInterval(check,300000);
+</script>
+</body></html>
