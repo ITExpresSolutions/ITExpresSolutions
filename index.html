@@ -10,34 +10,26 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png?v=16">
   <link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=16">
   <link rel="apple-touch-icon" href="favicon.png?v=16">
+  <link rel="preload" as="video" href="hero-intro.mp4" type="video/mp4" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
   <!-- Supabase: la Publishable Key es segura para uso en navegador cuando RLS está configurado. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="site-i18n.js" defer></script>
-  <script src="site-i18n-fixes.js" defer></script>
-
-  <style>
-    .priced-services .service-price-card{cursor:pointer;position:relative;transition:transform .2s ease,box-shadow .2s ease}
-    .priced-services .service-price-card:hover,.priced-services .service-price-card:focus{transform:translateY(-4px);box-shadow:0 14px 34px rgba(6,47,82,.14);outline:none}
-    .price-line{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-    .price-line span{display:inline-flex;align-items:center;padding:7px 9px;border-radius:999px;background:#eef8fa;color:#062f52;font-size:.82rem;font-weight:700}
-    .service-more{display:block;margin-top:12px;color:#087f8e;font-weight:800;font-size:.9rem}
-    .service-price-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px}
-    .service-price-modal[hidden]{display:none}
-    .service-price-backdrop{position:absolute;inset:0;background:rgba(3,25,43,.62);backdrop-filter:blur(4px)}
-    .service-price-dialog{position:relative;width:min(560px,100%);background:#fff;border-radius:24px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.28);z-index:1}
-    .service-price-dialog h2{margin:6px 0 12px;color:#062f52}
-    .service-price-dialog p{color:#4b6270;line-height:1.6}
-    .service-price-close{position:absolute;right:15px;top:12px;border:0;background:transparent;font-size:32px;line-height:1;cursor:pointer;color:#456}
-    .service-price-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
-    .service-price-options>div{padding:15px;border:1px solid #dcebf0;border-radius:15px;background:#f7fbfc}
-    .service-price-options span{display:block;font-size:.85rem;color:#617785;margin-bottom:5px}
-    .service-price-options strong{display:block;font-size:1.1rem;color:#062f52}
-    .service-price-note{font-size:.83rem!important}
-    @media(max-width:600px){.service-price-options{grid-template-columns:1fr}.service-price-dialog{padding:24px 20px}}
-  </style>
 </head>
 <body>
+  <!-- Intro -->
+  <div class="video-intro" id="videoIntro" aria-hidden="false">
+    <video class="video-intro-media" id="introVideo" autoplay playsinline preload="auto" poster="intro-poster.jpg">
+      <source src="hero-intro.mp4" type="video/mp4">
+    </video>
+    <div class="video-intro-shade"></div>
+    <div class="video-intro-brand">
+      <img src="logo-badge.webp" alt="ITExpresSolutions">
+      <div class="intro-name">ITExpres<span>Solutions</span></div>
+      <div class="intro-tagline">Soporte técnico y soluciones digitales</div>
+      <button class="intro-skip" id="skipIntro" type="button">Entrar al sitio</button>
+    </div>
+  </div>
+
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#inicio" data-page="inicio" aria-label="ITExpresSolutions inicio">
@@ -49,11 +41,11 @@
         <a href="#inicio" data-page="inicio">Inicio</a>
         <a href="#servicios" data-page="servicios">Servicios</a>
         <a href="#pymes" data-page="pymes">PyMEs</a>
+        <a href="#remoto" data-page="remoto">Soporte remoto</a>
         <a href="#nosotros" data-page="nosotros">Nosotros</a>
         <a href="#contacto" data-page="contacto">Contacto</a>
         <a href="#portal" data-page="portal" class="portal-link">🔐 Portal</a>
       </nav>
-      <a class="btn btn-small desktop-call" href="tel:+525663885856">📞 Llamar</a>
     </div>
   </header>
 
@@ -71,7 +63,7 @@
             <h1>Tu tecnología funcionando.<br><span>Sin complicaciones.</span></h1>
             <p>Soporte técnico, reparación y soluciones digitales para personas, hogares y pequeñas empresas.</p>
             <div class="hero-actions">
-              <a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
+              <a class="btn" href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">💬 WhatsApp</a>
               <a class="btn btn-outline" href="#contacto" data-page="contacto">📋 Solicitar soporte</a>
             </div>
             <div class="trust">
@@ -85,9 +77,9 @@
 
       <section class="quick" aria-label="Acciones rápidas">
         <div class="container quick-grid">
-          <a href="tel:+525663885856"><strong>📞 Soporte telefónico</strong><small>Habla directamente con un técnico</small></a>
-          <a href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
-          <a href="#servicios" data-page="servicios"><strong>🖥️ Soporte remoto</strong><small>Disponible dentro de nuestros servicios en todo México</small></a>
+          
+          <a href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20un%20servicio." target="_blank" rel="noopener"><strong>💬 WhatsApp</strong><small>Solicita ayuda por mensaje</small></a>
+          <a href="#remoto" data-page="remoto"><strong>🖥️ Soporte remoto</strong><small>Asistencia desde cualquier lugar de México</small></a>
         </div>
       </section>
 
@@ -121,25 +113,13 @@
           <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de servicios tecnológicos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-services" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="80" y="90" width="205" height="135" rx="16" fill="#062f52"/><rect x="100" y="110" width="165" height="92" rx="9" fill="#f2fafc"/><rect x="125" y="255" width="155" height="18" rx="9" fill="#0a6fae"/><rect x="175" y="225" width="55" height="45" rx="8" fill="#087f8e"/><circle cx="400" cy="145" r="72" fill="#e8faf4" stroke="#43d58e" stroke-width="8"/><path d="M400 105v80M360 145h80" stroke="#087f8e" stroke-width="16" stroke-linecap="round"/><path d="M352 225c-34 28-50 67-40 103 8 30 39 43 67 29l27-13 27 13c28 14 59 1 67-29 10-36-6-75-40-103" fill="#eef7fa" stroke="#062f52" stroke-width="8"/><path d="M348 282h104" stroke="#43d58e" stroke-width="12" stroke-linecap="round"/><path d="M335 80l38-25 38 25M510 80l-38-25-38 25" fill="none" stroke="url(#g-services)" stroke-width="9" stroke-linecap="round"/></svg></div></div>
         </div>
 
-        <div class="cards service-cards priced-services">
-          <article class="card service-price-card" data-service="Computadoras" data-mx="Desde $500 MXN" data-cr="Desde ₡25,000 CRC" data-details="Diagnóstico, reparación, mantenimiento, instalación y optimización de Windows y equipos. El precio final depende del problema y del equipo." tabindex="0" role="button" aria-label="Ver precio de Computadoras">
-            <div class="icon">💻</div><h3>Computadoras</h3><p>Diagnóstico, reparación, mantenimiento, instalación y optimización.</p><div class="price-line"><span>🇲🇽 Desde $500 MXN</span><span>🇨🇷 Desde ₡25,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="card service-price-card" data-service="Virus y seguridad" data-mx="Desde $600 MXN" data-cr="Desde ₡30,000 CRC" data-details="Detección de malware, limpieza, configuración de seguridad y recomendaciones para proteger tus equipos." tabindex="0" role="button" aria-label="Ver precio de Virus y seguridad">
-            <div class="icon">🛡️</div><h3>Virus y seguridad</h3><p>Detección de malware, limpieza y configuración de seguridad.</p><div class="price-line"><span>🇲🇽 Desde $600 MXN</span><span>🇨🇷 Desde ₡30,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="card service-price-card" data-service="Redes e Internet" data-mx="Desde $700 MXN" data-cr="Desde ₡35,000 CRC" data-details="Configuración de Wi‑Fi, routers y redes domésticas o pequeñas oficinas, además de solución de problemas de conexión." tabindex="0" role="button" aria-label="Ver precio de Redes e Internet">
-            <div class="icon">🌐</div><h3>Redes e Internet</h3><p>Wi‑Fi, routers, redes y solución de problemas de conexión.</p><div class="price-line"><span>🇲🇽 Desde $700 MXN</span><span>🇨🇷 Desde ₡35,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="card service-price-card" data-service="Impresoras" data-mx="Desde $450 MXN" data-cr="Desde ₡22,000 CRC" data-details="Instalación, configuración, controladores y solución de problemas de impresión." tabindex="0" role="button" aria-label="Ver precio de Impresoras">
-            <div class="icon">🖨️</div><h3>Impresoras</h3><p>Instalación, configuración, drivers y solución de problemas.</p><div class="price-line"><span>🇲🇽 Desde $450 MXN</span><span>🇨🇷 Desde ₡22,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="card service-price-card" data-service="Celulares y dispositivos" data-mx="Desde $400 MXN" data-cr="Desde ₡20,000 CRC" data-details="Configuración de cuentas, aplicaciones, conectividad y asistencia técnica para celulares y dispositivos." tabindex="0" role="button" aria-label="Ver precio de Celulares y dispositivos">
-            <div class="icon">📱</div><h3>Celulares y dispositivos</h3><p>Configuración, cuentas, aplicaciones y conectividad.</p><div class="price-line"><span>🇲🇽 Desde $400 MXN</span><span>🇨🇷 Desde ₡20,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="card service-price-card" data-service="Soporte para negocios" data-mx="Desde $800 MXN" data-cr="Desde ₡40,000 CRC" data-details="Soporte para equipos, usuarios, redes, mantenimiento y asistencia remota para pequeñas empresas." tabindex="0" role="button" aria-label="Ver precio de Soporte para negocios">
-            <div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Equipos, usuarios, redes y mantenimiento para pequeñas empresas.</p><div class="price-line"><span>🇲🇽 Desde $800 MXN</span><span>🇨🇷 Desde ₡40,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
+        <div class="cards service-cards">
+          <article class="card"><div class="icon">💻</div><h3>Computadoras</h3><p>Diagnóstico, reparación, mantenimiento, instalación y optimización de Windows y equipos.</p></article>
+          <article class="card"><div class="icon">🛡️</div><h3>Virus y seguridad</h3><p>Detección de malware, limpieza, configuración de seguridad y recomendaciones.</p></article>
+          <article class="card"><div class="icon">🌐</div><h3>Redes e Internet</h3><p>Wi‑Fi, routers, redes domésticas y solución de problemas de conexión.</p></article>
+          <article class="card"><div class="icon">🖨️</div><h3>Impresoras</h3><p>Instalación, configuración, controladores y solución de problemas de impresión.</p></article>
+          <article class="card"><div class="icon">📱</div><h3>Celulares y dispositivos</h3><p>Configuración, cuentas, aplicaciones, conectividad y asistencia técnica.</p></article>
+          <article class="card"><div class="icon">🏢</div><h3>Soporte para negocios</h3><p>Equipos, usuarios, redes y mantenimiento tecnológico para pequeñas empresas.</p></article>
         </div>
 
         <div class="subsection-head">
@@ -175,25 +155,33 @@
           <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de soluciones digitales para empresas"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-digital" x1="0" x2="1"><stop stop-color="#087f8e"/><stop offset="1" stop-color="#43d58e"/></linearGradient></defs><rect x="92" y="62" width="315" height="225" rx="18" fill="#062f52"/><rect x="114" y="84" width="271" height="181" rx="11" fill="#f1fafc"/><rect x="140" y="112" width="95" height="15" rx="7" fill="#d6e9ef"/><rect x="140" y="142" width="200" height="12" rx="6" fill="#d6e9ef"/><rect x="140" y="168" width="150" height="12" rx="6" fill="#d6e9ef"/><path d="M143 232l58-34 48 20 80-72" fill="none" stroke="url(#g-digital)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M140 320h220" stroke="#0a6fae" stroke-width="18" stroke-linecap="round"/><path d="M205 288v32M295 288v32" stroke="#062f52" stroke-width="10"/><circle cx="475" cy="145" r="75" fill="#e5faf3" stroke="#43d58e" stroke-width="7"/><path d="M437 145h76M475 107v76" stroke="#087f8e" stroke-width="12" stroke-linecap="round"/><circle cx="475" cy="145" r="23" fill="#fff" stroke="#087f8e" stroke-width="8"/></svg></div></div>
         </div>
 
-        <div class="digital-grid priced-services">
-          <article class="digital-card service-price-card" data-service="Gestión de redes sociales" data-mx="Desde $2,500 MXN/mes" data-cr="Desde ₡125,000 CRC/mes" data-details="Configuración y apoyo para perfiles empresariales, publicaciones, información de contacto y orientación digital." tabindex="0" role="button" aria-label="Ver precio de Gestión de redes sociales">
-            <div class="digital-icon">📱</div><h3>Gestión de redes sociales</h3><p>Presencia profesional y apoyo para tus perfiles empresariales.</p><ul><li>Perfiles profesionales</li><li>Publicaciones y contenido</li><li>Información de contacto</li><li>Orientación digital</li></ul><div class="price-line"><span>🇲🇽 Desde $2,500/mes</span><span>🇨🇷 Desde ₡125,000/mes</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="digital-card service-price-card" data-service="Página web" data-mx="Desde $3,500 MXN" data-cr="Desde ₡180,000 CRC" data-details="Página web profesional y responsive con información del negocio, servicios, contacto, WhatsApp y formularios. El precio depende del alcance." tabindex="0" role="button" aria-label="Ver precio de Página web">
-            <div class="digital-icon">🌐</div><h3>Páginas web</h3><p>Webs profesionales, responsive y adaptadas a celulares.</p><ul><li>Páginas informativas</li><li>Catálogo de servicios</li><li>WhatsApp y formularios</li><li>Mantenimiento y actualización</li></ul><div class="price-line"><span>🇲🇽 Desde $3,500 MXN</span><span>🇨🇷 Desde ₡180,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="digital-card service-price-card" data-service="Presencia digital" data-mx="Desde $1,500 MXN" data-cr="Desde ₡75,000 CRC" data-details="Organización de información, Google Business Profile, datos de contacto, enlaces, perfiles y orientación básica de marketing." tabindex="0" role="button" aria-label="Ver precio de Presencia digital">
-            <div class="digital-icon">📈</div><h3>Presencia digital</h3><p>Ayudamos a que tus clientes encuentren y conozcan tu negocio.</p><ul><li>Google Business Profile</li><li>Datos de contacto</li><li>Enlaces y perfiles</li><li>Orientación básica de marketing</li></ul><div class="price-line"><span>🇲🇽 Desde $1,500 MXN</span><span>🇨🇷 Desde ₡75,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="digital-card service-price-card" data-service="Tienda en línea" data-mx="Desde $12,000 MXN" data-cr="Desde ₡600,000 CRC" data-details="Tienda online con catálogo, estructura de productos y herramientas de contacto o compra. El precio final depende del número de productos e integraciones." tabindex="0" role="button" aria-label="Ver precio de Tienda en línea">
-            <div class="digital-icon">🛒</div><h3>Tienda en línea</h3><p>Comercio electrónico para vender tus productos o servicios.</p><ul><li>Catálogo de productos</li><li>Diseño responsive</li><li>Integración de contacto</li><li>Configuración inicial</li></ul><div class="price-line"><span>🇲🇽 Desde $12,000 MXN</span><span>🇨🇷 Desde ₡600,000</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
-          <article class="digital-card service-price-card" data-service="Mantenimiento web" data-mx="Desde $800 MXN/mes" data-cr="Desde ₡40,000 CRC/mes" data-details="Actualizaciones, pequeños cambios de contenido, revisión básica y mantenimiento preventivo del sitio." tabindex="0" role="button" aria-label="Ver precio de Mantenimiento web">
-            <div class="digital-icon">🔧</div><h3>Mantenimiento web</h3><p>Mantén tu sitio actualizado y funcionando correctamente.</p><ul><li>Actualización de contenido</li><li>Cambios menores</li><li>Revisión básica</li><li>Mantenimiento preventivo</li></ul><div class="price-line"><span>🇲🇽 Desde $800/mes</span><span>🇨🇷 Desde ₡40,000/mes</span></div><span class="service-more">Ver detalles y precio →</span>
-          </article>
+        <div class="digital-grid">
+          <article class="digital-card"><div class="digital-icon">📱</div><h3>Gestión de redes sociales</h3><p>Configuración y apoyo para perfiles empresariales.</p><ul><li>Perfiles profesionales</li><li>Publicaciones y contenido</li><li>Información de contacto</li><li>Orientación digital</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">🌐</div><h3>Páginas web</h3><p>Webs sencillas, profesionales y adaptadas a celulares.</p><ul><li>Páginas informativas</li><li>Catálogo de servicios</li><li>WhatsApp y formularios</li><li>Mantenimiento y actualización</li></ul></article>
+          <article class="digital-card"><div class="digital-icon">📈</div><h3>Presencia digital</h3><p>Organizamos la información para que tus clientes puedan encontrarte.</p><ul><li>Google Business Profile</li><li>Datos de contacto</li><li>Enlaces y perfiles</li><li>Orientación básica de marketing</li></ul></article>
         </div>
 
-        <div class="cta-strip"><div><strong>¿Tienes un pequeño negocio?</strong><span>Precios aproximados. El costo final se confirma después de valorar tus necesidades.</span></div><a class="btn" href="#contacto" data-page="contacto">Hablar con nosotros</a></div>
+        <div class="cta-strip"><div><strong>¿Tienes un pequeño negocio?</strong><span>Cuéntanos qué quieres mejorar y te orientamos.</span></div><a class="btn" href="#contacto" data-page="contacto">Hablar con nosotros</a></div>
+      </div>
+    </section>
+
+    <!-- REMOTE -->
+    <section class="page-panel section" data-panel="remoto" id="remoto">
+      <div class="container">
+        <div class="page-hero">
+          <div class="page-hero-copy">
+            <div class="eyebrow">ASISTENCIA REMOTA</div>
+            <h1>¿Estás lejos? Podemos ayudarte sin que salgas de casa.</h1>
+            <p>Primero hablamos contigo por teléfono o WhatsApp. Si es necesario, podemos utilizar una herramienta de acceso remoto con tu autorización.</p>
+            <div class="hero-actions inner-actions"><a class="btn" href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte%20remoto." target="_blank" rel="noopener">🖥️ Solicitar soporte remoto</a></div>
+          </div>
+          <div class="page-hero-art"><div class="inline-illustration" role="img" aria-label="Ilustración de soporte remoto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420"><defs><linearGradient id="g-remote" x1="0" x2="1"><stop stop-color="#062f52"/><stop offset="1" stop-color="#087f8e"/></linearGradient></defs><rect x="70" y="90" width="240" height="160" rx="16" fill="#062f52"/><rect x="92" y="112" width="196" height="115" rx="9" fill="#eef9fb"/><circle cx="190" cy="170" r="35" fill="#e4faf2" stroke="#43d58e" stroke-width="7"/><path d="M174 170l12 12 23-27" fill="none" stroke="#087f8e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="135" y="270" width="110" height="15" rx="7" fill="#0a6fae"/><path d="M190 250v20" stroke="#062f52" stroke-width="9"/><rect x="370" y="125" width="170" height="125" rx="18" fill="#fff" stroke="#d9e9ef" stroke-width="5"/><circle cx="455" cy="188" r="34" fill="#e9f9f5"/><path d="M455 166v25M443 179h24" stroke="#087f8e" stroke-width="9" stroke-linecap="round"/><path d="M310 165c28-24 50-31 76-8M310 215c28 24 50 31 76 8" fill="none" stroke="url(#g-remote)" stroke-width="10" stroke-linecap="round"/><path d="M340 157l-3 18 18-5M340 223l-3-18 18 5" fill="none" stroke="#43d58e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="455" cy="325" r="55" fill="#062f52"/><path d="M455 290v70M420 325h70" stroke="#43d58e" stroke-width="9" stroke-linecap="round"/></svg></div></div>
+        </div>
+
+        <div class="remote-grid">
+          <div class="notice large-notice"><strong>🔐 Seguridad primero</strong><p>El acceso remoto debe ser autorizado por ti y solo durante la sesión de soporte. Nunca compartas contraseñas personales ni códigos de seguridad bancarios.</p></div>
+          <div class="remote-panel"><span class="pill">SERVICIO REMOTO</span><h3>Todo México</h3><p>Ciudad de México: atención local<br>Resto del país: atención remota</p><a href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20quiero%20solicitar%20soporte%20remoto." target="_blank" rel="noopener">💬 WhatsApp</a></div>
+        </div>
       </div>
     </section>
 
@@ -236,7 +224,7 @@
         <div class="contact-layout">
           <div class="contact-main">
             <div class="contact-card primary-contact"><div class="contact-icon">📋</div><h2>Solicitar soporte técnico</h2><p>Completa el formulario con los datos de tu equipo y el problema. Las respuestas quedan registradas en Google Sheets.</p><a class="btn" href="https://forms.gle/6QHaxfYMQFeeVf3RA" target="_blank" rel="noopener">Abrir formulario</a></div>
-            <div class="contact-card"><div class="contact-icon">💬</div><h2>WhatsApp</h2><p>Escríbenos y cuéntanos brevemente qué necesitas.</p><a class="btn" href="https://wa.me/525663885856?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">Enviar WhatsApp</a></div>
+            <div class="contact-card"><div class="contact-icon">💬</div><h2>WhatsApp</h2><p>Escríbenos y cuéntanos brevemente qué necesitas.</p><a class="btn" href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener">Enviar WhatsApp</a></div>
             <div class="contact-card opportunity-card">
               <div class="contact-icon">💻</div>
               <h2>¿Buscas proyectos fuera de tu jornada laboral?</h2>
@@ -246,7 +234,6 @@
             </div>
           </div>
           <aside class="contact-side">
-            <div class="contact-info"><span>📞</span><div><strong>Teléfono</strong><a href="tel:+525663885856">+52 56 6388 5856</a></div></div>
             <div class="contact-info"><span>✉️</span><div><strong>Correo</strong><a href="mailto:ITExpresSolutions@gmail.com">ITExpresSolutions@gmail.com</a></div></div>
             <div class="contact-info"><span>📍</span><div><strong>Servicio</strong><p>Ciudad de México presencial<br>Todo México remoto</p></div></div>
             <div class="contact-info"><span>🕘</span><div><strong>Horario</strong><p>Lunes a viernes<br>9:00 AM – 9:00 PM</p></div></div>
@@ -346,165 +333,7 @@
     <div class="container footer-inner"><div><strong>ITExpresSolutions</strong><br><span>Reparación, soporte técnico y soluciones digitales</span></div><div>Ciudad de México • Soporte remoto en todo México</div><div>© 2026 ITExpresSolutions</div></div>
   </footer>
 
-
-  <!-- MODAL DE PRECIOS -->
-  <div class="service-price-modal" id="servicePriceModal" hidden>
-    <div class="service-price-backdrop" data-price-close></div>
-    <div class="service-price-dialog" role="dialog" aria-modal="true" aria-labelledby="servicePriceTitle">
-      <button class="service-price-close" type="button" data-price-close aria-label="Cerrar">×</button>
-      <div class="eyebrow">PRECIO APROXIMADO</div>
-      <h2 id="servicePriceTitle">Servicio</h2>
-      <p id="servicePriceDetails"></p>
-      <div class="service-price-options">
-        <div><span>🇲🇽 México</span><strong id="servicePriceMX"></strong></div>
-        <div><span>🇨🇷 Costa Rica</span><strong id="servicePriceCR"></strong></div>
-      </div>
-      <p class="service-price-note">El precio mostrado es aproximado y puede variar según el alcance, equipo, ubicación, materiales o necesidades específicas.</p>
-      <a class="btn" id="servicePriceRequest" href="#contacto" data-page="contacto">🤖 Solicitar este servicio</a>
-    </div>
-  </div>
-
-  <!-- BOT DE SERVICIO -->
-  <button class="service-bot-toggle" id="serviceBotToggle" type="button" aria-label="Abrir asistente de servicio" aria-expanded="false" aria-controls="serviceBot">
-    <span class="service-bot-icon" aria-hidden="true">💬</span>
-    <span class="service-bot-badge" aria-hidden="true"></span>
-  </button>
-
-  <section class="service-bot" id="serviceBot" hidden aria-label="Asistente de servicio ITExpresSolutions">
-    <div class="service-bot-head">
-      <div class="service-bot-brand">
-        <div class="service-bot-avatar">IT</div>
-        <div>
-          <strong>ITExpresSolutions</strong>
-          <span><i></i> Asistente de servicio</span>
-        </div>
-      </div>
-      <button class="service-bot-close" id="serviceBotClose" type="button" aria-label="Cerrar asistente">×</button>
-    </div>
-
-    <div class="service-bot-messages" id="serviceBotMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
-    <div class="service-bot-quick" id="serviceBotQuick"></div>
-
-    <form class="service-bot-input" id="serviceBotInputForm" autocomplete="off">
-      <input id="serviceBotInput" type="text" maxlength="500" placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje">
-      <button type="submit" aria-label="Enviar mensaje">➤</button>
-    </form>
-  </section>
-
-<script>
-/* V25 — Bot de servicio. No usa claves/API públicas.
-   Orienta al cliente, recopila datos y deriva a Google Forms o WhatsApp.
-   Supabase queda reservado para el portal privado. */
-(function(){
-  const toggle=document.getElementById('serviceBotToggle');
-  const panel=document.getElementById('serviceBot');
-  const close=document.getElementById('serviceBotClose');
-  const messages=document.getElementById('serviceBotMessages');
-  const quick=document.getElementById('serviceBotQuick');
-  const form=document.getElementById('serviceBotInputForm');
-  const input=document.getElementById('serviceBotInput');
-  if(!toggle||!panel||!close||!messages||!quick||!form||!input)return;
-
-  const FORM_URL='https://forms.gle/6QHaxfYMQFeeVf3RA';
-  const WHATSAPP='525663885856';
-  const state={step:'menu',data:{}};
-
-  function addMessage(text,who='bot',isHtml=false){
-    const row=document.createElement('div'); row.className='service-bot-message '+who;
-    const bubble=document.createElement('div'); bubble.className='service-bot-bubble';
-    if(isHtml) bubble.innerHTML=text; else bubble.textContent=text;
-    row.appendChild(bubble); messages.appendChild(row); messages.scrollTop=messages.scrollHeight;
-  }
-  function setQuick(items){
-    quick.innerHTML='';
-    (items||[]).forEach(item=>{
-      const b=document.createElement('button'); b.type='button'; b.textContent=item.label;
-      b.addEventListener('click',()=>handleChoice(item.value,item.label)); quick.appendChild(b);
-    });
-  }
-  function safe(v){return String(v||'').trim().slice(0,500)}
-  function waUrl(){
-    const d=state.data;
-    const lines=['Hola ITExpresSolutions, necesito soporte técnico.',
-      d.nombre?'Nombre: '+d.nombre:'',d.ciudad?'Ciudad: '+d.ciudad:'',
-      d.servicio?'Servicio: '+d.servicio:'',d.equipo?'Equipo: '+d.equipo:'',
-      d.problema?'Problema: '+d.problema:'',d.prioridad?'Prioridad: '+d.prioridad:'',
-      d.contacto?'Contacto: '+d.contacto:''].filter(Boolean);
-    return 'https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(lines.join('\n'));
-  }
-  function finishRequest(){
-    addMessage('Perfecto. Ya tenemos los datos básicos. Puedes enviarlos por WhatsApp para que un técnico te atienda, o completar el formulario oficial para registrar la solicitud.');
-    const row=document.createElement('div'); row.className='service-bot-message bot';
-    const bubble=document.createElement('div'); bubble.className='service-bot-bubble';
-    bubble.innerHTML='<strong>¿Cómo quieres continuar?</strong><div class="service-bot-actions">'+
-      '<a class="service-bot-action primary" href="'+waUrl()+'" target="_blank" rel="noopener">💬 Enviar por WhatsApp</a>'+
-      '<a class="service-bot-action" href="'+FORM_URL+'" target="_blank" rel="noopener">📋 Abrir formulario</a>'+
-      '<button type="button" class="service-bot-action" id="serviceBotRestart">↻ Nueva solicitud</button></div>';
-    row.appendChild(bubble); messages.appendChild(row); messages.scrollTop=messages.scrollHeight;
-    document.getElementById('serviceBotRestart').addEventListener('click',restart);
-    state.step='done'; setQuick([]);
-  }
-  function restart(){state.step='menu';state.data={};messages.innerHTML='';start()}
-  function askNext(){
-    if(state.step==='ask_service'){state.step='ask_equipo';addMessage('¿Qué equipo o servicio necesitas atender? Por ejemplo: computadora, impresora, red Wi‑Fi, celular, página web o redes sociales.');setQuick([{label:'Computadora',value:'Computadora'},{label:'Impresora',value:'Impresora'},{label:'Red / Wi‑Fi',value:'Red / Wi‑Fi'},{label:'Celular',value:'Celular'},{label:'Página web',value:'Página web'},{label:'Otro',value:'Otro'}])}
-    else if(state.step==='ask_equipo'){state.step='ask_problem';addMessage('Cuéntame brevemente qué está pasando o qué necesitas hacer.');setQuick([])}
-    else if(state.step==='ask_problem'){state.step='ask_name';addMessage('¿Cuál es tu nombre?');setQuick([])}
-    else if(state.step==='ask_name'){state.step='ask_city';addMessage('¿En qué ciudad estás? Tenemos servicio presencial en Ciudad de México y soporte remoto en todo México.');setQuick([{label:'Ciudad de México',value:'Ciudad de México'},{label:'Otra ciudad',value:'Otra ciudad'}])}
-    else if(state.step==='ask_city'){state.step='ask_contact';addMessage('¿Cuál es el mejor medio para contactarte? Puedes escribir teléfono, WhatsApp o correo.');setQuick([])}
-    else if(state.step==='ask_contact'){state.step='ask_priority';addMessage('¿Qué tan urgente es?');setQuick([{label:'Normal',value:'Normal'},{label:'Alta',value:'Alta'},{label:'Urgente',value:'Urgente'}])}
-    else if(state.step==='ask_priority')finishRequest();
-  }
-  function handleChoice(value,label){
-    if(state.step==='menu'){
-      if(value==='support'){addMessage(label,'user');state.step='ask_service';addMessage('Claro. Te ayudo a preparar tu solicitud de soporte. ¿Qué tipo de ayuda necesitas?');setQuick([{label:'Soporte técnico',value:'Soporte técnico'},{label:'Reparación / mantenimiento',value:'Reparación / mantenimiento'},{label:'Página web / digital',value:'Página web / digital'},{label:'Otro',value:'Otro'}]);return}
-      if(value==='services'){addMessage(label,'user');addMessage('Ofrecemos soporte para Windows y Mac, impresoras, redes y Wi‑Fi, celulares, soporte remoto, páginas web y presencia digital para PyMEs.');setQuick([{label:'Solicitar soporte',value:'support'},{label:'Soporte remoto',value:'remote'},{label:'Hablar con técnico',value:'whatsapp'},{label:'Volver al inicio',value:'menu'}]);return}
-      if(value==='remote'){addMessage(label,'user');addMessage('El soporte remoto está disponible en todo México. Primero revisamos tu problema y te indicamos el siguiente paso.');setQuick([{label:'Solicitar soporte',value:'support'},{label:'WhatsApp',value:'whatsapp'},{label:'Formulario',value:'form'},{label:'Volver',value:'menu'}]);return}
-      if(value==='quote'){addMessage(label,'user');addMessage('La cotización depende del equipo, problema y si el servicio es presencial o remoto. Puedo tomar tus datos y dejarte listo para contactar al equipo.');setQuick([{label:'Empezar solicitud',value:'support'}]);return}
-      if(value==='whatsapp'){addMessage(label,'user');window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent('Hola ITExpresSolutions, necesito información sobre un servicio.'),'_blank','noopener');return}
-      if(value==='form'){addMessage(label,'user');window.open(FORM_URL,'_blank','noopener');return}
-      if(value==='menu'){start();return}
-    }
-    if(state.step==='ask_service'){state.data.servicio=safe(label);addMessage(label,'user');askNext();return}
-    if(state.step==='ask_equipo'){state.data.equipo=safe(label);addMessage(label,'user');askNext();return}
-    if(state.step==='ask_city'){
-      addMessage(label,'user');
-      if(value==='Otra ciudad'){state.step='ask_city_text';addMessage('Perfecto. Escribe el nombre de tu ciudad.');setQuick([])}
-      else{state.data.ciudad=safe(label);askNext()}
-      return;
-    }
-    if(state.step==='ask_priority'){state.data.prioridad=safe(label);addMessage(label,'user');askNext()}
-  }
-  function handleText(text){
-    const value=safe(text); if(!value)return; addMessage(value,'user');
-    if(state.step==='menu'){
-      const lower=value.toLowerCase();
-      if(lower.includes('soporte')||lower.includes('problema')||lower.includes('ayuda')){handleChoice('support','Solicitar soporte');return}
-      if(lower.includes('precio')||lower.includes('cotiz')){handleChoice('quote','Cotización');return}
-      if(lower.includes('whatsapp')||lower.includes('técnico')||lower.includes('tecnico')){handleChoice('whatsapp','Hablar con técnico');return}
-      addMessage('Puedo ayudarte a solicitar soporte, conocer servicios y precios aproximados, o contactar a un técnico.');
-      setQuick([{label:'Solicitar soporte',value:'support'},{label:'Ver servicios',value:'services'},{label:'Soporte remoto',value:'remote'},{label:'Cotización',value:'quote'},{label:'WhatsApp',value:'whatsapp'}]);return;
-    }
-    if(state.step==='ask_service'){state.data.servicio=value;askNext();return}
-    if(state.step==='ask_equipo'){state.data.equipo=value;askNext();return}
-    if(state.step==='ask_problem'){state.data.problema=value;askNext();return}
-    if(state.step==='ask_name'){state.data.nombre=value;askNext();return}
-    if(state.step==='ask_city'){state.data.ciudad=value;askNext();return}
-    if(state.step==='ask_city_text'){state.data.ciudad=value;state.step='ask_contact';addMessage('¿Cuál es el mejor medio para contactarte? Puedes escribir teléfono, WhatsApp o correo.');return}
-    if(state.step==='ask_contact'){state.data.contacto=value;askNext();return}
-    if(state.step==='done')addMessage('Si quieres iniciar otra solicitud, pulsa “Nueva solicitud”.');
-  }
-  function start(){
-    if(!messages.children.length)addMessage('¡Hola! 👋 Soy el asistente de servicio de ITExpresSolutions. Puedo orientarte y preparar una solicitud de soporte.');
-    else addMessage('¿Qué necesitas ahora?');
-    setQuick([{label:'🛠️ Solicitar soporte',value:'support'},{label:'📋 Ver servicios',value:'services'},{label:'🌐 Soporte remoto',value:'remote'},{label:'💰 Cotización',value:'quote'},{label:'💬 Hablar con técnico',value:'whatsapp'}]);
-  }
-  function openBot(){panel.hidden=false;toggle.setAttribute('aria-expanded','true');if(!messages.children.length)start();setTimeout(()=>input.focus(),80)}
-  function closeBot(){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}
-  toggle.addEventListener('click',()=>panel.hidden?openBot():closeBot());
-  close.addEventListener('click',closeBot);
-  form.addEventListener('submit',e=>{e.preventDefault();const text=input.value;input.value='';handleText(text)});
-})();
-</script>
+  <a class="float-wa" href="https://wa.me/529984661832?text=Hola%20ITExpresSolutions%2C%20necesito%20soporte%20t%C3%A9cnico." target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
 
 <script>
 (function(){
@@ -561,7 +390,6 @@
     if(!session){ if(notificationChannel){ try{ sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; } notifications=[]; renderNotifications(); currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
     try{
       currentUser=session.user; currentProfile=await loadProfile(currentUser);
-      if(currentProfile.rol==='tecnico'){ window.location.replace('/technician-dashboard.html'); return; }
       loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
       $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
       $('portalEmail').textContent=currentProfile.email || currentUser.email;
@@ -662,6 +490,10 @@
         notifications=[payload.new,...notifications].slice(0,20);
         renderNotifications();
         showAssignmentNotification(payload.new);
+        // Actualiza inmediatamente la tabla del técnico cuando llega una asignación/reasignación.
+        if(currentProfile?.rol==='tecnico'){
+          loadTech();
+        }
       })
       .subscribe(status=>{ console.log('Notificaciones Realtime:',status); });
   }
@@ -763,11 +595,56 @@
     else await loadTech();
   }
   $('techRefresh').addEventListener('click',loadTech);
+
+  // La actualización principal se hace por Supabase Realtime.
+  // No usamos location.reload() ni un recargado periódico de la página,
+  // para no interrumpir la sesión ni devolver al usuario al video de entrada.
   refreshPortal();
 })();
 </script>
 
 <script>
+  const intro = document.querySelector('#videoIntro');
+  const introVideo = document.querySelector('#introVideo');
+  const skipIntro = document.querySelector('#skipIntro');
+  const heroVideo = document.querySelector('#heroVideo');
+  let entered = false;
+  function enterSite(){
+    if(!intro || entered) return;
+    entered = true;
+    intro.classList.add('hide'); intro.setAttribute('aria-hidden','true'); document.body.classList.remove('intro-active');
+    setTimeout(()=>intro.remove(),900);
+    if(heroVideo){ heroVideo.muted=true; heroVideo.play().catch(()=>{}); }
+  }
+  document.body.classList.add('intro-active');
+  skipIntro.addEventListener('click',enterSite);
+  introVideo.addEventListener('ended',enterSite);
+  introVideo.addEventListener('error',enterSite);
+  // En conexiones lentas, no dejamos al visitante atrapado esperando el video.
+  const slowConnection = navigator.connection && /(^|-)2g|3g/.test(navigator.connection.effectiveType || '');
+  if(slowConnection || navigator.connection?.saveData){
+    setTimeout(enterSite, 1200);
+  } else {
+    setTimeout(()=>{ if(!entered && introVideo.readyState < 2) enterSite(); }, 8000);
+  }
+  if(heroVideo){
+    heroVideo.loop=true; heroVideo.muted=true;
+    heroVideo.addEventListener('canplay',()=>heroVideo.play().catch(()=>{}),{once:true});
+  }
+
+  // Si el usuario ya tiene una sesión de Supabase, no le mostramos
+  // nuevamente la pantalla de introducción al recargar el documento.
+  // Esto es importante para el portal de técnicos.
+  (async()=>{
+    try{
+      const client=window.ITExpresSupabase;
+      if(client){
+        const {data:{session}}=await client.auth.getSession();
+        if(session) enterSite();
+      }
+    }catch(_){}
+  })();
+
   const nav=document.querySelector('#main-nav');
   const toggle=document.querySelector('.menu-toggle');
   const panels=[...document.querySelectorAll('.page-panel')];
@@ -798,80 +675,5 @@
   <span><strong>Conexión segura</strong><small>Acceso protegido</small></span>
 </div>
 
-  <script src="ticket-bot.js" defer></script>
-
-<script>
-(function(){
-  const modal=document.getElementById('servicePriceModal');
-  if(!modal)return;
-  const title=document.getElementById('servicePriceTitle');
-  const details=document.getElementById('servicePriceDetails');
-  const mx=document.getElementById('servicePriceMX');
-  const cr=document.getElementById('servicePriceCR');
-  const request=document.getElementById('servicePriceRequest');
-  let selectedService='';
-  function close(){modal.hidden=true;document.body.style.overflow='';}
-  function open(card){
-    selectedService=card.dataset.service||'';
-    title.textContent=selectedService;
-    details.textContent=card.dataset.details||'';
-    mx.textContent=card.dataset.mx||'Consultar';
-    cr.textContent=card.dataset.cr||'Consultar';
-    request.dataset.service=selectedService;
-    modal.hidden=false;document.body.style.overflow='hidden';
-  }
-  document.querySelectorAll('.service-price-card').forEach(card=>{
-    card.addEventListener('click',()=>open(card));
-    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(card)}})
-  });
-  modal.querySelectorAll('[data-price-close]').forEach(el=>el.addEventListener('click',close));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
-  request.addEventListener('click',()=>{
-    close();
-    setTimeout(()=>{
-      const bot=document.getElementById('serviceBotToggle');
-      if(bot)bot.click();
-      const msg=document.getElementById('serviceBotInput');
-      if(msg&&selectedService){msg.value='Quiero solicitar: '+selectedService;document.getElementById('serviceBotInputForm')?.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))}
-    },250);
-  });
-})();
-</script>
-<!-- ITX-TECHNICIAN-DASHBOARD-ROUTE -->
-<script>
-(function(){
-  'use strict';
-  var redirected=false;
-  var checking=false;
-  function route(){
-    if(redirected || checking || location.pathname.endsWith('/technician-dashboard.html')) return;
-    var sb=window.ITExpresSupabase;
-    if(!sb || !sb.auth) return;
-    checking=true;
-    sb.auth.getSession().then(function(result){
-      var session=result && result.data && result.data.session;
-      if(!session || !session.user || redirected) return null;
-      return sb.from('public_profiles').select('rol').eq('id',session.user.id).maybeSingle();
-    }).then(function(result){
-      if(!result || !result.data || redirected) return;
-      if(String(result.data.rol || '').toLowerCase()==='tecnico'){
-        redirected=true;
-        location.replace('/technician-dashboard.html');
-      }
-    }).catch(function(err){ console.debug('Technician routing:',err); }).finally(function(){ checking=false; });
-  }
-  function boot(){
-    route();
-    window.addEventListener('load',route);
-    if(window.ITExpresSupabase && window.ITExpresSupabase.auth){
-      window.ITExpresSupabase.auth.onAuthStateChange(function(event){
-        if(event==='SIGNED_IN' || event==='INITIAL_SESSION') route();
-      });
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
-  window.addEventListener('hashchange',route);
-})();
-</script>
 </body>
 </html>
