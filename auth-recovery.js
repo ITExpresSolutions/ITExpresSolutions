@@ -154,7 +154,6 @@
     return { ok: false, error: new Error('No se encontró una sesión de recuperación válida.') };
   }
 
-  /* Fixes used by the portal: the two internal-content buttons must point to different admin pages. */
   function fixAdminContentLinks() {
     const anchors = Array.from(document.querySelectorAll('a,button'));
     anchors.forEach((el) => {
@@ -187,7 +186,8 @@
       } catch (_) {}
     };
     run();
-    a && a.onAuthStateChange((event) => { if (event === 'SIGNED_IN') setTimeout(run, 250); });
+    const authClient = auth();
+    if (authClient) authClient.onAuthStateChange((event) => { if (event === 'SIGNED_IN') setTimeout(run, 250); });
   }
 
   function loadAdmin2FA() {
