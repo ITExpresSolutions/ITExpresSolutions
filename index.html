@@ -841,13 +841,15 @@
 (function(){
   'use strict';
   var redirected=false;
+  var checking=false;
   function route(){
-    if(redirected || location.pathname.endsWith('/technician-dashboard.html')) return;
+    if(redirected || checking || location.pathname.endsWith('/technician-dashboard.html')) return;
     var sb=window.ITExpresSupabase;
     if(!sb || !sb.auth) return;
+    checking=true;
     sb.auth.getSession().then(function(result){
       var session=result && result.data && result.data.session;
-      if(!session || !session.user || redirected) return;
+      if(!session || !session.user || redirected) return null;
       return sb.from('public_profiles').select('rol').eq('id',session.user.id).maybeSingle();
     }).then(function(result){
       if(!result || !result.data || redirected) return;
@@ -855,14 +857,16 @@
         redirected=true;
         location.replace('/technician-dashboard.html');
       }
-    }).catch(function(err){ console.debug('Technician routing:',err); });
+    }).catch(function(err){ console.debug('Technician routing:',err); }).finally(function(){ checking=false; });
   }
   function boot(){
     route();
-    setTimeout(route,800);
-    setTimeout(route,1800);
-    setTimeout(route,3500);
-    setTimeout(route,6000);
+    window.addEventListener('load',route);
+    if(window.ITExpresSupabase && window.ITExpresSupabase.auth){
+      window.ITExpresSupabase.auth.onAuthStateChange(function(event){
+        if(event==='SIGNED_IN' || event==='INITIAL_SESSION') setTimeout(route,0);
+      });
+    }
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
   window.addEventListener('hashchange',route);
