@@ -28,6 +28,21 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Enable administrator 2FA
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          tag = '<script src="admin-2fa.js?v=4" defer></script>'
+          if 'admin-2fa.js' not in text:
+              marker = '<script src="site-i18n-fixes.js" defer></script>'
+              if marker not in text:
+                  raise SystemExit('Could not find the site script insertion point in index.html')
+              text = text.replace(marker, marker + '\n  ' + tag, 1)
+              p.write_text(text, encoding='utf-8')
+          PY
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
