@@ -30,6 +30,10 @@
       .itx-tech-invite-note{margin:0 0 16px;color:#617785;font-size:.9rem;line-height:1.5}
       .itx-tech-invite-message{margin-top:10px;font-weight:700}
       .itx-tech-invite-message.success{color:#087f62}.itx-tech-invite-message.error{color:#b42318}
+      .itx-admin-content-card{margin-top:18px!important}
+      .itx-admin-content-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+      .itx-admin-content-btn{display:inline-flex;align-items:center;gap:7px;border-radius:10px;padding:11px 15px;background:#087f8e;color:#fff!important;text-decoration:none!important;font-weight:800;box-shadow:0 4px 12px rgba(8,127,142,.16)}
+      .itx-admin-content-btn:hover{background:#066f7c}
       @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px}.itx-tech-invite-grid{grid-template-columns:1fr} }
     `;
     document.head.appendChild(style);
@@ -222,13 +226,24 @@
     });
   }
 
+  function installAdminContentLink(){
+    const adminPanel=document.getElementById('adminPanel');
+    if(!adminPanel || adminPanel.hidden || document.getElementById('itxAdminContentCard')) return;
+    const card=document.createElement('div');
+    card.id='itxAdminContentCard';
+    card.className='portal-card itx-admin-content-card';
+    card.innerHTML=`<div class="portal-card-head"><div><h3>📰 Contenido interno</h3><p>Publica novedades, agrega SOPs a Knowledge Base y administra la documentación para los técnicos.</p></div><span>📚</span></div><div class="itx-admin-content-actions"><a class="itx-admin-content-btn" href="/admin-content.html">📰 Gestionar novedades y SOPs</a><a class="itx-admin-content-btn" href="/admin-content.html#knowledge-base">📚 Knowledge Base</a></div>`;
+    const jobs=adminPanel.querySelector('.portal-grid-2');
+    if(jobs) jobs.insertAdjacentElement('afterend',card); else adminPanel.prepend(card);
+  }
+
   function watchAdminPanel(){
     const panel=document.getElementById('adminPanel');
     if(!panel) return;
-    const observer=new MutationObserver(()=>{if(!panel.hidden)installTechnicianInvite();});
+    const observer=new MutationObserver(()=>{if(!panel.hidden){installTechnicianInvite();installAdminContentLink();}});
     observer.observe(panel,{attributes:true,childList:true,subtree:true});
-    setTimeout(()=>{if(!panel.hidden)installTechnicianInvite();},500);
-    setTimeout(()=>{if(!panel.hidden)installTechnicianInvite();},1500);
+    setTimeout(()=>{if(!panel.hidden){installTechnicianInvite();installAdminContentLink();}},500);
+    setTimeout(()=>{if(!panel.hidden){installTechnicianInvite();installAdminContentLink();}},1500);
   }
 
   function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);}
