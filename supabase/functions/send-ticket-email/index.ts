@@ -33,8 +33,8 @@ Deno.serve(async (req: Request) => {
     if (!resendKey) return json({ error: "RESEND_API_KEY is not configured" }, 500);
 
     const companyEmail = "itexpressolutions@gmail.com";
-    const companyPhone = "+52 56 6388 5856";
-    const companyPhoneHref = "+525663885856";
+    const companyPhone = "+52 998 466 1832";
+    const companyPhoneHref = "+529984661832";
     const website = "https://itexpressolutions.com";
     const portal = "https://itexpressolutions.com/#portal";
     const logoUrl = "https://itexpressolutions.com/logo-badge.webp";
