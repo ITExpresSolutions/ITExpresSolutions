@@ -1,5 +1,6 @@
 /* ITExpresSolutions - second authentication gate for the administrator panel.
-   Uses Supabase email OTP after the normal password login.
+   Uses the secured Supabase Edge Function admin-2fa to send and verify a real 6-digit code.
+   It intentionally does NOT use Supabase Magic Link for this second factor.
 */
 (function () {
   'use strict';
@@ -8,6 +9,8 @@
   const VERIFIED_FOR_MS = 15 * 60 * 1000;
   let gateShown = false;
   let observerStarted = false;
+  let resendTimer = null;
+  let resendUntil = 0;
 
   const sb = () => window.ITExpresSupabase;
   const auth = () => sb()?.auth;
@@ -67,6 +70,26 @@
     el.className = type;
   }
 
+  function startResendCountdown(seconds) {
+    clearInterval(resendTimer);
+    resendUntil = Date.now() + Math.max(1, Number(seconds || 60)) * 1000;
+    const send = $('itxAdmin2FASend');
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((resendUntil - Date.now()) / 1000));
+      if (!send) return;
+      if (remaining > 0) {
+        send.disabled = true;
+        send.textContent = `📧 Reenviar código (${remaining}s)`;
+      } else {
+        send.disabled = false;
+        send.textContent = '📧 Enviar código';
+        clearInterval(resendTimer);
+      }
+    };
+    tick();
+    resendTimer = setInterval(tick, 1000);
+  }
+
   function render(email) {
     if ($('itxAdmin2FAOverlay')) return;
     installStyles();
@@ -76,7 +99,7 @@
       <section id="itxAdmin2FACard" role="dialog" aria-modal="true" aria-labelledby="itxAdmin2FATitle">
         <h2 id="itxAdmin2FATitle">🔐 Verificación de seguridad</h2>
         <p>Tu contraseña ya fue validada. Antes de abrir el panel de administración necesitamos una segunda autenticación.</p>
-        <p>Enviaremos un código de acceso al correo:</p>
+        <p>Enviaremos un <strong>código de 6 dígitos</strong> al correo:</p>
         <p id="itxAdmin2FAEmail"></p>
         <form id="itxAdmin2FAForm" autocomplete="off">
           <label for="itxAdmin2FACode">Código de verificación</label>
@@ -100,20 +123,29 @@
     async function sendCode() {
       const user = await getAdminUser();
       if (!user) { setMessage('La sesión de administrador no es válida. Inicia sesión nuevamente.', 'error'); return; }
+      if (Date.now() < resendUntil) return;
       send.disabled = true;
       setMessage('Enviando el código de seguridad…');
       try {
-        const { error } = await auth().signInWithOtp({
-          email: user.email,
-          options: { shouldCreateUser: false }
-        });
-        if (error) throw error;
+        const { data, error } = await sb().functions.invoke('admin-2fa', { body: { action: 'send' } });
+        if (error) {
+          let detail = error.message || 'No se pudo enviar el código.';
+          try {
+            if (error.context) {
+              const body = await error.context.json();
+              if (body?.error === 'rate_limited') detail = `Por seguridad, espera ${body.wait_seconds}s antes de solicitar otro código.`;
+              else if (body?.error) detail = body.error;
+            }
+          } catch (_) {}
+          throw new Error(detail);
+        }
+        if (!data?.ok) throw new Error(data?.error || 'No se pudo enviar el código.');
         setMessage('Código enviado. Revisa tu correo y escribe los 6 dígitos.', 'success');
+        startResendCountdown(60);
         code.focus();
       } catch (error) {
         setMessage(error?.message || 'No se pudo enviar el código. Intenta nuevamente.', 'error');
-      } finally {
-        setTimeout(() => { send.disabled = false; }, 5000);
+        send.disabled = false;
       }
     }
 
@@ -127,21 +159,30 @@
       send.disabled = true;
       setMessage('Verificando código…');
       try {
-        const { error } = await auth().verifyOtp({ email: user.email, token, type: 'email' });
-        if (error) throw error;
-        const verifiedAdmin = await getAdminUser();
-        if (!verifiedAdmin) throw new Error('La cuenta no tiene permisos de administrador.');
+        const { data, error } = await sb().functions.invoke('admin-2fa', { body: { action: 'verify', code: token } });
+        if (error) {
+          let detail = error.message || 'Código incorrecto o expirado.';
+          try {
+            if (error.context) {
+              const body = await error.context.json();
+              if (body?.error) detail = body.error;
+            }
+          } catch (_) {}
+          throw new Error(detail);
+        }
+        if (!data?.ok) throw new Error(data?.error || 'Código incorrecto o expirado.');
         markVerified();
         setMessage('✓ Verificación completada. Abriendo el panel…', 'success');
         setTimeout(() => {
           gateShown = false;
+          clearInterval(resendTimer);
           overlay.remove();
           revealAdminPanel();
         }, 450);
       } catch (error) {
         setMessage(error?.message || 'Código incorrecto o expirado.', 'error');
         verify.disabled = false;
-        send.disabled = false;
+        if (Date.now() >= resendUntil) send.disabled = false;
         code.select();
       }
     }
