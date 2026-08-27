@@ -1,0 +1,48 @@
+name: Fix contact number
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, 'Fix contact number automatically') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace old contact number
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          replacements = {
+              '+52 56 6388 5856': '+52 998 466 1832',
+              '+525663885856': '+529984661832',
+              '525663885856': '529984661832',
+          }
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except (UnicodeDecodeError, OSError):
+                  continue
+              new = text
+              for old, value in replacements.items():
+                  new = new.replace(old, value)
+              if new != text:
+                  path.write_text(new, encoding='utf-8')
+          PY
+      - name: Commit and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/contact-number-fix.yml
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Fix contact number automatically"
+          git push
