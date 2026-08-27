@@ -19,11 +19,25 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p = Path('index.html')
           text = p.read_text(encoding='utf-8')
-          marker = '<!-- ITX-TECHNICIAN-DASHBOARD-ROUTE -->'
 
+          # The portal used to render the old technician dashboard first and
+          # redirect only after a second auth/profile check. Redirect as soon
+          # as the technician profile is known, before the old dashboard is
+          # made visible. This prevents the visible page flash and eliminates
+          # the need for a manual refresh.
+          old = "currentUser=session.user; currentProfile=await loadProfile(currentUser);\n      loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;"
+          new = "currentUser=session.user; currentProfile=await loadProfile(currentUser);\n      if(currentProfile.rol==='tecnico'){ window.location.replace('/technician-dashboard.html'); return; }\n      loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;"
+
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('Could not find the technician profile render point in index.html')
+
+          # Keep a fallback route block for sessions that arrive at the portal
+          # after an auth event without going through the normal login submit.
+          marker = '<!-- ITX-TECHNICIAN-DASHBOARD-ROUTE -->'
           script = r'''<!-- ITX-TECHNICIAN-DASHBOARD-ROUTE -->
           <script>
           (function(){
@@ -52,7 +66,7 @@ jobs:
               window.addEventListener('load',route);
               if(window.ITExpresSupabase && window.ITExpresSupabase.auth){
                 window.ITExpresSupabase.auth.onAuthStateChange(function(event){
-                  if(event==='SIGNED_IN' || event==='INITIAL_SESSION') setTimeout(route,0);
+                  if(event==='SIGNED_IN' || event==='INITIAL_SESSION') route();
                 });
               }
             }
@@ -61,7 +75,6 @@ jobs:
           })();
           </script>'''
 
-          # Replace any previous routing block, or install it once if missing.
           if marker in text:
               start = text.index(marker)
               end = text.find('</script>', start)
@@ -87,5 +100,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Fix immediate technician dashboard routing'
+          git commit -m 'Route technicians before portal render'
           git push
