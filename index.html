@@ -561,6 +561,7 @@
     if(!session){ if(notificationChannel){ try{ sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; } notifications=[]; renderNotifications(); currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
     try{
       currentUser=session.user; currentProfile=await loadProfile(currentUser);
+      if(currentProfile.rol==='tecnico'){ window.location.replace('/technician-dashboard.html'); return; }
       loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
       $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
       $('portalEmail').textContent=currentProfile.email || currentUser.email;
@@ -864,7 +865,7 @@
     window.addEventListener('load',route);
     if(window.ITExpresSupabase && window.ITExpresSupabase.auth){
       window.ITExpresSupabase.auth.onAuthStateChange(function(event){
-        if(event==='SIGNED_IN' || event==='INITIAL_SESSION') setTimeout(route,0);
+        if(event==='SIGNED_IN' || event==='INITIAL_SESSION') route();
       });
     }
   }
