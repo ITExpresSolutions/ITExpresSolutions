@@ -70,7 +70,7 @@ async function sendWelcomeEmail(to: string, nombre: string, actionLink: string) 
         <p style="font-size:12px;word-break:break-all;color:#087f8e">${esc(actionLink)}</p>
         <hr style="border:0;border-top:1px solid #e5edf1;margin:28px 0">
         <p style="font-size:13px;color:#607887;margin-bottom:4px">ITExpresSolutions</p>
-        <p style="font-size:13px;color:#607887;margin:0">✉️ itexpressolutions@gmail.com · 📞 +52 56 6388 5856</p>
+        <p style="font-size:13px;color:#607887;margin:0">✉️ itexpressolutions@gmail.com · 📞 +52 998 466 1832</p>
         <p style="font-size:13px;margin:8px 0 0"><a href="${SITE_URL}" style="color:#087f8e">${SITE_URL}</a></p>
       </div>
     </div>
