@@ -71,7 +71,6 @@
     const matchMessage = document.getElementById('itxRecoveryMatch');
     if (initialMessage) { message.textContent = initialMessage; message.className = initialType; }
 
-    // Show/hide password buttons so the user can visually verify both fields.
     overlay.querySelectorAll('.itxPasswordToggle').forEach((toggle) => {
       toggle.addEventListener('click', () => {
         const input = document.getElementById(toggle.dataset.target);
@@ -84,20 +83,10 @@
     });
 
     function updateMatchIndicator() {
-      if (!confirmInput.value) {
-        matchMessage.textContent = '';
-        matchMessage.className = '';
-        return;
-      }
-      if (passwordInput.value === confirmInput.value) {
-        matchMessage.textContent = '✓ Las contraseñas coinciden.';
-        matchMessage.className = 'match';
-      } else {
-        matchMessage.textContent = '✕ Las contraseñas no coinciden.';
-        matchMessage.className = 'no-match';
-      }
+      if (!confirmInput.value) { matchMessage.textContent = ''; matchMessage.className = ''; return; }
+      if (passwordInput.value === confirmInput.value) { matchMessage.textContent = '✓ Las contraseñas coinciden.'; matchMessage.className = 'match'; }
+      else { matchMessage.textContent = '✕ Las contraseñas no coinciden.'; matchMessage.className = 'no-match'; }
     }
-
     passwordInput.addEventListener('input', updateMatchIndicator);
     confirmInput.addEventListener('input', updateMatchIndicator);
 
@@ -165,7 +154,45 @@
     return { ok: false, error: new Error('No se encontró una sesión de recuperación válida.') };
   }
 
+  /* Fixes used by the portal: the two internal-content buttons must point to different admin pages. */
+  function fixAdminContentLinks() {
+    const anchors = Array.from(document.querySelectorAll('a,button'));
+    anchors.forEach((el) => {
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      if (el.tagName !== 'A') return;
+      if (text.includes('gestionar novedades') || (text.includes('novedades') && text.includes('sop'))) {
+        el.href = '/admin-content.html';
+      } else if (text === '📚 knowledge base' || text === 'knowledge base' || (text.includes('knowledge base') && !text.includes('novedades'))) {
+        el.href = '/admin-knowledge.html';
+      }
+    });
+  }
+
+  function installPortalAuthDiagnostics() {
+    const run = async () => {
+      const a = auth();
+      if (!a) return;
+      try {
+        const { error } = await a.getUser();
+        if (!error) return;
+        const text = String(error.message || error);
+        if (/issued in the future|jwt.*future|token.*future/i.test(text)) {
+          try { await a.signOut(); } catch (_) {}
+          const message = document.getElementById('loginMessage');
+          if (message) {
+            message.textContent = 'La sesión anterior era inválida (JWT emitido en el futuro). Se limpió la sesión. Vuelve a iniciar sesión.';
+            message.className = 'portal-message error';
+          }
+        }
+      } catch (_) {}
+    };
+    run();
+    if (a) a.onAuthStateChange((event) => { if (event === 'SIGNED_IN') setTimeout(run, 250); });
+  }
+
   async function boot() {
+    fixAdminContentLinks();
+    installPortalAuthDiagnostics();
     if (!isRecoveryRoute()) return;
     let ready = false;
     for (let i = 0; i < 30; i++) {
