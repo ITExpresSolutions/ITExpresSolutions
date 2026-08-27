@@ -390,6 +390,7 @@
     if(!session){ if(notificationChannel){ try{ sb.removeChannel(notificationChannel); }catch(_){} notificationChannel=null; } notifications=[]; renderNotifications(); currentUser=null; currentProfile=null; loginCard.hidden=false; setPasswordCard.hidden=true; dashboard.hidden=true; $('portalStatus').textContent='No has iniciado sesión'; $('portalEmail').textContent='Acceso protegido por Supabase'; $('portalStatusDot').classList.remove('online'); return; }
     try{
       currentUser=session.user; currentProfile=await loadProfile(currentUser);
+      if(currentProfile.rol==='tecnico'){ window.location.replace('/technician-dashboard.html'); return; }
       loginCard.hidden=true; setPasswordCard.hidden=true; dashboard.hidden=false;
       $('portalStatus').textContent=(currentProfile.rol==='admin'?'Administrador':'Técnico')+' conectado';
       $('portalEmail').textContent=currentProfile.email || currentUser.email;
@@ -675,5 +676,41 @@
   <span><strong>Conexión segura</strong><small>Acceso protegido</small></span>
 </div>
 
+<!-- ITX-TECHNICIAN-DASHBOARD-ROUTE -->
+<script>
+(function(){
+  'use strict';
+  var redirected=false;
+  var checking=false;
+  function route(){
+    if(redirected || checking || location.pathname.endsWith('/technician-dashboard.html')) return;
+    var sb=window.ITExpresSupabase;
+    if(!sb || !sb.auth) return;
+    checking=true;
+    sb.auth.getSession().then(function(result){
+      var session=result && result.data && result.data.session;
+      if(!session || !session.user || redirected) return null;
+      return sb.from('public_profiles').select('rol').eq('id',session.user.id).maybeSingle();
+    }).then(function(result){
+      if(!result || !result.data || redirected) return;
+      if(String(result.data.rol || '').toLowerCase()==='tecnico'){
+        redirected=true;
+        location.replace('/technician-dashboard.html');
+      }
+    }).catch(function(err){ console.debug('Technician routing:',err); }).finally(function(){ checking=false; });
+  }
+  function boot(){
+    route();
+    window.addEventListener('load',route);
+    if(window.ITExpresSupabase && window.ITExpresSupabase.auth){
+      window.ITExpresSupabase.auth.onAuthStateChange(function(event){
+        if(event==='SIGNED_IN' || event==='INITIAL_SESSION') route();
+      });
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+  window.addEventListener('hashchange',route);
+})();
+</script>
 </body>
 </html>
