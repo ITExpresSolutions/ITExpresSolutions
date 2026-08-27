@@ -194,7 +194,7 @@
     if (document.getElementById('itxAdmin2FAScript')) return;
     const script = document.createElement('script');
     script.id = 'itxAdmin2FAScript';
-    script.src = 'admin-2fa.js?v=1';
+    script.src = 'admin-2fa.js?v=2';
     script.defer = true;
     document.head.appendChild(script);
   }
