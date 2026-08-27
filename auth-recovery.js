@@ -187,12 +187,22 @@
       } catch (_) {}
     };
     run();
-    if (a) a.onAuthStateChange((event) => { if (event === 'SIGNED_IN') setTimeout(run, 250); });
+    a && a.onAuthStateChange((event) => { if (event === 'SIGNED_IN') setTimeout(run, 250); });
+  }
+
+  function loadAdmin2FA() {
+    if (document.getElementById('itxAdmin2FAScript')) return;
+    const script = document.createElement('script');
+    script.id = 'itxAdmin2FAScript';
+    script.src = 'admin-2fa.js?v=1';
+    script.defer = true;
+    document.head.appendChild(script);
   }
 
   async function boot() {
     fixAdminContentLinks();
     installPortalAuthDiagnostics();
+    loadAdmin2FA();
     if (!isRecoveryRoute()) return;
     let ready = false;
     for (let i = 0; i < 30; i++) {
