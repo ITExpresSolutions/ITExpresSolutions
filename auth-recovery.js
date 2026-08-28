@@ -161,10 +161,21 @@
       if (el.tagName !== 'A') return;
       if (text.includes('gestionar novedades') || (text.includes('novedades') && text.includes('sop'))) {
         el.href = '/admin-content.html';
-      } else if (text === '📚 knowledge base' || text === 'knowledge base' || (text.includes('knowledge base') && !text.includes('novedades'))) {
+      } else if (text.includes('knowledge base') && !text.includes('novedades') && !text.includes('sop')) {
         el.href = '/admin-knowledge.html';
       }
     });
+  }
+
+  function installAdminContentLinkObserver() {
+    fixAdminContentLinks();
+    if (!document.body || document.body.dataset.itxAdminContentLinksObserver === '1') return;
+    document.body.dataset.itxAdminContentLinksObserver = '1';
+    const observer = new MutationObserver(() => fixAdminContentLinks());
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(fixAdminContentLinks, 250);
+    setTimeout(fixAdminContentLinks, 1000);
+    setTimeout(fixAdminContentLinks, 2500);
   }
 
   function installPortalAuthDiagnostics() {
@@ -200,7 +211,7 @@
   }
 
   async function boot() {
-    fixAdminContentLinks();
+    installAdminContentLinkObserver();
     installPortalAuthDiagnostics();
     loadAdmin2FA();
     if (!isRecoveryRoute()) return;
