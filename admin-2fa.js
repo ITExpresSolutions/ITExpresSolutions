@@ -1,34 +1,76 @@
-/* ITExpresSolutions - second authentication gate for the administrator panel.
-   Uses the secured Supabase Edge Function admin-2fa to send and verify a real 6-digit code.
-   It intentionally does NOT use Supabase Magic Link for this second factor.
-*/
+/* ITExpresSolutions - administrator second authentication + idle session control. */
 (function () {
   'use strict';
 
-  const VERIFIED_FOR_MS = 15 * 60 * 1000;
+  const IDLE_FOR_MS = 15 * 60 * 1000;
+  const VERIFIED_KEY = 'itx_admin_2fa_verified_session';
   let gateShown = false;
-  let observerStarted = false;
+  let idleTimer = null;
+  let activityBound = false;
   let resendTimer = null;
   let resendUntil = 0;
 
   const sb = () => window.ITExpresSupabase;
   const auth = () => sb()?.auth;
-  const $ = (id) => document.getElementById(id);
-  const verifiedKey = (userId) => `itx_admin_2fa_verified_at_${userId}`;
+  const $ = id => document.getElementById(id);
 
   function isVerified(userId) {
     if (!userId) return false;
-    const key = verifiedKey(userId);
-    const value = Number(localStorage.getItem(key) || 0);
-    if (!value || Date.now() - value >= VERIFIED_FOR_MS) {
-      localStorage.removeItem(key);
+    try {
+      return sessionStorage.getItem(VERIFIED_KEY) === userId;
+    } catch (_) {
       return false;
     }
-    return true;
+  }
+
+  function clearVerification() {
+    try { sessionStorage.removeItem(VERIFIED_KEY); } catch (_) {}
   }
 
   function markVerified(userId) {
-    if (userId) localStorage.setItem(verifiedKey(userId), String(Date.now()));
+    try { sessionStorage.setItem(VERIFIED_KEY, userId); } catch (_) {}
+    startIdleLogout();
+  }
+
+  async function logoutForInactivity() {
+    clearTimeout(idleTimer);
+    clearVerification();
+    try { await auth()?.signOut({ scope: 'local' }); } catch (_) {}
+    location.href = '/';
+  }
+
+  function resetIdleTimer() {
+    if (!isAdminPanelVisible()) return;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(logoutForInactivity, IDLE_FOR_MS);
+  }
+
+  function startIdleLogout() {
+    if (!activityBound) {
+      activityBound = true;
+      ['click', 'keydown', 'mousemove', 'mousedown', 'touchstart', 'scroll'].forEach(eventName => {
+        document.addEventListener(eventName, resetIdleTimer, { passive: true });
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) resetIdleTimer();
+      });
+    }
+    resetIdleTimer();
+  }
+
+  function isAdminPanelVisible() {
+    const panel = $('adminPanel');
+    return !!panel && !panel.hidden;
+  }
+
+  async function getAdminUser() {
+    const a = auth();
+    if (!a) return null;
+    const { data: { session }, error: sessionError } = await a.getSession();
+    if (sessionError || !session?.user) return null;
+    const { data: profile, error } = await sb().from('public_profiles').select('rol,activo').eq('id', session.user.id).single();
+    if (error || !profile || profile.rol !== 'admin' || !profile.activo) return null;
+    return session.user;
   }
 
   function installStyles() {
@@ -43,7 +85,6 @@
       #itxAdmin2FAEmail{font-weight:800;color:#087f8e;word-break:break-word}
       #itxAdmin2FACard label{display:block;margin:18px 0 7px;font-weight:800;color:#173042}
       #itxAdmin2FACode{width:100%;box-sizing:border-box;border:1px solid #cfe0e6;border-radius:12px;padding:14px;text-align:center;letter-spacing:7px;font-size:24px;font-weight:900;color:#062f52}
-      #itxAdmin2FACode:focus{outline:2px solid rgba(67,213,142,.5);outline-offset:2px}
       #itxAdmin2FAActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
       #itxAdmin2FAActions button{flex:1 1 190px;border:0;border-radius:12px;padding:13px 15px;background:#087f8e;color:#fff;font-weight:800;cursor:pointer}
       #itxAdmin2FAActions button.secondary{background:#eef6f8;color:#062f52}
@@ -53,16 +94,6 @@
       #itxAdmin2FAStatus{margin-top:14px;padding:10px 12px;border-radius:10px;background:#f3f8fa;color:#526875;font-size:13px}
     `;
     document.head.appendChild(style);
-  }
-
-  async function getAdminUser() {
-    const a = auth();
-    if (!a) return null;
-    const { data: { session }, error: sessionError } = await a.getSession();
-    if (sessionError || !session?.user) return null;
-    const { data: profile, error } = await sb().from('public_profiles').select('rol,activo').eq('id', session.user.id).single();
-    if (error || !profile || profile.rol !== 'admin' || !profile.activo) return null;
-    return session.user;
   }
 
   function setMessage(text, type='') {
@@ -180,6 +211,7 @@
           clearInterval(resendTimer);
           overlay.remove();
           revealAdminPanel();
+          startIdleLogout();
         }, 450);
       } catch (error) {
         setMessage(error?.message || 'Código incorrecto o expirado.', 'error');
@@ -205,7 +237,12 @@
     if (!panel || panel.hidden || $('itxAdmin2FAOverlay')) return;
     const user = await getAdminUser();
     if (!user) return;
-    if (isVerified(user.id)) return;
+
+    if (isVerified(user.id)) {
+      startIdleLogout();
+      return;
+    }
+
     panel.hidden = true;
     if (!gateShown) {
       gateShown = true;
@@ -214,14 +251,19 @@
   }
 
   function startObserver() {
-    if (observerStarted) return;
-    observerStarted = true;
     const run = () => { protectAdminPanel().catch(() => {}); };
     run();
     const observer = new MutationObserver(run);
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
     setInterval(run, 3000);
   }
+
+  auth()?.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      clearVerification();
+      clearTimeout(idleTimer);
+    }
+  });
 
   function boot() {
     startObserver();
