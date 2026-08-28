@@ -34,26 +34,11 @@
       .itx-admin-content-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
       .itx-admin-content-btn{display:inline-flex;align-items:center;gap:7px;border-radius:10px;padding:11px 15px;background:#087f8e;color:#fff!important;text-decoration:none!important;font-weight:800;box-shadow:0 4px 12px rgba(8,127,142,.16)}
       .itx-admin-content-btn:hover{background:#066f7c}
-      .itx-partners-section{margin:28px 0 0;background:#f6fafc;border-top:1px solid #dbe9ee;border-bottom:1px solid #dbe9ee;padding:34px 0 30px}
-      .itx-partners-inner{max-width:1180px;margin:0 auto;padding:0 22px}
-      .itx-partners-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
-      .itx-partner{padding:8px 34px;text-align:center;min-width:0}
-      .itx-partner+.itx-partner{border-left:1px solid #cddfe6}
-      .itx-partner-logo{height:78px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-      .itx-lenovo-logo{display:inline-flex;align-items:center;justify-content:center;background:#e2231a;color:#fff;font:800 34px/1 Arial,Helvetica,sans-serif;padding:12px 24px;border-radius:2px;letter-spacing:-1.5px}
-      .itx-dell-logo{width:92px;height:92px;border:6px solid #168dcc;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#168dcc;font:800 27px/1 Arial,Helvetica,sans-serif;letter-spacing:-2px}
-      .itx-hp-logo{width:88px;height:88px;border-radius:50%;background:#168dcc;color:#fff;display:flex;align-items:center;justify-content:center;font:800 36px/1 Arial,Helvetica,sans-serif;letter-spacing:-4px}
-      .itx-partner h3{margin:0 0 10px;color:#062f52;font-size:20px}
-      .itx-partner p{margin:7px auto;color:#4f6674;line-height:1.55;max-width:330px;font-size:14px}
-      .itx-partner strong{color:#17324d}
-      .itx-partner-note{font-size:13px!important;margin-top:16px!important}
-      .itx-partner-link{display:inline-block;margin-top:7px;color:#087f8e;font-weight:800;text-decoration:none}
       .itx-security-badge{display:inline-flex;align-items:center;gap:11px;color:#fff;text-align:left}
       .itx-security-shield{width:54px;height:62px;display:grid;place-items:center;position:relative;background:linear-gradient(145deg,#43d58e,#087f8e);clip-path:polygon(50% 0,92% 15%,86% 72%,50% 100%,14% 72%,8% 15%);font-size:25px;filter:drop-shadow(0 5px 8px rgba(0,0,0,.18))}
       .itx-security-text strong{display:block;font-size:17px;letter-spacing:.3px}
       .itx-security-text span{display:block;margin-top:4px;font-size:12px;color:#d8e8ef}
       footer .footer-inner{align-items:center}
-      @media(max-width:850px){.itx-partners-grid{grid-template-columns:1fr}.itx-partner{padding:24px 10px}.itx-partner+.itx-partner{border-left:0;border-top:1px solid #cddfe6}.itx-partners-section{padding-top:20px}}
       @media(max-width:760px){ .site-language-switcher{margin-left:0!important}.site-language-switcher button{min-width:32px!important;height:26px!important;line-height:26px!important;padding:0 7px!important}#serviceBotToggle{right:16px!important;bottom:16px!important}#serviceBot{right:16px!important;bottom:82px!important;width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;max-height:calc(100vh - 98px)!important}.itx-admin-service-date{min-width:190px}.itx-tech-invite-grid{grid-template-columns:1fr} }
     `;
     document.head.appendChild(style);
@@ -257,39 +242,6 @@
     if(jobs) jobs.insertAdjacentElement('afterend',card); else adminPanel.prepend(card);
   }
 
-  function installPartnersFooter(){
-    const footer=document.querySelector('footer');
-    if(!footer || document.getElementById('itxPartnersSection')) return;
-    const section=document.createElement('section');
-    section.id='itxPartnersSection';
-    section.className='itx-partners-section';
-    section.innerHTML=`
-      <div class="itx-partners-inner">
-        <div class="itx-partners-grid">
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-lenovo-logo" aria-label="Lenovo">Lenovo</div></div>
-            <h3>Lenovo Pro para PyMEs</h3>
-            <p><strong>Empresa registrada en Lenovo Pro.</strong> Acceso a la plataforma Lenovo Pro para compras empresariales.</p>
-            <p>Servicio de mantenimiento y soporte técnico para equipos Lenovo.</p>
-            <a class="itx-partner-link" href="https://www.lenovo.com/mx/es/" target="_blank" rel="noopener noreferrer">Ver Lenovo Pro →</a>
-          </article>
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-dell-logo" aria-label="Dell">DELL</div></div>
-            <h3>Soporte para equipos Dell</h3>
-            <p><strong>Soporte técnico y mantenimiento.</strong> Atención para computadoras, laptops y equipos Dell.</p>
-            <p class="itx-partner-note">No implica una relación de representación o distribución oficial con Dell.</p>
-          </article>
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-hp-logo" aria-label="HP">hp</div></div>
-            <h3>Soporte para equipos HP</h3>
-            <p><strong>Soporte técnico y mantenimiento.</strong> Atención para computadoras, laptops, impresoras y equipos HP.</p>
-            <p class="itx-partner-note">No implica una relación de representación o distribución oficial con HP.</p>
-          </article>
-        </div>
-      </div>`;
-    footer.parentNode.insertBefore(section,footer);
-  }
-
   function installSecurityBadge(){
     const footer=document.querySelector('footer');
     if(!footer || document.getElementById('itxSecurityBadge')) return;
@@ -311,7 +263,7 @@
     setTimeout(()=>{if(!panel.hidden){installTechnicianInvite();installAdminContentLink();}},1500);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();installPartnersFooter();installSecurityBadge();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);setTimeout(installPartnersFooter,500);setTimeout(installSecurityBadge,500);}
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();installSecurityBadge();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);setTimeout(installSecurityBadge,500);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
