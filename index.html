@@ -582,6 +582,10 @@
     const email=$('loginEmail').value.trim(), password=$('loginPassword').value;
     const {error}=await sb.auth.signInWithPassword({email,password});
     if(error){ msg($('loginMessage'),error.message==='Invalid login credentials'?'Correo o contraseña incorrectos.':error.message,'error'); return; }
+    // 2FA administrativo solo se inicia después de una autenticación
+    // explícita desde el formulario del Portal. Restaurar una sesión existente
+    // al visitar la página principal NO debe enviar un nuevo código.
+    try { sessionStorage.setItem('itx_admin_2fa_pending_login','1'); } catch (_) {}
     msg($('loginMessage'),'Sesión iniciada.','success'); await refreshPortal();
   });
   $('forgotPassword').addEventListener('click',async()=>{

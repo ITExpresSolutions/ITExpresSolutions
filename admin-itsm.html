@@ -23,7 +23,8 @@ body{font-family:Arial,sans-serif;margin:0;background:#f5f7fb;color:#172033}.wra
 <script>
 const SUPABASE_URL='https://wfdxbgohwejawmkpninz.supabase.co';
 // Public anon key is intentionally loaded from the same runtime configuration used by the existing portal.
-const sb=supabase.createClient(SUPABASE_URL,'sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb');
+let sb;
+try{const key=window.ITEXPRESS_SUPABASE_ANON_KEY||localStorage.getItem('ITEXPRESS_SUPABASE_ANON_KEY'); if(key) sb=supabase.createClient(SUPABASE_URL,key)}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 async function load(){
  if(!sb){document.getElementById('rows').innerHTML='<tr><td colspan="6">La configuración segura de Supabase del portal no está disponible en esta página.</td></tr>';return}

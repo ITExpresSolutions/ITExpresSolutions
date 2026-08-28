@@ -288,8 +288,11 @@
   }
 
   auth()?.onAuthStateChange((event) => {
+    // IMPORTANTE: SIGNED_IN también ocurre cuando Supabase restaura una
+    // sesión existente al abrir/refrescar la página. No debemos enviar OTP
+    // en ese caso. index.html marca PENDING_KEY únicamente después de que
+    // el usuario introduce credenciales en el formulario del Portal.
     if (event === 'SIGNED_IN') {
-      setSessionValue(PENDING_KEY, '1');
       setTimeout(() => protectAdminPanel().catch(() => {}), 0);
     }
     if (event === 'SIGNED_OUT') {
