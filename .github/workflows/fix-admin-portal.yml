@@ -1,0 +1,35 @@
+name: Fix admin portal links
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix Portal links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          changed=[]
+          for p in Path('.').glob('admin-*.html'):
+              s=p.read_text(encoding='utf-8')
+              n=s.replace('/?portal=1','/#portal')
+              if n!=s:
+                  p.write_text(n,encoding='utf-8')
+                  changed.append(str(p))
+          print('Changed:', changed)
+          PY
+      - name: Commit fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin-*.html
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git commit -m "Fix admin portal navigation"
+          git push
