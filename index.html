@@ -36,6 +36,11 @@
     .service-price-note{font-size:.83rem!important}
     @media(max-width:600px){.service-price-options{grid-template-columns:1fr}.service-price-dialog{padding:24px 20px}}
   </style>
+<style>
+.admin-dashboard-access{margin-bottom:16px;border:1px solid rgba(8,127,142,.18);background:linear-gradient(135deg,#ffffff,#f3fafb)}
+.admin-dashboard-access h3{margin:4px 0 6px}
+.admin-dashboard-access p{margin:0 0 14px}
+</style>
 </head>
 <body>
   <header class="header">
@@ -299,6 +304,17 @@
         </div>
 
         <div id="adminPanel" hidden>
+          <div class="portal-card admin-dashboard-access">
+            <div class="portal-card-head">
+              <div>
+                <div class="eyebrow">ADMINISTRACIÓN</div>
+                <h3>📊 Dashboard Administrativo</h3>
+                <p>Accede al centro de gestión de ITExpresSolutions: ITSM, CSM, ERP, monitoreo, técnicos, Knowledge Base y reportes.</p>
+              </div>
+              <span>⚙️</span>
+            </div>
+            <a class="btn" href="admin-dashboard.html">Abrir Dashboard Administrativo</a>
+          </div>
           <div class="portal-grid-2">
             <div class="portal-card">
               <div class="portal-card-head"><div><h3>Nuevo trabajo</h3><p>Asigna una solicitud a un técnico.</p></div><span>🛠️</span></div>
