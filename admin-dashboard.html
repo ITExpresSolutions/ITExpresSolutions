@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard | ITExpresSolutions</title>
+<link rel="icon" href="favicon.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#062f52;--teal:#087f8e;--green:#43d58e;--bg:#f3f7fa;--ink:#17324d;--muted:#6b808d;--line:#dce8ed;--card:#fff;--danger:#b42318;--warn:#a86a00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,Helvetica,sans-serif}.wrap{max-width:1280px;margin:auto;padding:22px}.top{background:#fff;border-radius:20px;box-shadow:0 8px 28px rgba(6,47,82,.08);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:52px;height:52px;border-radius:13px}.brand h1{margin:0;color:var(--navy);font-size:23px}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--teal);color:#fff;text-decoration:none;font-weight:800;cursor:pointer}.btn.secondary{background:#eef6f8;color:var(--navy)}.btn.danger{background:#b42318}.hero{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:10px 2px 18px}.hero h2{margin:0;color:var(--navy);font-size:30px}.hero p{margin:7px 0 0;color:var(--muted)}.live{display:flex;align-items:center;gap:8px;color:#087f62;font-weight:800;font-size:13px}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px #e5f8ef}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.metric,.panel,.module{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 24px rgba(6,47,82,.06)}.metric{padding:17px}.metric span{display:block;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.5px}.metric strong{display:block;color:var(--navy);font-size:28px;margin-top:8px}.metric small{display:block;color:#087f62;font-weight:800;margin-top:5px}.layout{display:grid;grid-template-columns:1.65fr 1fr;gap:16px}.panel{padding:20px}.panel h3{margin:0 0 5px;color:var(--navy);font-size:18px}.panel>p{margin:0 0 16px;color:var(--muted);font-size:13px}.modules{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.module{padding:17px;text-decoration:none;color:inherit;display:block;transition:transform .18s ease,box-shadow .18s ease}.module:hover{transform:translateY(-2px);box-shadow:0 13px 30px rgba(6,47,82,.11)}.module .icon{font-size:27px}.module h4{margin:9px 0 5px;color:var(--navy);font-size:17px}.module p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.tag{display:inline-block;margin-top:12px;border-radius:999px;padding:5px 9px;background:#eef6f8;color:var(--teal);font-size:11px;font-weight:900}.tag.live{background:#e7f8ef;color:#087f62}.tag.build{background:#fff5dc;color:var(--warn)}.feed{display:grid;gap:10px}.feed-row{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfdfe;display:flex;justify-content:space-between;gap:10px;align-items:center}.feed-row strong{display:block;color:var(--navy);font-size:13px}.feed-row small{display:block;color:var(--muted);margin-top:3px}.pill{border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;white-space:nowrap;background:#eef2f4;color:#607887}.pill.ok{background:#e5f7ed;color:#087f62}.pill.warn{background:#fff5dc;color:var(--warn)}.pill.bad{background:#fff0ed;color:var(--danger)}.itil{margin-top:16px;padding:14px;border-radius:14px;background:#eef7fa;border:1px solid #d8eaf0}.itil strong{color:var(--navy)}.itil p{margin:5px 0 0;color:#526d7a;font-size:12px;line-height:1.5}.foot{margin:18px 2px 0;color:var(--muted);font-size:11px;line-height:1.6}@media(max-width:950px){.metrics{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:620px){.wrap{padding:13px}.top{align-items:flex-start;flex-direction:column}.hero{align-items:flex-start;flex-direction:column}.hero h2{font-size:25px}.metrics,.modules{grid-template-columns:1fr}.actions{width:100%}.actions .btn{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><img src="logo-badge.webp" alt="ITExpresSolutions"><div><h1>ITExpresSolutions</h1><p>Centro de gestión de servicios, clientes y operaciones</p></div></div>
+  <div class="actions"><a class="btn secondary" href="/#portal">← Portal</a><button class="btn" id="refresh">↻ Actualizar</button><button class="btn danger" id="logout">Salir</button></div>
+</header>
+<section class="hero"><div><h2>Dashboard</h2><p>Una vista unificada para ITSM, CSM, ERP y monitoreo.</p></div><div class="live"><span class="dot"></span>Sistema operativo</div></section>
+<section class="metrics">
+  <div class="metric"><span>ITSM · TICKETS</span><strong id="tickets">—</strong><small id="ticketsHint">Cargando…</small></div>
+  <div class="metric"><span>CLIENTES / CSM</span><strong id="customers">—</strong><small id="customersHint">Base actual</small></div>
+  <div class="metric"><span>TÉCNICOS EN LÍNEA</span><strong id="techs">—</strong><small id="techsHint">Presencia actual</small></div>
+  <div class="metric"><span>KNOWLEDGE BASE</span><strong id="kb">—</strong><small id="kbHint">Artículos publicados</small></div>
+</section>
+<div class="layout">
+  <section class="panel">
+    <h3>Módulos principales</h3>
+    <p>Construimos sobre lo que ya existe, sin duplicar funciones.</p>
+    <div class="modules">
+      <a class="module" href="/#portal"><div class="icon">🎫</div><h4>ITSM</h4><p>Tickets, incidentes, solicitudes, asignación, prioridades, SLA, cambios, problemas y seguimiento.</p><span class="tag live">ACTIVO</span></a>
+      <div class="module"><div class="icon">👥</div><h4>CSM</h4><p>Clientes, contactos, servicios contratados, SLA, historial, satisfacción y relación con el servicio.</p><span class="tag build">FASE 2</span></div>
+      <div class="module"><div class="icon">💼</div><h4>ERP</h4><p>Activos, inventario, proveedores, compras, cotizaciones, gastos, ingresos y facturación.</p><span class="tag build">FASE 2</span></div>
+      <a class="module" href="/admin-server.html"><div class="icon">🖥️</div><h4>Monitoreo</h4><p>Estado de sistemas, disponibilidad, alertas y eventos que posteriormente podrán alimentar ITSM.</p><span class="tag live">ACTIVO</span></a>
+      <a class="module" href="/admin-knowledge.html"><div class="icon">📚</div><h4>Knowledge Base</h4><p>Conocimiento, soluciones conocidas, procedimientos y documentación para técnicos.</p><span class="tag live">ACTIVO</span></a>
+      <a class="module" href="/admin-content.html"><div class="icon">📰</div><h4>Contenido interno</h4><p>Novedades corporativas y documentación que se publica para los técnicos.</p><span class="tag live">ACTIVO</span></a>
+      <a class="module" href="/admin-technicians.html"><div class="icon">👨‍🔧</div><h4>Técnicos</h4><p>Disponibilidad, cuentas, asignaciones y gestión operativa del equipo técnico.</p><span class="tag live">ACTIVO</span></a>
+      <a class="module" href="/admin-reports.html"><div class="icon">📊</div><h4>Reportes</h4><p>Indicadores y seguimiento operativo para tomar decisiones basadas en datos.</p><span class="tag live">ACTIVO</span></a>
+    </div>
+    <div class="itil"><strong>Referencia de diseño: ITIL (Version 5)</strong><p>La arquitectura de ITSM se orientará a gestión de productos y servicios digitales, valor medible, experiencia, resiliencia, niveles de servicio y mejora continua, sin presentar a ITExpresSolutions como una certificación oficial de ITIL.</p></div>
+  </section>
+  <aside class="panel">
+    <h3>Actividad y alertas</h3><p>Resumen de lo que el sistema puede consultar actualmente.</p>
+    <div class="feed">
+      <div class="feed-row"><div><strong>🔐 Autenticación administrativa</strong><small>Sesión protegida con Supabase.</small></div><span class="pill ok">OK</span></div>
+      <div class="feed-row"><div><strong>🖥️ Estado del sistema</strong><small>Panel de monitoreo disponible.</small></div><span class="pill ok">OK</span></div>
+      <div class="feed-row"><div><strong>📚 Knowledge Base</strong><small id="kbFeed">Consultando artículos…</small></div><span class="pill" id="kbPill">—</span></div>
+      <div class="feed-row"><div><strong>👨‍🔧 Técnicos</strong><small id="techFeed">Consultando presencia…</small></div><span class="pill" id="techPill">—</span></div>
+      <div class="feed-row"><div><strong>🎫 Trabajo / tickets</strong><small id="ticketFeed">Consultando registros…</small></div><span class="pill" id="ticketPill">—</span></div>
+    </div>
+  </aside>
+</div>
+<p class="foot">ITExpresSolutions · Dashboard interno. Los módulos CSM y ERP se muestran como la siguiente fase para evitar crear datos ficticios antes de definir sus tablas y reglas de negocio.</p>
+</div>
+<script>
+const sb=supabase.createClient('https://wfdxbgohwejawmkpninz.supabase.co','sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb');
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+async function auth(){
+  const {data:{session},error}=await sb.auth.getSession();
+  if(error||!session){location.href='/#portal';return false}
+  const {data:p}=await sb.from('public_profiles').select('rol,activo').eq('id',session.user.id).maybeSingle();
+  if(!p||p.rol!=='admin'||!p.activo){alert('Acceso restringido al panel administrativo.');await sb.auth.signOut();location.href='/#portal';return false}
+  return true;
+}
+async function count(table,filter){
+  let q=sb.from(table).select('*',{count:'exact',head:true});
+  if(filter)q=q.eq(filter[0],filter[1]);
+  const {count,error}=await q;
+  if(error)throw error;
+  return count??0;
+}
+async function load(){
+  try{
+    const [tickets,customers,techs,kb]=await Promise.all([
+      count('trabajos'),
+      count('public_profiles',['rol','cliente']),
+      count('technician_presence',['status','online']),
+      count('knowledge_base',['publicado',true])
+    ]);
+    $('tickets').textContent=tickets;$('ticketsHint').textContent='Registros de trabajo';$('ticketFeed').textContent=tickets+' registros disponibles';$('ticketPill').textContent='OK';$('ticketPill').className='pill ok';
+    $('customers').textContent=customers;$('customersHint').textContent='Perfiles con rol cliente';
+    $('techs').textContent=techs;$('techsHint').textContent='Conectados ahora';$('techFeed').textContent=techs+' técnicos en línea';$('techPill').textContent=techs?'ONLINE':'SIN TÉCNICOS';$('techPill').className='pill '+(techs?'ok':'warn');
+    $('kb').textContent=kb;$('kbHint').textContent='Artículos publicados';$('kbFeed').textContent=kb+' artículos publicados';$('kbPill').textContent='OK';$('kbPill').className='pill ok';
+  }catch(e){
+    console.error(e);$('tickets').textContent='—';$('customers').textContent='—';$('techs').textContent='—';$('kb').textContent='—';$('ticketsHint').textContent='Consulta no disponible';$('kbFeed').textContent='Revisa permisos/RLS de Supabase';$('kbPill').textContent='REVISAR';$('kbPill').className='pill warn';
+  }
+}
+$('refresh').onclick=load;
+$('logout').onclick=async()=>{await sb.auth.signOut();location.href='/'};
+(async()=>{if(await auth())await load()})();
+</script>
+</body>
+</html>
