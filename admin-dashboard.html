@@ -30,7 +30,7 @@
     <p>Construimos sobre lo que ya existe, sin duplicar funciones.</p>
     <div class="modules">
       <a class="module" href="/#portal"><div class="icon">🎫</div><h4>ITSM</h4><p>Tickets, incidentes, solicitudes, asignación, prioridades, SLA, cambios, problemas y seguimiento.</p><span class="tag live">ACTIVO</span></a>
-      <div class="module"><div class="icon">👥</div><h4>CSM</h4><p>Clientes, contactos, servicios contratados, SLA, historial, satisfacción y relación con el servicio.</p><span class="tag build">FASE 2</span></div>
+      <a class="module" href="/admin-csm.html"><div class="icon">👥</div><h4>CSM</h4><p>Clientes, contactos, servicios, casos, SLA, historial y satisfacción.</p><span class="tag live">ACTIVO · FASE 1</span></a>
       <div class="module"><div class="icon">💼</div><h4>ERP</h4><p>Activos, inventario, proveedores, compras, cotizaciones, gastos, ingresos y facturación.</p><span class="tag build">FASE 2</span></div>
       <a class="module" href="/admin-server.html"><div class="icon">🖥️</div><h4>Monitoreo</h4><p>Estado de sistemas, disponibilidad, alertas y eventos que posteriormente podrán alimentar ITSM.</p><span class="tag live">ACTIVO</span></a>
       <a class="module" href="/admin-knowledge.html"><div class="icon">📚</div><h4>Knowledge Base</h4><p>Conocimiento, soluciones conocidas, procedimientos y documentación para técnicos.</p><span class="tag live">ACTIVO</span></a>
@@ -51,45 +51,15 @@
     </div>
   </aside>
 </div>
-<p class="foot">ITExpresSolutions · Dashboard interno. Los módulos CSM y ERP se muestran como la siguiente fase para evitar crear datos ficticios antes de definir sus tablas y reglas de negocio.</p>
+<p class="foot">ITExpresSolutions · Dashboard interno. CSM ya dispone de una primera pantalla administrativa; ERP se mantiene como siguiente fase para definir primero sus tablas y reglas de negocio.</p>
 </div>
 <script>
 const sb=supabase.createClient('https://wfdxbgohwejawmkpninz.supabase.co','sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb');
 const $=id=>document.getElementById(id);
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-async function auth(){
-  const {data:{session},error}=await sb.auth.getSession();
-  if(error||!session){location.href='/#portal';return false}
-  const {data:p}=await sb.from('public_profiles').select('rol,activo').eq('id',session.user.id).maybeSingle();
-  if(!p||p.rol!=='admin'||!p.activo){alert('Acceso restringido al panel administrativo.');await sb.auth.signOut();location.href='/#portal';return false}
-  return true;
-}
-async function count(table,filter){
-  let q=sb.from(table).select('*',{count:'exact',head:true});
-  if(filter)q=q.eq(filter[0],filter[1]);
-  const {count,error}=await q;
-  if(error)throw error;
-  return count??0;
-}
-async function load(){
-  try{
-    const [tickets,customers,techs,kb]=await Promise.all([
-      count('trabajos'),
-      count('public_profiles',['rol','cliente']),
-      count('technician_presence',['status','online']),
-      count('knowledge_base',['publicado',true])
-    ]);
-    $('tickets').textContent=tickets;$('ticketsHint').textContent='Registros de trabajo';$('ticketFeed').textContent=tickets+' registros disponibles';$('ticketPill').textContent='OK';$('ticketPill').className='pill ok';
-    $('customers').textContent=customers;$('customersHint').textContent='Perfiles con rol cliente';
-    $('techs').textContent=techs;$('techsHint').textContent='Conectados ahora';$('techFeed').textContent=techs+' técnicos en línea';$('techPill').textContent=techs?'ONLINE':'SIN TÉCNICOS';$('techPill').className='pill '+(techs?'ok':'warn');
-    $('kb').textContent=kb;$('kbHint').textContent='Artículos publicados';$('kbFeed').textContent=kb+' artículos publicados';$('kbPill').textContent='OK';$('kbPill').className='pill ok';
-  }catch(e){
-    console.error(e);$('tickets').textContent='—';$('customers').textContent='—';$('techs').textContent='—';$('kb').textContent='—';$('ticketsHint').textContent='Consulta no disponible';$('kbFeed').textContent='Revisa permisos/RLS de Supabase';$('kbPill').textContent='REVISAR';$('kbPill').className='pill warn';
-  }
-}
-$('refresh').onclick=load;
-$('logout').onclick=async()=>{await sb.auth.signOut();location.href='/'};
-(async()=>{if(await auth())await load()})();
+async function auth(){const {data:{session},error}=await sb.auth.getSession();if(error||!session){location.href='/#portal';return false}const {data:p}=await sb.from('public_profiles').select('rol,activo').eq('id',session.user.id).maybeSingle();if(!p||p.rol!=='admin'||!p.activo){alert('Acceso restringido al panel administrativo.');await sb.auth.signOut();location.href='/#portal';return false}return true}
+async function count(table,filter){let q=sb.from(table).select('*',{count:'exact',head:true});if(filter)q=q.eq(filter[0],filter[1]);const {count,error}=await q;if(error)throw error;return count??0}
+async function load(){try{const [tickets,customers,techs,kb]=await Promise.all([count('trabajos'),count('public_profiles',['rol','cliente']),count('technician_presence',['status','online']),count('knowledge_base',['publicado',true])]);$('tickets').textContent=tickets;$('ticketsHint').textContent='Registros de trabajo';$('ticketFeed').textContent=tickets+' registros disponibles';$('ticketPill').textContent='OK';$('ticketPill').className='pill ok';$('customers').textContent=customers;$('customersHint').textContent='Perfiles con rol cliente';$('techs').textContent=techs;$('techsHint').textContent='Conectados ahora';$('techFeed').textContent=techs+' técnicos en línea';$('techPill').textContent=techs?'ONLINE':'SIN TÉCNICOS';$('techPill').className='pill '+(techs?'ok':'warn');$('kb').textContent=kb;$('kbHint').textContent='Artículos publicados';$('kbFeed').textContent=kb+' artículos publicados';$('kbPill').textContent='OK';$('kbPill').className='pill ok'}catch(e){console.error(e);$('tickets').textContent='—';$('customers').textContent='—';$('techs').textContent='—';$('kb').textContent='—';$('ticketsHint').textContent='Consulta no disponible';$('kbFeed').textContent='Revisa permisos/RLS de Supabase';$('kbPill').textContent='REVISAR';$('kbPill').className='pill warn'}}
+$('refresh').onclick=load;$('logout').onclick=async()=>{await sb.auth.signOut();location.href='/'};(async()=>{if(await auth())await load()})();
 </script>
 </body>
 </html>
