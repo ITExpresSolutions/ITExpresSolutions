@@ -257,39 +257,6 @@
     if(jobs) jobs.insertAdjacentElement('afterend',card); else adminPanel.prepend(card);
   }
 
-  function installPartnersFooter(){
-    const footer=document.querySelector('footer');
-    if(!footer || document.getElementById('itxPartnersSection')) return;
-    const section=document.createElement('section');
-    section.id='itxPartnersSection';
-    section.className='itx-partners-section';
-    section.innerHTML=`
-      <div class="itx-partners-inner">
-        <div class="itx-partners-grid">
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-lenovo-logo" aria-label="Lenovo">Lenovo</div></div>
-            <h3>Lenovo Pro para PyMEs</h3>
-            <p><strong>Empresa registrada en Lenovo Pro.</strong> Acceso a la plataforma Lenovo Pro para compras empresariales.</p>
-            <p>Servicio de mantenimiento y soporte técnico para equipos Lenovo.</p>
-            <a class="itx-partner-link" href="https://www.lenovo.com/mx/es/" target="_blank" rel="noopener noreferrer">Ver Lenovo Pro →</a>
-          </article>
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-dell-logo" aria-label="Dell">DELL</div></div>
-            <h3>Soporte para equipos Dell</h3>
-            <p><strong>Soporte técnico y mantenimiento.</strong> Atención para computadoras, laptops y equipos Dell.</p>
-            <p class="itx-partner-note">No implica una relación de representación o distribución oficial con Dell.</p>
-          </article>
-          <article class="itx-partner">
-            <div class="itx-partner-logo"><div class="itx-hp-logo" aria-label="HP">hp</div></div>
-            <h3>Soporte para equipos HP</h3>
-            <p><strong>Soporte técnico y mantenimiento.</strong> Atención para computadoras, laptops, impresoras y equipos HP.</p>
-            <p class="itx-partner-note">No implica una relación de representación o distribución oficial con HP.</p>
-          </article>
-        </div>
-      </div>`;
-    footer.parentNode.insertBefore(section,footer);
-  }
-
   function installSecurityBadge(){
     const footer=document.querySelector('footer');
     if(!footer || document.getElementById('itxSecurityBadge')) return;
@@ -311,7 +278,7 @@
     setTimeout(()=>{if(!panel.hidden){installTechnicianInvite();installAdminContentLink();}},1500);
   }
 
-  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();installPartnersFooter();installSecurityBadge();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);setTimeout(installPartnersFooter,500);setTimeout(installSecurityBadge,500);}
+  function boot(){installStyles();moveLanguageSwitcher();loadPrices();loadAuthRecovery();installLoginPasswordToggle();installPasswordRecoveryFix();watchAdminJobs();watchAdminPanel();installSecurityBadge();setTimeout(moveLanguageSwitcher,300);setTimeout(moveLanguageSwitcher,1000);setTimeout(installSecurityBadge,500);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   new MutationObserver(moveLanguageSwitcher).observe(document.documentElement,{childList:true,subtree:true});
 })();
