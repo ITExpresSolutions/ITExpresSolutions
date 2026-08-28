@@ -5,7 +5,6 @@
 (function () {
   'use strict';
 
-  const VERIFIED_KEY = 'itx_admin_2fa_verified_at';
   const VERIFIED_FOR_MS = 15 * 60 * 1000;
   let gateShown = false;
   let observerStarted = false;
@@ -15,18 +14,21 @@
   const sb = () => window.ITExpresSupabase;
   const auth = () => sb()?.auth;
   const $ = (id) => document.getElementById(id);
+  const verifiedKey = (userId) => `itx_admin_2fa_verified_at_${userId}`;
 
-  function isVerified() {
-    const value = Number(sessionStorage.getItem(VERIFIED_KEY) || 0);
+  function isVerified(userId) {
+    if (!userId) return false;
+    const key = verifiedKey(userId);
+    const value = Number(localStorage.getItem(key) || 0);
     if (!value || Date.now() - value >= VERIFIED_FOR_MS) {
-      sessionStorage.removeItem(VERIFIED_KEY);
+      localStorage.removeItem(key);
       return false;
     }
     return true;
   }
 
-  function markVerified() {
-    sessionStorage.setItem(VERIFIED_KEY, String(Date.now()));
+  function markVerified(userId) {
+    if (userId) localStorage.setItem(verifiedKey(userId), String(Date.now()));
   }
 
   function installStyles() {
@@ -90,7 +92,7 @@
     resendTimer = setInterval(tick, 1000);
   }
 
-  function render(email) {
+  function render(user) {
     if ($('itxAdmin2FAOverlay')) return;
     installStyles();
     const overlay = document.createElement('div');
@@ -113,7 +115,7 @@
         </form>
       </section>`;
     document.body.appendChild(overlay);
-    $('itxAdmin2FAEmail').textContent = email || 'tu correo de administrador';
+    $('itxAdmin2FAEmail').textContent = user?.email || 'tu correo de administrador';
 
     const send = $('itxAdmin2FASend');
     const verify = $('itxAdmin2FAVerify');
@@ -121,8 +123,8 @@
     const form = $('itxAdmin2FAForm');
 
     async function sendCode() {
-      const user = await getAdminUser();
-      if (!user) { setMessage('La sesión de administrador no es válida. Inicia sesión nuevamente.', 'error'); return; }
+      const currentUser = await getAdminUser();
+      if (!currentUser) { setMessage('La sesión de administrador no es válida. Inicia sesión nuevamente.', 'error'); return; }
       if (Date.now() < resendUntil) return;
       send.disabled = true;
       setMessage('Enviando el código de seguridad…');
@@ -153,8 +155,8 @@
       event.preventDefault();
       const token = code.value.replace(/\D/g, '');
       if (token.length !== 6) { setMessage('Escribe el código completo de 6 dígitos.', 'error'); return; }
-      const user = await getAdminUser();
-      if (!user?.email) { setMessage('La sesión de administrador no es válida. Inicia sesión nuevamente.', 'error'); return; }
+      const currentUser = await getAdminUser();
+      if (!currentUser?.email) { setMessage('La sesión de administrador no es válida. Inicia sesión nuevamente.', 'error'); return; }
       verify.disabled = true;
       send.disabled = true;
       setMessage('Verificando código…');
@@ -171,7 +173,7 @@
           throw new Error(detail);
         }
         if (!data?.ok) throw new Error(data?.error || 'Código incorrecto o expirado.');
-        markVerified();
+        markVerified(currentUser.id);
         setMessage('✓ Verificación completada. Abriendo el panel…', 'success');
         setTimeout(() => {
           gateShown = false;
@@ -201,13 +203,13 @@
   async function protectAdminPanel() {
     const panel = $('adminPanel');
     if (!panel || panel.hidden || $('itxAdmin2FAOverlay')) return;
-    if (isVerified()) return;
     const user = await getAdminUser();
     if (!user) return;
+    if (isVerified(user.id)) return;
     panel.hidden = true;
     if (!gateShown) {
       gateShown = true;
-      render(user.email);
+      render(user);
     }
   }
 
