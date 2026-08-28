@@ -53,7 +53,7 @@
       if(!password || password.dataset.itxEyeInstalled === '1') return;
       password.dataset.itxEyeInstalled = '1';
       const wrap = document.createElement('div');
-      wrap.className = 'itx-login-password-wrap';
+      wrap.className='itx-login-password-wrap';
       password.parentNode.insertBefore(wrap,password);
       wrap.appendChild(password);
       const button = document.createElement('button');
@@ -232,7 +232,7 @@
     const card=document.createElement('div');
     card.id='itxAdminContentCard';
     card.className='portal-card itx-admin-content-card';
-    card.innerHTML=`<div class="portal-card-head"><div><h3>📰 Contenido interno</h3><p>Publica novedades, agrega SOPs a Knowledge Base y administra la documentación para los técnicos.</p></div><span>📚</span></div><div class="itx-admin-content-actions"><a class="itx-admin-content-btn" href="/admin-content.html">📰 Gestionar novedades y SOPs</a><a class="itx-admin-content-btn" href="/admin-content.html#knowledge-base">📚 Knowledge Base</a></div>`;
+    card.innerHTML=`<div class="portal-card-head"><div><h3>📰 Contenido interno</h3><p>Publica novedades, agrega SOPs a Knowledge Base y administra la documentación para los técnicos.</p></div><span>📚</span></div><div class="itx-admin-content-actions"><a class="itx-admin-content-btn" href="/admin-content.html">📰 Gestionar novedades y SOPs</a><a class="itx-admin-content-btn" href="/admin-content.html#knowledge-base">📚 Knowledge Base</a><a class="itx-admin-content-btn" href="/admin-technicians.html">👨‍🔧 Para técnicos</a><a class="itx-admin-content-btn" href="/admin-server.html">🖥️ Monitoreo del sistema</a></div>`;
     const jobs=adminPanel.querySelector('.portal-grid-2');
     if(jobs) jobs.insertAdjacentElement('afterend',card); else adminPanel.prepend(card);
   }
