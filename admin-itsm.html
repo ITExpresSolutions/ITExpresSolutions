@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITSM | ITExpresSolutions</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f5f7fb;color:#172033}.wrap{max-width:1200px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.back{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none;background:#172033;color:#fff}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:#fff;border:1px solid #e4e8f0;border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}.num{font-size:30px;font-weight:700;margin-top:8px}.section{margin-top:22px}.table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden}.table th,.table td{padding:12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:14px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f7}.danger{background:#fee2e2}.warn{background:#fef3c7}.ok{background:#dcfce7}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start;flex-direction:column}}@media(max-width:500px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1>ITSM</h1><p>Centro de gestión de servicios de ITExpresSolutions</p></div><a class="back" href="admin-portal.html">← Portal</a></div>
+<div class="grid">
+<div class="card"><div>Tickets abiertos</div><div id="open" class="num">—</div></div>
+<div class="card"><div>SLA en riesgo</div><div id="risk" class="num">—</div></div>
+<div class="card"><div>SLA vencidos</div><div id="breach" class="num">—</div></div>
+<div class="card"><div>Completados</div><div id="done" class="num">—</div></div>
+</div>
+<div class="section card"><h2>Tickets recientes</h2><table class="table"><thead><tr><th>Ticket</th><th>Cliente</th><th>Estado</th><th>Prioridad</th><th>Activo</th><th>SLA</th></tr></thead><tbody id="rows"><tr><td colspan="6">Cargando…</td></tr></tbody></table></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://wfdxbgohwejawmkpninz.supabase.co';
+// Public anon key is intentionally loaded from the same runtime configuration used by the existing portal.
+let sb;
+try{const key=window.ITEXPRESS_SUPABASE_ANON_KEY||localStorage.getItem('ITEXPRESS_SUPABASE_ANON_KEY'); if(key) sb=supabase.createClient(SUPABASE_URL,key)}catch(e){}
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+async function load(){
+ if(!sb){document.getElementById('rows').innerHTML='<tr><td colspan="6">La configuración segura de Supabase del portal no está disponible en esta página.</td></tr>';return}
+ const {data,error}=await sb.from('trabajos').select('id,cliente_nombre,estado,prioridad,activo_id,creado_at,it_assets(marca,modelo,numero_serie)').order('creado_at',{ascending:false}).limit(50);
+ if(error){document.getElementById('rows').innerHTML='<tr><td colspan="6">No fue posible cargar los tickets.</td></tr>';return}
+ const now=Date.now(); let open=0,done=0,risk=0,breach=0;
+ const sla=await sb.from('it_ticket_sla').select('ticket_id,response_due_at,resolution_due_at,response_met,resolution_met');
+ const sm=new Map((sla.data||[]).map(x=>[x.ticket_id,x]));
+ for(const t of data||[]){if(['completado','cerrado'].includes(String(t.estado).toLowerCase()))done++;else open++;const s=sm.get(t.id);if(s){const due=new Date(s.resolution_due_at).getTime();if(!s.resolution_met&&due<now)breach++;else if(!s.resolution_met&&due-now<2*60*60*1000)risk++;}}
+ document.getElementById('open').textContent=open;document.getElementById('done').textContent=done;document.getElementById('risk').textContent=risk;document.getElementById('breach').textContent=breach;
+ document.getElementById('rows').innerHTML=(data||[]).map(t=>{const s=sm.get(t.id);const due=s&&new Date(s.resolution_due_at).getTime();let label='Sin SLA',cl='pill';if(s&&s.resolution_met){label='Cumplido';cl='pill ok'}else if(due&&due<now){label='Vencido';cl='pill danger'}else if(due&&due-now<2*60*60*1000){label='En riesgo';cl='pill warn'}return `<tr><td>${esc(String(t.id).slice(0,8).toUpperCase())}</td><td>${esc(t.cliente_nombre)}</td><td>${esc(t.estado)}</td><td>${esc(t.prioridad)}</td><td>${esc(t.it_assets?[t.it_assets.marca,t.it_assets.modelo,t.it_assets.numero_serie].filter(Boolean).join(' / '):'Sin activo')}</td><td><span class="${cl}">${label}</span></td></tr>`}).join('')||'<tr><td colspan="6">No hay tickets.</td></tr>';
+}
+load();
+</script>
+</body>
+</html>
