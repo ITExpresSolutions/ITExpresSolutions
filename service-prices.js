@@ -72,3 +72,18 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   setTimeout(boot,1000);setTimeout(boot,2500);
 })();
+
+/* Load the Lenovo service badge after the pricing script is loaded. */
+(function(){
+  function boot(){
+    if(document.getElementById('itxLenovoBadgeLoader'))return;
+    if(!document.querySelector('footer'))return;
+    const s=document.createElement('script');
+    s.id='itxLenovoBadgeLoader';
+    s.src='lenovo-badge.js?v=1';
+    s.defer=true;
+    document.head.appendChild(s);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+  setTimeout(boot,500);
+})();
