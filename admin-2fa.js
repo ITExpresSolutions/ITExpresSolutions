@@ -4,6 +4,7 @@
 
   const IDLE_FOR_MS = 15 * 60 * 1000;
   const VERIFIED_KEY = 'itx_admin_2fa_verified_session';
+  const PENDING_KEY = 'itx_admin_2fa_pending_login';
   let gateShown = false;
   let idleTimer = null;
   let activityBound = false;
@@ -14,35 +15,60 @@
   const auth = () => sb()?.auth;
   const $ = id => document.getElementById(id);
 
+  function getSessionValue(key) {
+    try { return sessionStorage.getItem(key); } catch (_) { return null; }
+  }
+  function setSessionValue(key, value) {
+    try { sessionStorage.setItem(key, value); } catch (_) {}
+  }
+  function removeSessionValue(key) {
+    try { sessionStorage.removeItem(key); } catch (_) {}
+  }
+
   function isVerified(userId) {
-    if (!userId) return false;
-    try {
-      return sessionStorage.getItem(VERIFIED_KEY) === userId;
-    } catch (_) {
-      return false;
-    }
+    return !!userId && getSessionValue(VERIFIED_KEY) === userId;
   }
 
   function clearVerification() {
-    try { sessionStorage.removeItem(VERIFIED_KEY); } catch (_) {}
+    removeSessionValue(VERIFIED_KEY);
+  }
+
+  function isPendingLogin() {
+    return getSessionValue(PENDING_KEY) === '1';
+  }
+
+  function clearPendingLogin() {
+    removeSessionValue(PENDING_KEY);
   }
 
   function markVerified(userId) {
-    try { sessionStorage.setItem(VERIFIED_KEY, userId); } catch (_) {}
+    setSessionValue(VERIFIED_KEY, userId);
+    clearPendingLogin();
     startIdleLogout();
   }
 
   async function logoutForInactivity() {
     clearTimeout(idleTimer);
     clearVerification();
+    clearPendingLogin();
     try { await auth()?.signOut({ scope: 'local' }); } catch (_) {}
     location.href = '/';
   }
 
+  function isAdminPanelVisible() {
+    const panel = $('adminPanel');
+    return !!panel && !panel.hidden;
+  }
+
   function resetIdleTimer() {
-    if (!isAdminPanelVisible()) return;
+    if (!isAdminPanelVisible() || !isPendingOrVerified()) return;
     clearTimeout(idleTimer);
     idleTimer = setTimeout(logoutForInactivity, IDLE_FOR_MS);
+  }
+
+  function isPendingOrVerified() {
+    const a = auth();
+    return isPendingLogin() || !!getSessionValue(VERIFIED_KEY);
   }
 
   function startIdleLogout() {
@@ -56,11 +82,6 @@
       });
     }
     resetIdleTimer();
-  }
-
-  function isAdminPanelVisible() {
-    const panel = $('adminPanel');
-    return !!panel && !panel.hidden;
   }
 
   async function getAdminUser() {
@@ -121,6 +142,12 @@
     };
     tick();
     resendTimer = setInterval(tick, 1000);
+  }
+
+  function removeOverlay() {
+    clearInterval(resendTimer);
+    const overlay = $('itxAdmin2FAOverlay');
+    if (overlay) overlay.remove();
   }
 
   function render(user) {
@@ -208,8 +235,7 @@
         setMessage('✓ Verificación completada. Abriendo el panel…', 'success');
         setTimeout(() => {
           gateShown = false;
-          clearInterval(resendTimer);
-          overlay.remove();
+          removeOverlay();
           revealAdminPanel();
           startIdleLogout();
         }, 450);
@@ -235,10 +261,13 @@
   async function protectAdminPanel() {
     const panel = $('adminPanel');
     if (!panel || panel.hidden || $('itxAdmin2FAOverlay')) return;
+    if (!isPendingLogin()) return;
+
     const user = await getAdminUser();
     if (!user) return;
 
     if (isVerified(user.id)) {
+      clearPendingLogin();
       startIdleLogout();
       return;
     }
@@ -255,13 +284,20 @@
     run();
     const observer = new MutationObserver(run);
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
-    setInterval(run, 3000);
+    setInterval(run, 1000);
   }
 
   auth()?.onAuthStateChange((event) => {
+    if (event === 'SIGNED_IN') {
+      setSessionValue(PENDING_KEY, '1');
+      setTimeout(() => protectAdminPanel().catch(() => {}), 0);
+    }
     if (event === 'SIGNED_OUT') {
       clearVerification();
+      clearPendingLogin();
       clearTimeout(idleTimer);
+      removeOverlay();
+      gateShown = false;
     }
   });
 
