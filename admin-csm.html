@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSM | ITExpresSolutions</title>
+<link rel="icon" href="favicon.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#062f52;--teal:#087f8e;--green:#43d58e;--bg:#f3f7fa;--ink:#17324d;--muted:#6b808d;--line:#dce8ed;--card:#fff;--warn:#a86a00;--danger:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,Helvetica,sans-serif}.wrap{max-width:1280px;margin:auto;padding:22px}.top{background:#fff;border-radius:20px;box-shadow:0 8px 28px rgba(6,47,82,.08);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.brand img{width:52px;height:52px;border-radius:13px}.brand h1{margin:0;color:var(--navy);font-size:23px}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--teal);color:#fff;text-decoration:none;font-weight:800;cursor:pointer}.btn.secondary{background:#eef6f8;color:var(--navy)}.hero{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:10px 2px 18px}.hero h2{margin:0;color:var(--navy);font-size:30px}.hero p{margin:7px 0 0;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.metric,.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 24px rgba(6,47,82,.06)}.metric{padding:17px}.metric span{display:block;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.5px}.metric strong{display:block;color:var(--navy);font-size:28px;margin-top:8px}.metric small{display:block;color:#087f62;font-weight:800;margin-top:5px}.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}.panel{padding:20px}.panel h3{margin:0 0 5px;color:var(--navy);font-size:18px}.panel>p{margin:0 0 16px;color:var(--muted);font-size:13px}.search{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;font:inherit;margin-bottom:12px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}.table{width:100%;border-collapse:collapse;min-width:620px}.table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:13px}.table th{background:#f7fafb;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}.table tr:last-child td{border-bottom:0}.name{font-weight:800;color:var(--navy)}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;background:#eef2f4;color:#607887}.pill.ok{background:#e5f7ed;color:#087f62}.pill.off{background:#f1f3f4;color:#70818a}.cards{display:grid;gap:10px}.card{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fbfdfe}.card strong{color:var(--navy);display:block}.card small{display:block;color:var(--muted);margin-top:4px;line-height:1.45}.roadmap{margin-top:16px;background:#eef7fa;border:1px solid #d8eaf0;border-radius:14px;padding:14px}.roadmap strong{color:var(--navy)}.roadmap ul{margin:8px 0 0;padding-left:18px;color:#526d7a;font-size:12px;line-height:1.7}.empty{text-align:center;padding:24px;color:var(--muted)}.error{color:var(--danger);background:#fff0ed;border:1px solid #ffd4cc;padding:12px;border-radius:12px;font-size:13px}@media(max-width:950px){.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:620px){.wrap{padding:13px}.top,.hero{align-items:flex-start;flex-direction:column}.metrics{grid-template-columns:1fr}.actions{width:100%}.actions .btn{flex:1;text-align:center}.hero h2{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><img src="logo-badge.webp" alt="ITExpresSolutions"><div><h1>ITExpresSolutions</h1><p>Customer Service Management · CSM</p></div></div>
+ <div class="actions"><a class="btn secondary" href="/admin-dashboard.html">← Dashboard</a><a class="btn secondary" href="/admin-reports.html">📊 Reportes</a><button class="btn" id="refresh">↻ Actualizar</button></div>
+</header>
+<section class="hero"><div><h2>Gestión de clientes</h2><p>Primera capa CSM construida sobre los perfiles y servicios que ya existen.</p></div></section>
+<section class="metrics">
+ <div class="metric"><span>CLIENTES</span><strong id="customers">—</strong><small>Perfiles con rol cliente</small></div>
+ <div class="metric"><span>ACTIVOS</span><strong id="active">—</strong><small>Clientes habilitados</small></div>
+ <div class="metric"><span>TRABAJOS</span><strong id="jobs">—</strong><small>Registros operativos</small></div>
+ <div class="metric"><span>CSAT</span><strong>✓</strong><small>Encuestas ya disponibles</small></div>
+</section>
+<div class="grid">
+<section class="panel">
+ <h3>Clientes</h3><p>Directorio administrativo. No se crean clientes ficticios: la información procede de Supabase.</p>
+ <input id="search" class="search" placeholder="Buscar cliente por nombre o correo…" autocomplete="off">
+ <div class="table-wrap"><table class="table"><thead><tr><th>Cliente</th><th>Correo</th><th>Estado</th><th>Rol</th></tr></thead><tbody id="rows"><tr><td colspan="4" class="empty">Cargando…</td></tr></tbody></table></div>
+ <div id="error" class="error" style="display:none;margin-top:12px"></div>
+</section>
+<aside class="panel">
+ <h3>CSM · siguiente nivel</h3><p>La base para relacionar cada cliente con sus servicios y resultados.</p>
+ <div class="cards">
+  <div class="card"><strong>👤 Perfil 360°</strong><small>Identidad, contacto, estado, historial y relación con los servicios.</small></div>
+  <div class="card"><strong>🧰 Servicios contratados</strong><small>Catálogo de servicios, equipos atendidos y alcance por cliente.</small></div>
+  <div class="card"><strong>🎫 Casos y solicitudes</strong><small>Vinculación CSM → ITSM para que cada solicitud tenga contexto del cliente.</small></div>
+  <div class="card"><strong>📈 Experiencia y SLA</strong><small>Seguimiento de niveles de servicio, satisfacción y mejora continua.</small></div>
+ </div>
+ <div class="roadmap"><strong>Ruta de construcción</strong><ul><li>Clientes y contactos ← esta etapa</li><li>Servicios y SLA</li><li>Casos CSM vinculados a ITSM</li><li>Activos y contratos</li><li>CSAT y experiencia</li><li>Automatizaciones y AI</li></ul></div>
+</aside>
+</div>
+<p style="color:var(--muted);font-size:11px;line-height:1.6;margin:18px 2px 0">Diseñado como módulo CSM interno. La referencia ITIL (Version 5) enfatiza la co-creación de valor, la experiencia, la resiliencia y la mejora continua; esta pantalla no implica certificación oficial. citeturn0search0turn0search1</p>
+</div>
+<script>
+const sb=supabase.createClient('https://wfdxbgohwejawmkpninz.supabase.co','sb_publishable_SxcHBgFdBO4O6Aq1wQAU7A_BCJN98yb');
+const $=id=>document.getElementById(id);let clients=[];
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function pick(p,keys){for(const k of keys){if(p?.[k]!==undefined&&p?.[k]!==null&&String(p[k]).trim()!=='')return p[k]}return ''}
+function render(){const q=$('search').value.trim().toLowerCase();const list=clients.filter(p=>JSON.stringify(p).toLowerCase().includes(q));$('rows').innerHTML=list.length?list.map(p=>{const name=pick(p,['nombre','nombre_completo','full_name','name'])||'Cliente';const email=pick(p,['email','correo'])||'—';const active=p.activo!==false;const role=pick(p,['rol','role'])||'cliente';return `<tr><td><span class="name">${esc(name)}</span></td><td>${esc(email)}</td><td><span class="pill ${active?'ok':'off'}">${active?'ACTIVO':'INACTIVO'}</span></td><td>${esc(role)}</td></tr>`}).join(''):'<tr><td colspan="4" class="empty">No hay clientes que coincidan.</td></tr>'}
+async function auth(){const {data:{session},error}=await sb.auth.getSession();if(error||!session){location.href='/#portal';return false}const {data:p}=await sb.from('public_profiles').select('rol,activo').eq('id',session.user.id).maybeSingle();if(!p||p.rol!=='admin'||!p.activo){await sb.auth.signOut();location.href='/#portal';return false}return true}
+async function load(){ $('error').style.display='none';try{const [profiles,jobs]=await Promise.all([sb.from('public_profiles').select('*').eq('rol','cliente'),sb.from('trabajos').select('*',{count:'exact',head:true})]);if(profiles.error)throw profiles.error;if(jobs.error)throw jobs.error;clients=profiles.data||[];$('customers').textContent=clients.length;$('active').textContent=clients.filter(x=>x.activo!==false).length;$('jobs').textContent=jobs.count??0;render()}catch(e){console.error(e);$('rows').innerHTML='<tr><td colspan="4" class="empty">No se pudo cargar el directorio.</td></tr>';$('error').textContent='No se pudo consultar CSM. Revisa las políticas RLS de public_profiles y trabajos en Supabase.';$('error').style.display='block'}}
+$('search').addEventListener('input',render);$('refresh').onclick=load;(async()=>{if(await auth())await load()})();
+</script>
+</body></html>
