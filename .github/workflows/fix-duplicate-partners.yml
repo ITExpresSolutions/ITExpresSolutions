@@ -1,0 +1,53 @@
+name: Fix duplicate partner section
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Remove duplicate injected partner section
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('site-i18n-fixes.js')
+          text = path.read_text(encoding='utf-8')
+          original = text
+
+          text = re.sub(
+              r'  function installPartnersFooter\(\)\{.*?\n  \}\n\n  function installSecurityBadge',
+              '  function installSecurityBadge',
+              text,
+              flags=re.S,
+          )
+          text = text.replace('installPartnersFooter();', '')
+          text = re.sub(r'setTimeout\(installPartnersFooter,500\);', '', text)
+
+          if text == original:
+              print('No duplicate partner injector found; nothing to change.')
+          else:
+              path.write_text(text, encoding='utf-8')
+              print('Duplicate partner injector removed.')
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add site-i18n-fixes.js
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Fix duplicate partner section'
+          git push
