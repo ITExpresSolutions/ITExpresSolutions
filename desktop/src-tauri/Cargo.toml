@@ -1,0 +1,18 @@
+[package]
+name = "frozenat-desktop"
+version = "0.1.0"
+description = "FrozeNat Business Suite for Windows"
+authors = ["ITExpresSolutions"]
+edition = "2021"
+
+[lib]
+name = "frozenat_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
